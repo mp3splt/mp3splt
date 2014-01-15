@@ -762,7 +762,7 @@ char *splt_io_readline(FILE *stream, int *error)
   return line;
 }
 
-unsigned char *splt_io_fread(FILE *file, int start, size_t size)
+unsigned char *splt_io_fread(FILE *file, size_t size)
 {
   unsigned char *bytes = malloc(sizeof(unsigned char) * size);
 

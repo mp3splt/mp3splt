@@ -5,6 +5,16 @@
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
  * Copyright (c) 2005-2013 Alexandru Munteanu - m@ioalex.net
  *
+ * Bit reservoir fix heavily inspired from pcutmp3.
+ * It worth reminding that:
+ *    pcutmp3 was created by Sebastian Gesemann
+ *    pcutmp3 source code is here
+ *       http://wiki.themixingbowl.org/Pcutmp3
+ *    pcutmp3 is licensed as BSD
+ *       quoting the author from source: http://www.hydrogenaudio.org/forums/index.php?showtopic=35654&pid=569128&mode=threaded&start=100#entry569128
+ *          "Let's say BSD. :)" 
+ *    See below for the pcutmp3 license
+ *
  *********************************************************/
 
 /**********************************************************
@@ -22,6 +32,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
  * USA.
+ *********************************************************/
+
+/**********************************************************
+ * Reminder of the pcutmp3 license:
+ *
+ * Pcutmp3 Copyright (c) 2005, Sebastian Gesemann
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions
+ * and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+ * and the following disclaimer in the documentation and/or other materials provided with the
+ * distribution.
+ *
+ * 3. Neither the name of the Sebastian Gesemann nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *********************************************************/
 
 #include "mp3_utils.h"
@@ -73,17 +112,700 @@ int splt_mp3_c_bitrate(unsigned long head)
   return ((head>>12)&0xf);
 }
 
-//!make mp3 header bitrate, padding, offset, framesize
 struct splt_header splt_mp3_makehead(unsigned long headword, 
     struct splt_mp3 mp3f, struct splt_header head, off_t ptr)
 {
   head.ptr = ptr;
-  head.bitrate = splt_mp3_tabsel_123[1 - mp3f.mpgid][mp3f.layer-1][splt_mp3_c_bitrate(headword)];
-  head.padding = ((headword>>9)&0x1);
-  head.framesize = (head.bitrate*144000)/
-    (mp3f.freq<<(1 - mp3f.mpgid)) + head.padding;
+
+  int mpeg_index = splt_mp3_get_mpeg_as_int(mp3f.mpgid) != 1;
+  head.bitrate = splt_mp3_tabsel_123[mpeg_index][mp3f.layer-1][splt_mp3_c_bitrate(headword)];
+  head.padding = ((headword >> 9) & 0x1);
+
+  int is_mpeg1 = mp3f.mpgid == SPLT_MP3_MPEG1_ID;
+
+  if (mp3f.layer == MAD_LAYER_I)
+    head.framesize = (head.bitrate * 12000 / mp3f.freq + head.padding) * 4;
+  else if (is_mpeg1 || (mp3f.layer != MAD_LAYER_III))
+    head.framesize = head.bitrate * 144000 / mp3f.freq + head.padding;
+  else
+    head.framesize = head.bitrate * 72000 / mp3f.freq + head.padding;
+
+  head.has_crc = ! ((headword >> 16) & 0x1);
+
+  if (mp3f.layer == 3)
+  {
+    int is_mono = ((headword >> 6 & 3) == 3); // 3 = mono
+    if (is_mpeg1)
+      head.sideinfo_size = is_mono ? 17 : 32;
+    else
+      head.sideinfo_size = is_mono ? 9 : 17;
+  }
+  else
+  {
+    head.sideinfo_size = 0;
+  }
+
+  //4 is the header size
+  head.frame_data_space = head.framesize - head.sideinfo_size - 4;
 
   return head;
+}
+
+static void splt_mp3_store_header(splt_mp3_state *mp3state)
+{
+  struct splt_header *h = &mp3state->br_headers[mp3state->next_br_header_index];
+  h->ptr = mp3state->h.ptr;
+  h->bitrate = mp3state->h.bitrate;
+  h->padding = mp3state->h.padding;
+  h->framesize = mp3state->h.framesize;
+  h->has_crc = mp3state->h.has_crc;
+  h->sideinfo_size = mp3state->h.sideinfo_size;
+  h->main_data_begin = mp3state->h.main_data_begin;
+  h->frame_data_space = mp3state->h.frame_data_space;
+
+  mp3state->next_br_header_index++;
+
+  if (mp3state->number_of_br_headers_stored < SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS)
+  {
+    mp3state->number_of_br_headers_stored++;
+  }
+
+  if (mp3state->next_br_header_index >= SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS)
+  {
+    mp3state->next_br_header_index = 0;
+  }
+}
+
+void splt_mp3_read_process_side_info_main_data_begin(splt_mp3_state *mp3state, off_t offset)
+{
+  //side info is only for layer 3
+  if (mp3state->mp3file.layer != 3) { return; }
+
+  //skip crc
+  if (mp3state->h.has_crc)
+  {
+    fgetc(mp3state->file_input);
+    fgetc(mp3state->file_input);
+  }
+
+  unsigned int main_data_begin = 0;
+  main_data_begin = (unsigned int) fgetc(mp3state->file_input);
+  //main_data_begin has 9 bits in MPEG1 and 8 in MPEG2
+  if (mp3state->mp3file.mpgid == SPLT_MP3_MPEG1_ID)
+  {
+    main_data_begin <<= 8;
+    main_data_begin |= fgetc(mp3state->file_input);
+    main_data_begin >>= 7;
+  }
+
+  mp3state->h.main_data_begin = (int) main_data_begin;
+
+/*  fprintf(stdout, "frame size = %d\t sideinfo_size = %d\t main_data_begin = %d\t frame data space = %d\n",
+      mp3state->h.framesize, mp3state->h.sideinfo_size, mp3state->h.main_data_begin,
+      mp3state->h.frame_data_space);
+  fflush(stdout);*/
+
+  splt_mp3_store_header(mp3state);
+}
+
+static void splt_mp3_update_existing_xing(splt_mp3_state *mp3state, unsigned long frames, 
+    unsigned long bytes)
+{
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+4] = (frames >> 24) & 0xFF;
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+5] = (frames >> 16) & 0xFF;
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+6] = (frames >> 8) & 0xFF;
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+7] = frames & 0xFF;
+
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+8] = (bytes >> 24) & 0xFF;
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+9] = (bytes >> 16) & 0xFF;
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+10] = (bytes >> 8) & 0xFF;
+  mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+11] = bytes & 0xFF;
+}
+
+static int splt_mp3_xing_content_size(splt_mp3_state *mp3state)
+{
+  struct splt_mp3 *mp3file = &mp3state->mp3file;
+
+  unsigned long xing_flags = 
+    (unsigned long) ((mp3file->xingbuffer[mp3file->xing_offset] << 24) | 
+        (mp3file->xingbuffer[mp3file->xing_offset + 1] << 16) |
+        (mp3file->xingbuffer[mp3file->xing_offset + 2] << 8) |
+        (mp3file->xingbuffer[mp3file->xing_offset + 3]));
+
+  int xing_content_size = 0;
+  if (xing_flags & SPLT_MP3_XING_FRAMES)
+  {
+    xing_content_size += 4;
+    mp3file->xing_has_frames = SPLT_TRUE;
+  }
+  if (xing_flags & SPLT_MP3_XING_BYTES)
+  {
+    xing_content_size += 4;
+    mp3file->xing_has_bytes = SPLT_TRUE;
+  }
+  if (xing_flags & SPLT_MP3_XING_TOC)
+  {
+    xing_content_size += 100;
+    mp3file->xing_has_toc = SPLT_TRUE;
+  }
+  if (xing_flags & SPLT_MP3_XING_QUALITY)
+  {
+    xing_content_size += 4;
+    mp3file->xing_has_quality = SPLT_TRUE;
+  }
+
+  return xing_content_size;
+}
+
+static int splt_mp3_xing_frame_has_lame(splt_mp3_state *mp3state)
+{
+  struct splt_mp3 mp3file = mp3state->mp3file;
+
+  off_t end_xing_offset =
+    mp3file.xing_offset + mp3file.xing_content_size + SPLT_MP3_XING_FLAGS_SIZE;
+
+  //4 for the LAME characters
+  if (mp3state->mp3file.xing <= end_xing_offset + 4)
+  {
+    return SPLT_FALSE;
+  }
+
+  if (mp3file.xingbuffer[end_xing_offset] == 'L' &&
+      mp3file.xingbuffer[end_xing_offset + 1] == 'A' &&
+      mp3file.xingbuffer[end_xing_offset + 2] == 'M' &&
+      mp3file.xingbuffer[end_xing_offset + 3] == 'E')
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
+}
+
+static off_t splt_mp3_get_delay_offset(splt_mp3_state *mp3state)
+{
+  off_t end_xing_offset =
+    mp3state->mp3file.xing_offset + mp3state->mp3file.xing_content_size + SPLT_MP3_XING_FLAGS_SIZE;
+  return end_xing_offset + SPLT_MP3_LAME_DELAY_OFFSET;
+}
+
+static int splt_mp3_xing_info_off(splt_mp3_state *mp3state)
+{
+  unsigned long headw = 0;
+  int i;
+
+  for (i=0; i<mp3state->mp3file.xing; i++)
+  {
+    if ((headw == SPLT_MP3_XING_MAGIC) || 
+        (headw == SPLT_MP3_INFO_MAGIC)) // "Xing" or "Info"
+    {
+      return i;
+    }
+    headw <<= 8;
+    headw |= mp3state->mp3file.xingbuffer[i];
+  }
+
+  return 0;
+}
+
+int splt_mp3_get_samples_per_frame(struct splt_mp3 *mp3file)
+{
+  if (mp3file->layer == MAD_LAYER_I)
+  {
+    return SPLT_MP3_LAYER1_SAMPLES_PER_FRAME;
+  }
+
+  if (mp3file->layer == MAD_LAYER_II)
+  {
+    return SPLT_MP3_LAYER3_MPEG1_AND_LAYER2_SAMPLES_PER_FRAME;
+  }
+
+  if (mp3file->mpgid == SPLT_MP3_MPEG1_ID)
+  {
+    return SPLT_MP3_LAYER3_MPEG1_AND_LAYER2_SAMPLES_PER_FRAME;
+  }
+
+  return SPLT_MP3_LAYER3_MPEG2_SAMPLES_PER_FRAME;
+}
+
+int splt_mp3_must_handle_bit_reservoir(splt_state *state)
+{
+  return SPLT_FALSE;
+}
+
+int splt_mp3_get_mpeg_as_int(int mpgid)
+{
+  if (mpgid == SPLT_MP3_MPEG1_ID) { return 1; }
+  if (mpgid == SPLT_MP3_MPEG2_ID) { return 2; }
+  return 25;
+}
+
+void splt_mp3_parse_xing_lame(splt_mp3_state *mp3state)
+{
+  mp3state->mp3file.xing_offset = splt_mp3_xing_info_off(mp3state);
+  mp3state->mp3file.xing_content_size = splt_mp3_xing_content_size(mp3state);
+
+  if (!splt_mp3_xing_frame_has_lame(mp3state))
+  {
+    mp3state->mp3file.lame_delay = -1;
+    mp3state->mp3file.lame_padding = -1;
+    return;
+  }
+
+  off_t delay_offset = splt_mp3_get_delay_offset(mp3state);
+  char *delay_padding_ptr = &mp3state->mp3file.xingbuffer[delay_offset];
+
+  int first = (int) *delay_padding_ptr;
+  int middle = (int) *(delay_padding_ptr + 1);
+  int last = (int) *(delay_padding_ptr + 2);
+
+  mp3state->mp3file.lame_delay = ((first & 0xFF) << 4) | (middle >> 4);
+  mp3state->mp3file.lame_padding = ((middle & 0xF) << 8) | (last & 0xFF);
+}
+
+void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t end, 
+    unsigned long fbegin, splt_code *error, splt_state *state)
+{
+  short reservoir_frame = 0;
+  short reservoir_bytes = 0;
+  if (mp3state->reservoir.reservoir_frame != NULL)
+  {
+    reservoir_frame = 1;
+    reservoir_bytes = mp3state->reservoir.reservoir_frame_size;
+  }
+
+  if (end == -1) { end = mp3state->mp3file.len; }
+
+  unsigned long frames = (unsigned long) (mp3state->frames - fbegin + 1);
+  //TODO: wrong bytes
+  unsigned long bytes = (unsigned long) (end - begin + mp3state->mp3file.xing +
+      reservoir_bytes + mp3state->overlapped_frames_bytes);
+
+  if (mp3state->mp3file.xing <= 0)
+  {
+    //TODO: build new xing lame frame if not existing
+    return;
+  }
+
+  if (splt_mp3_xing_frame_has_lame(mp3state) && splt_mp3_must_handle_bit_reservoir(state))
+  {
+    int delay = mp3state->mp3file.lame_delay;
+    int padding = mp3state->mp3file.lame_padding;
+
+    delay += (mp3state->begin_sample -
+        mp3state->first_frame_inclusive * mp3state->mp3file.samples_per_frame);
+
+    long number_of_frames = 0;
+    if (mp3state->last_frame_inclusive != mp3state->first_frame_inclusive)
+    {
+      number_of_frames = mp3state->last_frame_inclusive - mp3state->first_frame_inclusive + 1;
+    }
+    frames = number_of_frames;
+
+    long number_of_samples = number_of_frames * mp3state->mp3file.samples_per_frame;
+    long number_of_samples_to_play = mp3state->end_sample - mp3state->begin_sample;
+
+    padding = number_of_samples - number_of_samples_to_play - delay;
+
+    //TODO: pctump3 always builds the reservoir frame, thus, the delay is different for the first
+    //file
+    if (reservoir_frame)
+    {
+      delay += mp3state->mp3file.samples_per_frame;
+      frames++;
+    }
+
+    if (delay > SPLT_MP3_LAME_MAX_DELAY) { delay = SPLT_MP3_LAME_MAX_DELAY; }
+    if (padding > SPLT_MP3_LAME_MAX_PADDING) { padding = SPLT_MP3_LAME_MAX_PADDING; }
+    if (delay < 0) { delay = 0; }
+    if (padding < 0) { padding = 0; }
+
+    char *delay_padding_ptr = &mp3state->mp3file.xingbuffer[splt_mp3_get_delay_offset(mp3state)];
+    *delay_padding_ptr = (char) (delay >> 4);
+    *(delay_padding_ptr + 1) = (char) (delay & 0xF) << 4 | (padding >> 8);
+    *(delay_padding_ptr + 2) = (char) padding;
+
+    splt_mp3_update_existing_xing(mp3state, frames, bytes);
+
+    return;
+  }
+
+  splt_mp3_update_existing_xing(mp3state, frames, bytes);
+
+  //TODO: make bigger frame
+
+  //TODO: update lame crc16
+}
+
+static int splt_mp3_current_br_header_index(splt_mp3_state *mp3state)
+{
+  int current_header_index = mp3state->next_br_header_index - 1;
+  if (current_header_index < 0)
+  {
+    current_header_index = SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS - 1;
+  }
+
+  return current_header_index;
+}
+
+static int splt_mp3_previous_br_header_index(splt_mp3_state *mp3state, int current_header_index)
+{
+  int header_index = current_header_index - 1;
+  if (header_index < 0)
+  {
+    header_index = SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS - 1;
+  }
+
+  return header_index;
+}
+
+static void splt_mp3_back_br_header_index(splt_mp3_state *mp3state)
+{
+  mp3state->next_br_header_index--;
+  if (mp3state->next_br_header_index == 0)
+  {
+    mp3state->next_br_header_index = SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS;
+  }
+}
+
+unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3state,
+    splt_state *state)
+{
+  if (!splt_mp3_must_handle_bit_reservoir(state))
+  {
+    return (unsigned long) (fbegin_sec * mp3state->mp3file.fps);
+  }
+
+  long begin_sample = (long) rint((double) fbegin_sec * (double) mp3state->mp3file.freq);
+  mp3state->begin_sample = begin_sample;
+
+  long first_frame_inclusive = (long)
+    ((begin_sample + mp3state->mp3file.lame_delay - SPLT_MP3_MIN_OVERLAP_SAMPLES_START)
+     / mp3state->mp3file.samples_per_frame);
+  if (first_frame_inclusive < 0) { first_frame_inclusive = 0; }
+
+  mp3state->first_frame_inclusive = first_frame_inclusive;
+
+  //TODO: incompatible with overlap option
+  if (mp3state->last_frame_inclusive > 0)
+  {
+    long number_of_frames_to_be_overlapped = 
+      mp3state->last_frame_inclusive - first_frame_inclusive + 2;
+
+    int current_header_index = splt_mp3_current_br_header_index(mp3state);
+    mp3state->overlapped_frames_bytes = 0;
+    mp3state->overlapped_frames = 0;
+
+    int index = 0;
+    off_t frame_offsets[SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS] = { 0 };
+    int frame_sizes[SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS] = { 0 };
+
+    int i = 0;
+    for (;i < number_of_frames_to_be_overlapped; i++)
+    {
+      //TODO: hack ?
+      if (i > 0)
+      {
+        mp3state->overlapped_frames_bytes += mp3state->br_headers[current_header_index].framesize;
+        frame_offsets[index] = mp3state->br_headers[current_header_index].ptr;
+        frame_sizes[index] = mp3state->br_headers[current_header_index].framesize;
+        index++;
+        mp3state->overlapped_number_of_frames++;
+      }
+      current_header_index = splt_mp3_previous_br_header_index(mp3state, current_header_index);
+    }
+
+    //TODO: free mp3state->overlapped_frames at end of split
+    if (mp3state->overlapped_frames) { free(mp3state->overlapped_frames); }
+    mp3state->overlapped_frames = malloc(sizeof(unsigned char) * mp3state->overlapped_frames_bytes);
+    if (mp3state->overlapped_frames == NULL)
+    {
+      //TODO: handle error;
+    }
+
+    off_t previous_position = ftello(mp3state->file_input);
+
+    long current_index_in_frames = 0;
+    for (i = index - 1;i >= 0; i--)
+    {
+      off_t frame_offset = frame_offsets[i];
+
+      if (fseeko(mp3state->file_input, frame_offset, SEEK_SET) == -1)
+      {
+        //splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
+        //*error = SPLT_ERROR_SEEKING_FILE;
+        //TODO: handle error
+      }
+
+      int frame_size = frame_sizes[i];
+      unsigned char *frame = splt_io_fread(mp3state->file_input, frame_size);
+      if (!frame)
+      {
+        //TODO: handle error
+      }
+
+      memcpy(mp3state->overlapped_frames + current_index_in_frames, frame, frame_size);
+      current_index_in_frames += frame_size;
+      free(frame);
+
+      splt_mp3_back_br_header_index(mp3state);
+    }
+
+    if (fseeko(mp3state->file_input, previous_position, SEEK_SET) == -1)
+    {
+      //TODO: handle error
+      //splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
+      //*error = SPLT_ERROR_SEEKING_FILE;
+    }
+
+    /*int j = 0;
+    for (j = 0;j < mp3state->overlapped_frames_bytes;j++)
+    {
+      fprintf(stdout, "%02x ", mp3state->overlapped_frames[j]);
+      fflush(stdout);
+    }*/
+  }
+
+  return (unsigned long) first_frame_inclusive;
+}
+
+unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state,
+    splt_state *state)
+{
+  if (!splt_mp3_must_handle_bit_reservoir(state))
+  {
+    //prefer to split a bit after the end than loosing some frame
+    //before the end
+    return (unsigned long) ceilf(fend_sec * mp3state->mp3file.fps);
+  }
+
+  long end_sample = (long) rint((double) fend_sec * (double) mp3state->mp3file.freq);
+  if (end_sample < 0) { end_sample = 0; }
+  mp3state->end_sample = end_sample;
+
+  long last_frame_inclusive = (long)
+    ((end_sample + mp3state->mp3file.lame_delay + SPLT_MP3_MIN_OVERLAP_SAMPLES_END)
+     / mp3state->mp3file.samples_per_frame);
+  //TODO: last frame inclusive will be wrong for last file; must not be more than max frames
+
+  mp3state->last_frame_inclusive = last_frame_inclusive;
+
+  return (unsigned long) (last_frame_inclusive + 1);
+}
+
+static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state, splt_state *state, splt_code *error)
+{
+  //reservoir is only for layer 3
+  if (mp3state->mp3file.layer != 3) { return; }
+
+  int number_of_headers_stored = mp3state->number_of_br_headers_stored;
+
+  int current_header_index = splt_mp3_current_br_header_index(mp3state);
+  struct splt_header *h = &mp3state->br_headers[current_header_index];
+  int back_pointer = h->main_data_begin;
+/*  fprintf(stdout, "back pointer = %d\n", back_pointer);
+  fflush(stdout);*/
+
+  if (back_pointer > 511)
+  {
+    //TODO: handle error
+    fprintf(stdout, "error: back pointer bigger than 511\n");
+    fflush(stdout);
+    return;
+  }
+
+  off_t previous_position = ftello(mp3state->file_input);
+
+  unsigned char **data_from_frames = malloc(sizeof(unsigned char *) * SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS);
+  int *bytes_to_copy = malloc(sizeof(int *) * SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS);
+  if (data_from_frames == NULL || bytes_to_copy == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
+  int number_of_frames = 0;
+
+  while (back_pointer > 0)
+  {
+    current_header_index = splt_mp3_previous_br_header_index(mp3state, current_header_index);
+    number_of_headers_stored--;
+
+    if (number_of_headers_stored < 0)
+    {
+      fprintf(stdout, "error headers stored ?\n");
+      fflush(stdout);
+      //TODO: handle error
+      break;
+    }
+
+    h = &mp3state->br_headers[current_header_index];
+
+    unsigned int number_of_bytes_to_copy = h->frame_data_space;
+    if (back_pointer < h->frame_data_space)
+    {
+      number_of_bytes_to_copy = back_pointer;
+    }
+
+    off_t frame_main_data_offset = h->ptr + h->sideinfo_size + 4;
+    if (number_of_bytes_to_copy < h->frame_data_space)
+    {
+      frame_main_data_offset += h->frame_data_space - number_of_bytes_to_copy;
+    }
+
+/*    fprintf(stdout, "Copying %d bytes into reservoir\n", number_of_bytes_to_copy);
+    fflush(stdout);*/
+
+    if (fseeko(mp3state->file_input, frame_main_data_offset, SEEK_SET) == -1)
+    {
+      splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
+      *error = SPLT_ERROR_SEEKING_FILE;
+    }
+
+    unsigned char *data_from_frame = splt_io_fread(mp3state->file_input, number_of_bytes_to_copy);
+    if (data_from_frame)
+    {
+/*      unsigned int it = 0;
+      for (;it < number_of_bytes_to_copy;it++)
+      {
+        fprintf(stdout, "%02x ", data_from_frame[it]);
+      }
+      fprintf(stdout, "\n");
+      fflush(stdout);*/
+
+      data_from_frames[number_of_frames] = data_from_frame;
+      bytes_to_copy[number_of_frames] = number_of_bytes_to_copy;
+      number_of_frames++;
+    }
+    else
+    {
+      //TODO: handle error
+      fprintf(stdout, "failed to read bytes for reservoir ...\n");
+      fflush(stdout);
+      break;
+    }
+
+    back_pointer -= number_of_bytes_to_copy;
+  }
+
+  struct splt_reservoir *res = &mp3state->reservoir;
+  res->reservoir_end = 0;
+
+  number_of_frames--;
+  for (;number_of_frames >= 0; number_of_frames--)
+  {
+    unsigned char *data_from_frame = data_from_frames[number_of_frames];
+    int number_of_bytes_to_copy = bytes_to_copy[number_of_frames];
+
+    memcpy(res->reservoir + res->reservoir_end, data_from_frame, number_of_bytes_to_copy);
+    res->reservoir_end += number_of_bytes_to_copy;
+    free(data_from_frame);
+  }
+
+  free(bytes_to_copy);
+  free(data_from_frames);
+
+  /*unsigned int index = 0;
+  fprintf(stdout, "reservoir= _");
+  for (;index < res->reservoir_end;index++)
+  {
+    fprintf(stdout, "%02x ", res->reservoir[index]);
+  }
+  fprintf(stdout, "_\n");
+  fflush(stdout);*/
+
+  if (res->reservoir_end > 0)
+  {
+    if (fseeko(mp3state->file_input, previous_position, SEEK_SET) == -1)
+    {
+      splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
+      *error = SPLT_ERROR_SEEKING_FILE;
+    }
+  }
+}
+
+static void splt_mp3_build_reservoir_frame(splt_mp3_state *mp3state, splt_state *state, splt_code *error)
+{
+  struct splt_reservoir *res = &mp3state->reservoir;
+
+  if (res->reservoir_end == 0)
+  {
+    if (res->reservoir_frame) { free(res->reservoir_frame); }
+    res->reservoir_frame = NULL;
+    res->reservoir_frame_size = 0;
+    return;
+  }
+
+  unsigned long first_frame_header = mp3state->headw;
+  first_frame_header |= 0x00010000; //set protection bit to 1 in order to turn off CRC
+
+  int bytes_in_main_data = res->reservoir_end + 4; //keep 4 extra bytes
+
+  int bitrate_mask = 1;
+  for (;bitrate_mask <= 14; bitrate_mask++)
+  {
+    unsigned long header = (first_frame_header & 0xFFFF0FFF) + (bitrate_mask << 12);
+    struct splt_header h;
+    h = splt_mp3_makehead(header, mp3state->mp3file, h, 0);
+
+    if (h.frame_data_space >= bytes_in_main_data)
+    {
+      unsigned char *frame = malloc(sizeof(unsigned char) * h.framesize);
+      if (frame == NULL)
+      {
+        *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        return;
+      }
+
+      frame[0] = (unsigned char) (header >> 24);
+      frame[1] = (unsigned char) (header >> 16);
+      frame[2] = (unsigned char) (header >> 8);
+      frame[3] = (unsigned char) header;
+
+      int i = 4;
+      for (; i < 4 + h.sideinfo_size;i++) { frame[i] = 0x0; }
+      for (; i < h.framesize;i++) { frame[i] = 0x78; }
+
+      memcpy(frame + h.framesize - res->reservoir_end, res->reservoir, res->reservoir_end);
+
+      if (res->reservoir_frame) { free(res->reservoir_frame); }
+      res->reservoir_frame = frame;
+      res->reservoir_frame_size = h.framesize;
+
+      return;
+    }
+  }
+}
+
+void splt_mp3_extract_reservoir_and_build_reservoir_frame(splt_mp3_state *mp3state,
+    splt_state *state, splt_code *error)
+{
+  if (!splt_mp3_must_handle_bit_reservoir(state))
+  {
+    return;
+  }
+
+  //TODO: bytes reservoir with auto adjust in a second phase
+  splt_mp3_extract_reservoir_main_data_bytes(mp3state, state, error);
+  if (*error < 0) { return; }
+
+  //TODO: don't build reservoir frame for CBR files
+  splt_mp3_build_reservoir_frame(mp3state, state, error);
+
+  struct splt_reservoir *reservoir = &mp3state->reservoir;
+  if (reservoir->reservoir_frame == NULL)
+  {
+    /*    fprintf(stdout, "reservoir frame follows : NO reservoir frame\n");
+          fflush(stdout);*/
+    return;
+  }
+
+  /*  fprintf(stdout, "reservoir frame follows : _ ");
+      int i = 0;
+      for (i = 0;i < reservoir->reservoir_frame_size; i++)
+      {
+      fprintf(stdout, "%02x ", reservoir->reservoir_frame[i]);
+      }
+      fprintf(stdout, "_\n");
+      fflush(stdout);*/
 }
 
 //!finds first header from start_pos. Returns -1 if no header is found
@@ -131,26 +853,6 @@ off_t splt_mp3_findvalidhead(splt_mp3_state *mp3state, off_t start)
   } while (begin!=(start + h.framesize));
 
   return start;
-}
-
-//!finds xing info offset and returns it?
-int splt_mp3_xing_info_off(splt_mp3_state *mp3state)
-{
-  unsigned long headw = 0;
-  int i;
-
-  for (i=0; i<mp3state->mp3file.xing; i++)
-  {
-    if ((headw == SPLT_MP3_XING_MAGIC) || 
-        (headw == SPLT_MP3_INFO_MAGIC)) // "Xing" or "Info"
-    {
-      return i;
-    }
-    headw <<= 8;
-    headw |= mp3state->mp3file.xingbuffer[i];
-  }
-
-  return 0;
 }
 
 /*! Get a frame

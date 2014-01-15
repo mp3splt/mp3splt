@@ -54,6 +54,8 @@
 
 #define SPLT_MAD_BSIZE 4032
 
+#define SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS 30
+
 #ifndef NO_ID3TAG
 typedef struct {
   id3_byte_t *tag_bytes;
@@ -67,34 +69,52 @@ typedef struct {
 } tag_bytes_and_size;
 #endif
 
-// Struct that will contain header's useful infos
 struct splt_header {
-  off_t ptr;    // Offset of header
+  off_t ptr;    // offset of header
   int bitrate;
   int padding;
   int framesize;
+
+  int has_crc;
+  int sideinfo_size;
+
+  //info from the side info for layer 3
+  int main_data_begin;
+  int frame_data_space;
+};
+
+struct splt_reservoir {
+  unsigned char reservoir[511];
+  int reservoir_end;
+  unsigned char *reservoir_frame;
+  unsigned int reservoir_frame_size;
 };
 
 // Struct that will contains infos on mp3 and an header struct of first valid header
 struct splt_mp3 {
-  int mpgid;    // 0 or 1
-  int layer;    // mpg1, mpg2, or mpg3
-  int channels;
+  int mpgid;    // mpgid among SPLT_MP3_MPEG1_ID or SPLT_MP3_MPEG2_ID or SPLT_MP3_MPEG25_ID
+  int layer;    // layer 1, 2 or 3
   //0 = single channel
   //1 = dual channel
   //2 = joint stereo
   //3 = stereo
   //4 = other
-  //frequency
+  int channels;
   int freq;
-  //bitrate
   int bitrate;
-  //frames per second
   float fps;
+  int samples_per_frame;
   //used for the xing header
   int xing;
   char *xingbuffer;
   off_t xing_offset;
+  int xing_content_size;
+  int xing_has_frames;
+  int xing_has_bytes;
+  int xing_has_toc;
+  int xing_has_quality;
+  int lame_delay;
+  int lame_padding;
   //length of the mp3 file
   off_t len;
   //where we begin reading
@@ -120,6 +140,20 @@ typedef struct {
 
   //see the mp3 structure
   struct splt_mp3 mp3file;
+
+  //for byte reservoir
+  struct splt_header br_headers[SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS];
+  int next_br_header_index;
+  int number_of_br_headers_stored;
+  struct splt_reservoir reservoir;
+  long begin_sample;
+  long end_sample;
+  long first_frame_inclusive;
+  long last_frame_inclusive;
+
+  long overlapped_number_of_frames;
+  unsigned char *overlapped_frames;
+  size_t overlapped_frames_bytes;
 
   //used internally, libmad structures
   struct mad_stream stream;
@@ -154,14 +188,34 @@ typedef struct {
    */
 
 #define SPLT_MP3_TAG "TAG"
-#define SPLT_MP3_PCM 1152
+
+#define SPLT_MP3_LAYER1_SAMPLES_PER_FRAME 384
+#define SPLT_MP3_LAYER3_MPEG1_AND_LAYER2_SAMPLES_PER_FRAME 1152
+#define SPLT_MP3_LAYER3_MPEG2_SAMPLES_PER_FRAME 576
+
+#define SPLT_MP3_NO_END_SAMPLE -10000
+#define SPLT_MP3_MIN_OVERLAP_SAMPLES_START SPLT_MP3_LAYER3_MPEG2_SAMPLES_PER_FRAME
+#define SPLT_MP3_MIN_OVERLAP_SAMPLES_END SPLT_MP3_LAYER3_MPEG1_AND_LAYER2_SAMPLES_PER_FRAME
+
 #define SPLT_MP3_BYTE 8
+
+#define SPLT_MP3_MPEG1_ID 3
+#define SPLT_MP3_MPEG2_ID 2
+#define SPLT_MP3_MPEG25_ID 0
 
 #define SPLT_MP3_XING_MAGIC 0x58696E67
 #define SPLT_MP3_INFO_MAGIC 0x496E666F
 
-#define SPLT_MP3_XING_FRAMES 0x00000001L
-#define SPLT_MP3_XING_BYTES  0x00000002L
+#define SPLT_MP3_XING_FRAMES  0x00000001L
+#define SPLT_MP3_XING_BYTES   0x00000002L
+#define SPLT_MP3_XING_TOC     0x00000004L
+#define SPLT_MP3_XING_QUALITY 0x00000008L
+
+#define SPLT_MP3_XING_FLAGS_SIZE 4
+
+#define SPLT_MP3_LAME_DELAY_OFFSET 21
+#define SPLT_MP3_LAME_MAX_DELAY 4095
+#define SPLT_MP3_LAME_MAX_PADDING 4095
 
 #define SPLT_MP3_ID3_ARTIST 1
 #define SPLT_MP3_ID3_ALBUM 2
