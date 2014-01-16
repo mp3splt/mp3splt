@@ -327,7 +327,7 @@ int splt_mp3_get_samples_per_frame(struct splt_mp3 *mp3file)
   return SPLT_MP3_LAYER3_MPEG2_SAMPLES_PER_FRAME;
 }
 
-int splt_mp3_must_handle_bit_reservoir(splt_state *state)
+static int splt_mp3_must_handle_bit_reservoir(splt_state *state)
 {
   return SPLT_FALSE;
 }
@@ -461,7 +461,7 @@ static int splt_mp3_previous_br_header_index(splt_mp3_state *mp3state, int curre
 static void splt_mp3_back_br_header_index(splt_mp3_state *mp3state)
 {
   mp3state->next_br_header_index--;
-  if (mp3state->next_br_header_index == 0)
+  if (mp3state->next_br_header_index < 0)
   {
     mp3state->next_br_header_index = SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS;
   }
@@ -514,15 +514,17 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
       current_header_index = splt_mp3_previous_br_header_index(mp3state, current_header_index);
     }
 
+    off_t previous_position = ftello(mp3state->file_input);
+
     //TODO: free mp3state->overlapped_frames at end of split
     if (mp3state->overlapped_frames) { free(mp3state->overlapped_frames); }
     mp3state->overlapped_frames = malloc(sizeof(unsigned char) * mp3state->overlapped_frames_bytes);
     if (mp3state->overlapped_frames == NULL)
     {
       //TODO: handle error;
+      fprintf(stdout, "error allocating memory for overlapped frames !\n");
+      fflush(stdout);
     }
-
-    off_t previous_position = ftello(mp3state->file_input);
 
     long current_index_in_frames = 0;
     for (i = index - 1;i >= 0; i--)
@@ -534,6 +536,8 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
         //splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
         //*error = SPLT_ERROR_SEEKING_FILE;
         //TODO: handle error
+        fprintf(stdout, "failed to seek\n");
+        fflush(stdout);
       }
 
       int frame_size = frame_sizes[i];
@@ -541,6 +545,8 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
       if (!frame)
       {
         //TODO: handle error
+        fprintf(stdout, "error reading frame\n");
+        fflush(stdout);
       }
 
       memcpy(mp3state->overlapped_frames + current_index_in_frames, frame, frame_size);
@@ -552,6 +558,8 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
 
     if (fseeko(mp3state->file_input, previous_position, SEEK_SET) == -1)
     {
+      fprintf(stdout, "error seekx\n");
+      fflush(stdout);
       //TODO: handle error
       //splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
       //*error = SPLT_ERROR_SEEKING_FILE;
@@ -588,6 +596,12 @@ unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state,
   //TODO: last frame inclusive will be wrong for last file; must not be more than max frames
 
   mp3state->last_frame_inclusive = last_frame_inclusive;
+
+  fprintf(stdout, "samples_per_frame = %d\n", mp3state->mp3file.samples_per_frame);
+  fprintf(stdout, "lame_delay = %d\n", mp3state->mp3file.lame_delay);
+  fprintf(stdout, "end_sample = %ld\n", end_sample);
+  fprintf(stdout, "computed end frame = %ld\n", last_frame_inclusive + 1);
+  fflush(stdout);
 
   return (unsigned long) (last_frame_inclusive + 1);
 }

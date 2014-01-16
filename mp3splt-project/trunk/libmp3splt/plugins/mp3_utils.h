@@ -45,7 +45,6 @@ void splt_mp3_extract_reservoir_and_build_reservoir_frame(splt_mp3_state *mp3sta
 void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t end, 
     unsigned long fbegin, splt_code *error, splt_state *state);
 
-int splt_mp3_must_handle_bit_reservoir(splt_state *state);
 int splt_mp3_get_mpeg_as_int(int mpgid);
 int splt_mp3_get_samples_per_frame(struct splt_mp3 *mp3file);
 void splt_mp3_parse_xing_lame(splt_mp3_state *mp3state);
