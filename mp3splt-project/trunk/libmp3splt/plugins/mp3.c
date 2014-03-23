@@ -2348,9 +2348,9 @@ bloc_end:
         fbegin = mp3state->fend;
       }
 
-      fprintf(stdout, "fbegin = %ld\n", fbegin);
+      /*fprintf(stdout, "fbegin = %ld\n", fbegin);
       fprintf(stdout, "fend = %ld\n", fend);
-      fflush(stdout);
+      fflush(stdout);*/
 
       splt_mp3_extract_reservoir_and_build_reservoir_frame(mp3state, state, error);
       if (*error < 0) { goto bloc_end2; }
