@@ -106,7 +106,7 @@ splt_state *splt_t_new_state(splt_state *state, int *error)
     free(state);
     return NULL;
   }
-  memset(state->wrap, 0x0, sizeof(state->wrap));
+  memset(state->wrap, 0x0, sizeof(splt_wrap));
 
   if ((state->serrors = malloc(sizeof(splt_syncerrors))) == NULL)
   {
@@ -115,7 +115,7 @@ splt_state *splt_t_new_state(splt_state *state, int *error)
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
   }
-  memset(state->serrors, 0x0, sizeof(state->serrors));
+  memset(state->serrors, 0x0, sizeof(splt_syncerrors));
 
   if ((state->split.p_bar = malloc(sizeof(splt_progress))) == NULL)
   {

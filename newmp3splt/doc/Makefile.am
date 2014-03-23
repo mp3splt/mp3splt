@@ -1,7 +1,7 @@
 EXTRA_DIST = mp3splt.1 manual.html
 man_MANS = mp3splt.1
 
-install-exec-hook:
+install-data-hook:
 if DO_OGG_SYMLINK
 	-cd $(DESTDIR)/$(mandir)/man1 && $(LN_S) mp3splt.1 oggsplt.1
 endif

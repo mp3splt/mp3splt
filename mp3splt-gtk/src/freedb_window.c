@@ -103,11 +103,6 @@ static void create_freedb_columns(GtkTreeView *freedb_tree)
   gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
 }
 
-static void set_freedb_selected_id(gint selected_id, ui_state *ui)
-{
-  ui->infos->freedb_selected_id = selected_id;
-}
-
 //!freedb selection has changed
 static void freedb_selection_changed(GtkTreeSelection *selection, ui_state *ui)
 {
