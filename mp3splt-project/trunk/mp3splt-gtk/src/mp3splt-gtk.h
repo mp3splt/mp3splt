@@ -50,7 +50,7 @@ void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify
 gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data);
 void exit_application_bis(GtkWidget *widget, gpointer data);
 
-#define MP3SPLT_GTK_DATE "09/12/13"
+#define MP3SPLT_GTK_DATE "01/05/14"
 
 #endif
 

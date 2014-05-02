@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-09 20:46+0100\n"
+"POT-Creation-Date: 2014-05-02 20:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -315,29 +315,29 @@ msgstr ""
 msgid "Album title"
 msgstr ""
 
-#: src/freedb_window.c:159 src/freedb_window.c:477
+#: src/freedb_window.c:154 src/freedb_window.c:472
 msgid "please wait... contacting tracktype.org"
 msgstr ""
 
-#: src/freedb_window.c:440 src/freedb_window.c:461 src/ui_manager.c:372
+#: src/freedb_window.c:435 src/freedb_window.c:456 src/ui_manager.c:372
 #: src/splitpoints_window.c:671 src/splitpoints_window.c:792
 #: src/splitpoints_window.c:842
 msgid "description here"
 msgstr ""
 
-#: src/freedb_window.c:564
+#: src/freedb_window.c:559
 msgid "Search tracktype.org:"
 msgstr ""
 
-#: src/freedb_window.c:574
+#: src/freedb_window.c:569
 msgid "_Search"
 msgstr ""
 
-#: src/freedb_window.c:603
+#: src/freedb_window.c:598
 msgid "_Add splitpoints"
 msgstr ""
 
-#: src/freedb_window.c:609
+#: src/freedb_window.c:604
 msgid "Set splitpoints to the splitpoints table"
 msgstr ""
 

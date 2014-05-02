@@ -2,6 +2,17 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.9.1
+-------------------------------------------------------------
+- FLAC internal cue sheets support
+- simple MP3 chapter marks support (with no overlap)
+- added #161 FLAC option to compute and write MD5 sum in the STREAMINFO metadata block
+- fixed bug #159 with some FLAC files being detected as MP3; also look for the file extension
+  when detecting a file for a plugin
+- fixed bug '#160 ---last cue splitpoint--- created at 99 59 99 for mp3 files >100mins' (libmp3splt)
+- fixed bug with FLAC & pretend to split option
+- patch #8 to fix Werror=format-security in snprintf
+
 libmp3splt version 0.9
 -------------------------------------------------------------
 - experimental FLAC support added - stdin and stdout are not yet implemented

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-12-09 16:40+0100\n"
+"POT-Creation-Date: 2014-04-29 12:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -475,7 +475,7 @@ msgstr ""
 msgid "not enough memory"
 msgstr ""
 
-#: src/audacity.c:238
+#: src/audacity.c:237
 #, c-format
 msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr ""
@@ -580,75 +580,79 @@ msgstr ""
 msgid " warning: splitpoint %ld.%ld.%ld is not auto-adjusted\n"
 msgstr ""
 
-#: plugins/mp3.c:1237
+#: plugins/mp3.c:1250
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1333
+#: plugins/mp3.c:1344
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
-msgstr ""
-
-#: plugins/mp3.c:1471
-#, c-format
-msgid " info: MPEG %d Layer %d - %d Hz - %s"
-msgstr ""
-
-#: plugins/mp3.c:1479
-#, c-format
-msgid " - FRAME MODE NS"
 msgstr ""
 
 #: plugins/mp3.c:1483
 #, c-format
+msgid " info: MPEG %d Layer %d - %d Hz - %s"
+msgstr ""
+
+#: plugins/mp3.c:1492
+#, c-format
+msgid " - FRAME MODE NS"
+msgstr ""
+
+#: plugins/mp3.c:1496
+#, c-format
 msgid " - FRAME MODE"
 msgstr ""
 
-#: plugins/mp3.c:1488
+#: plugins/mp3.c:1501
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1493
+#: plugins/mp3.c:1506
 #, c-format
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1501 plugins/ogg.c:132 plugins/flac.c:286
+#: plugins/mp3.c:1514 plugins/ogg.c:132 plugins/flac.c:285
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
 
-#: plugins/mp3.c:2826
+#: plugins/mp3.c:2863
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr ""
 
-#: plugins/mp3.c:2864
+#: plugins/mp3.c:2901
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 
-#: plugins/mp3.c:2883
+#: plugins/mp3.c:2920
 msgid " OK\n"
 msgstr ""
 
-#: plugins/mp3.c:2902
+#: plugins/mp3.c:2939
 msgid " Detected file created with: AlbumWrap\n"
 msgstr ""
 
-#: plugins/mp3.c:2924
+#: plugins/mp3.c:2961
 #, c-format
 msgid " Total files: %d\n"
 msgstr ""
 
-#: plugins/mp3.c:3342
+#: plugins/mp3.c:3379
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 
-#: plugins/mp3.c:3369
+#: plugins/mp3.c:3406
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
+msgstr ""
+
+#: plugins/mp3.c:3589
+msgid " warning: overlapped chapters are not yet supported.\n"
 msgstr ""
 
 #: plugins/ogg.c:124
@@ -676,11 +680,11 @@ msgstr ""
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr ""
 
-#: plugins/flac.c:247
+#: plugins/flac.c:245
 msgid "--- last cue splitpoint ---"
 msgstr ""
 
-#: plugins/flac.c:278
+#: plugins/flac.c:277
 #, c-format
 msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""

@@ -2,7 +2,7 @@ Release instructions:
 ---------------------
 
 -1) verify
-    libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:8:0
+    libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:9:0
 
 0) set in 'tests/constants_variables.sh' RUN_INTERNET_TESTS to 1
 1) update translation files:

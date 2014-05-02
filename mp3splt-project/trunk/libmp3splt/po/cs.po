@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-12-09 16:40+0100\n"
+"POT-Creation-Date: 2014-04-29 12:15+0200\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -492,7 +492,7 @@ msgstr " Čtou se informace ze souboru CDDB %s …\n"
 msgid "not enough memory"
 msgstr "Nedostatek paměti"
 
-#: src/audacity.c:238
+#: src/audacity.c:237
 #, c-format
 msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr " Čtou se informace ze souboru se štítky Audacity '%s …\n"
@@ -603,7 +603,7 @@ msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 msgid " warning: splitpoint %ld.%ld.%ld is not auto-adjusted\n"
 msgstr ""
 
-#: plugins/mp3.c:1237
+#: plugins/mp3.c:1250
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
@@ -611,71 +611,75 @@ msgstr ""
 " Varování: ztraceno seřízení a sestaveno bez podpory pro id3tag - rozdělení "
 "může být poškozeno\n"
 
-#: plugins/mp3.c:1333
+#: plugins/mp3.c:1344
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 " Informace: Nalezena hlavička Xing nebo Info. Přepíná se do režimu snímků…\n"
 
-#: plugins/mp3.c:1471
+#: plugins/mp3.c:1483
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " Informace: MPEG %d Layer %d - %d Hz - %s"
 
-#: plugins/mp3.c:1479
+#: plugins/mp3.c:1492
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - REŽIM SNÍMKŮ NS"
 
-#: plugins/mp3.c:1483
+#: plugins/mp3.c:1496
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - REŽIM SNÍMKŮ"
 
-#: plugins/mp3.c:1488
+#: plugins/mp3.c:1501
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d kB/s"
 
-#: plugins/mp3.c:1493
+#: plugins/mp3.c:1506
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1501 plugins/ogg.c:132 plugins/flac.c:286
+#: plugins/mp3.c:1514 plugins/ogg.c:132 plugins/flac.c:285
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Celkový čas: %dm.%02ds"
 
-#: plugins/mp3.c:2826
+#: plugins/mp3.c:2863
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Zjištěný soubor vytvořen: Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2864
+#: plugins/mp3.c:2901
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Ověření celistvosti souboru: Počítá se CRC, prosím, počkejte …"
 
-#: plugins/mp3.c:2883
+#: plugins/mp3.c:2920
 msgid " OK\n"
 msgstr " OK\n"
 
-#: plugins/mp3.c:2902
+#: plugins/mp3.c:2939
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Zjištěný soubor vytvořen: AlbumWrap\n"
 
-#: plugins/mp3.c:2924
+#: plugins/mp3.c:2961
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Celkem souborů: %d\n"
 
-#: plugins/mp3.c:3342
+#: plugins/mp3.c:3379
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »-« je datový proud mp3.\n"
 
-#: plugins/mp3.c:3369
+#: plugins/mp3.c:3406
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " Byly zpracovány snímky %lu - Chyby při seřizování: %lu\n"
+
+#: plugins/mp3.c:3589
+msgid " warning: overlapped chapters are not yet supported.\n"
+msgstr ""
 
 #: plugins/ogg.c:124
 #, c-format
@@ -702,11 +706,11 @@ msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
-#: plugins/flac.c:247
+#: plugins/flac.c:245
 msgid "--- last cue splitpoint ---"
 msgstr ""
 
-#: plugins/flac.c:278
+#: plugins/flac.c:277
 #, c-format
 msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""

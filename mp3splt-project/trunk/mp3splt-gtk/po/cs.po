@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-09 19:07+0100\n"
+"POT-Creation-Date: 2014-05-01 14:34+0200\n"
 "PO-Revision-Date: 2013-04-29 08:45+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -362,29 +362,29 @@ msgstr "%s revize %d"
 msgid "Album title"
 msgstr "Název alba"
 
-#: src/freedb_window.c:159 src/freedb_window.c:477
+#: src/freedb_window.c:154 src/freedb_window.c:472
 msgid "please wait... contacting tracktype.org"
 msgstr "Počkejte, prosím - probíhá spojování se s tracktype.org"
 
-#: src/freedb_window.c:440 src/freedb_window.c:461 src/ui_manager.c:372
+#: src/freedb_window.c:435 src/freedb_window.c:456 src/ui_manager.c:372
 #: src/splitpoints_window.c:671 src/splitpoints_window.c:792
 #: src/splitpoints_window.c:842
 msgid "description here"
 msgstr "Zadejte, prosím, název"
 
-#: src/freedb_window.c:564
+#: src/freedb_window.c:559
 msgid "Search tracktype.org:"
 msgstr "Hledat na tracktype.org:"
 
-#: src/freedb_window.c:574
+#: src/freedb_window.c:569
 msgid "_Search"
 msgstr "_Hledání"
 
-#: src/freedb_window.c:603
+#: src/freedb_window.c:598
 msgid "_Add splitpoints"
 msgstr "_Přidat body rozdělení"
 
-#: src/freedb_window.c:609
+#: src/freedb_window.c:604
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Přidat body rozdělení do tabulky s body rozdělení"
 
