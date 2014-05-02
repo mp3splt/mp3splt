@@ -4,6 +4,26 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.9.1
+
+- FLAC internal cue sheets support
+- simple MP3 chapter marks support (with no overlap)
+- added 'Use CDDB/CUE file having similar name as the input file' option in Batch split
+- optimized amplitude wave drawing time (now consumes less CPU) and make it not to "shake" anymore
+- added customizable seeks in mp3splt-gtk (patch #7 - thanks to Sašo Živanović)
+- added quick preview closest splitpoint shortcut and option to stop gstreamer quick preview
+  several milliseconds earlier
+- added 'preview closest splitpoint & pause' option (feature request #98)
+- now compiled and delivered by default with gtk+-3.0 on Windows
+- gstreamer 0.10 support was dropped in favor of the 1.0 version
+- fixed bug #157: quick preview goes too far
+- fixed bug #159 with some FLAC files being detected as MP3; also look for the file extension
+  when detecting a file for a plugin (libmp3splt)
+- fixed bug #160 '---last cue splitpoint--- created at 99 59 99 for mp3 files >100mins' (libmp3splt)
+- better thread handling to make sure there is no overlap between the GTK thread and the other threads
+- fixed bug #162 - Tooltip displayed for only a second
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.9
 
 - experimental FLAC support added

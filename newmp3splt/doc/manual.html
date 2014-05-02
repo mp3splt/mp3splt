@@ -1,4 +1,4 @@
-
+Content-type: text/html; charset=UTF-8
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML><HEAD><TITLE>Man page of MP3SPLT</TITLE>
@@ -220,6 +220,10 @@ with consecutive tracks (such as live performances) might be only a waste of tim
 of a &quot;.CUE&quot; file (note that it must end with &quot;.cue&quot;, otherwise it will be wrongly
 interpreted as a cddb file) or a local .XMCD (.CDDB) file on your hard disk.
 <P>
+Furthermore, if you want to split using internal sheets, SOURCE must be <B>internal_sheet</B>.
+Currently two internal sheets are supported: internal CUE sheet of native FLAC files and ID3v2
+chapters for MP3 files (note that there is a limitation on ID3v2 chapters for overlapped chapters).
+<P>
 If you want to get informations from Internet, SOURCE must have one of the
 following formats:
 <P>
@@ -373,6 +377,12 @@ Positive integer for the time to decode before and after splitpoint, increase if
 are completely wrong, or decrease if wrong for only few seconds. Of course the smaller the gap, the faster the process.
 Default gap is 30 seconds (so for each song, total decode time is one minute).
 <P>
+<DT><B>warn_if_no_aa</B><DD>
+Print a warning for each splitpoint if it has not been auto-adjusted.
+<P>
+<DT><B>error_if_no_aa</B><DD>
+Stop the split process with error if one of the splitpoints has not been auto-adjusted.
+<P>
 <DT><B>-f</B>         <DD>
 <B>Frame mode (mp3 only)</B>. Process all frames, seeking split positions by counting frames and not
 with bitrate guessing. In this mode you have higher precision and you can
@@ -390,6 +400,15 @@ seeked. Both framemode and standard mode are available, but framemode can be rea
 files, because to seek splitpoints we need to process all bytes and all frames. -k option
 (so STDIN as input too) can't be used together with -s -a -w -e, because input must be seekable for
 those options. Copying original tags is not yet supported for the non seekable option.
+<P>
+<DT><B>-M</B>         <DD>
+<B>Write MD5 sum (FLAC only)</B>. Using this option, the frames are decoded just before being written in
+the output files and MD5 sum of the unencoded data is computed in order to complete the STREAMINFO 
+metadata block of the created files.
+This option is disabled by default because the decoding process makes the split to be
+much slower (it can be twice slower).
+However, even when using this option, the process remains faster compared to splitting by decoding
+and then re-encoding.
 <P>
 <DT><B>-O TIME</B>         <DD>
 <B>Overlap split files</B>. TIME will be added to each end splitpoint.
@@ -836,6 +855,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 21:29:45 GMT, July 20, 2013
+Time: 18:58:17 GMT, May 02, 2014
 </BODY>
 </HTML>
