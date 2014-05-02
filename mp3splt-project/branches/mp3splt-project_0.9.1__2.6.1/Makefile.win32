@@ -1,0 +1,53 @@
+all: compile_libmp3splt compile_mp3splt compile_mp3splt-gtk
+
+compile_libmp3splt:
+	export CFLAGS="-I/mingw/include -I/usr/include" && export LDFLAGS=-L/usr/lib && \
+	cd libmp3splt && ./autogen.sh win && ./configure --prefix=/usr --disable-cutter --enable-win && make clean && make && \
+	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
+	cp libmp3splt.pc /lib/pkgconfig/
+
+compile_mp3splt:
+	export CFLAGS="-I/mingw/include -I/usr/include" && export LDFLAGS=-L/usr/lib && \
+        cp /LIBMP3SPLT*README*.txt . && \
+        mkdir -p libmp3splt_libs_licenses; cp -a /libmp3splt_libs_licenses ./libmp3splt_libs_licenses && \
+	cd newmp3splt && ./autogen.sh win && cp -r /lib/libmp3splt* . && \
+	./configure --host=mingw32 && make clean && make && make install
+
+compile_mp3splt-gtk:
+	cp /MP3SPLT-GTK*README*.txt . && \
+        mkdir -p mp3splt-gtk_libs_licenses; cp -a /mp3splt-gtk_libs_licenses ./mp3splt-gtk_libs_licenses && \
+	cd mp3splt-gtk && ./autogen.sh win && \
+	cp /lib/libmp3splt* . && \
+	cp /lib/libmp3splt* src/ && \
+        ./configure --disable-audacious --disable-gnome --disable-cutter && make clean && make && make install
+
+recompile_mp3splt-gtk:
+	cd mp3splt-gtk && make
+
+recompile:
+	cd libmp3splt && make && \
+	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
+	\
+	cd ../newmp3splt && cp /usr/lib/libmp3splt.* . && cp /usr/lib/libmp3splt.* ./src && make && \
+	cd ../mp3splt-gtk && cp /usr/lib/libmp3splt.* . && cp /usr/lib/libmp3splt.* ./src && make
+
+clean:
+	cd libmp3splt && make clean
+	cd mp3splt-gtk && make clean
+	cd newmp3splt && make clean
+
+dist:
+#copy iconv & intl & ltdl
+	cp /bin/iconv.dll /bin/libintl-8.dll /bin/libltdl-7.dll /bin/pcre3.dll .
+#copying vorbis and ogg libraries
+	cp /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll /bin/libvorbisenc-2.dll /lib/libFLAC*.dll .
+#copying libmad and libid3tag libraries
+	cp /bin/libmad-0.dll /bin/libid3tag.dll .
+#copying zlib1.dll (needed by libid3tag)
+	cp /bin/zlib1.dll .
+#building installer for the text mode
+	strip newmp3splt/src/mp3splt.exe && \
+	cd newmp3splt/windows && ./make_windows_installer.sh && cd ../../
+#building installer for the gui
+	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
+	cd mp3splt-gtk/windows && ./make_windows_installer.sh && cd ../../
