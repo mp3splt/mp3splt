@@ -23,7 +23,6 @@ Release instructions:
 7) optional: update debian/ubuntu chroot installation for binary packages
 8) create the distribution files:
      $ ./scripts/compile.sh
-
 9) upload to sourceforge
 10) generate libmp3splt API documentation:
     $ make -C libmp3splt/doc api_doc
