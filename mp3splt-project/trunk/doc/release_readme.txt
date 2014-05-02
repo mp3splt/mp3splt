@@ -16,13 +16,14 @@ Release instructions:
      AUTHORS
      INSTALL
 6) edit 'scripts/compile.sh' file and modify the following variables as needed:
-     LIBMP3SPLT_REAL_VERSION=0.7
-     MP3SPLT_REAL_VERSION=2.4
-     MP3SPLT_GTK_REAL_VERSION=0.7
+     LIBMP3SPLT_REAL_VERSION=0.9.1
+     MP3SPLT_REAL_VERSION=2.6.1
+     MP3SPLT_GTK_REAL_VERSION=0.9.1
      BUILD_BINARY_PACKAGES=0
 7) optional: update debian/ubuntu chroot installation for binary packages
 8) create the distribution files:
      $ ./scripts/compile.sh
+
 9) upload to sourceforge
 10) generate libmp3splt API documentation:
     $ make -C libmp3splt/doc api_doc
