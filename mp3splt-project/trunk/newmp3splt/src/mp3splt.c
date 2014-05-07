@@ -31,6 +31,10 @@
 #include "freedb.h"
 #include "windows_utils.h"
 
+#ifndef __WIN32__
+#include <langinfo.h>
+#endif
+
 #ifdef __WIN32__
 #include <direct.h>
 #endif
@@ -119,7 +123,11 @@ int main(int argc, char **orig_argv)
 #endif
 
 #ifdef ENABLE_NLS
+ #ifdef __WIN32__
   bind_textdomain_codeset(MP3SPLT_GETTEXT_DOMAIN, "UTF-8");
+ #else
+  bind_textdomain_codeset(MP3SPLT_GETTEXT_DOMAIN, nl_langinfo(CODESET));
+ #endif
 #endif
 
   state = mp3splt_new_state(&err);

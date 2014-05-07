@@ -39,6 +39,10 @@
 
 #include "mp3splt-gtk.h"
 
+#ifndef __WIN32__
+  #include <langinfo.h>
+#endif
+
 ui_state *ui;
 
 static gpointer split_collected_files(ui_for_split *ui_fs);
@@ -427,10 +431,11 @@ static void init_i18n_and_plugin_paths(gchar *argv[], ui_state *ui)
 
   bindtextdomain(LIBMP3SPLT_WITH_SONAME, "translations");
   bindtextdomain("mp3splt-gtk", "translations");
+  bind_textdomain_codeset("mp3splt-gtk", "UTF-8");
 #else
   bindtextdomain("mp3splt-gtk", LOCALEDIR);
+  bind_textdomain_codeset("mp3splt-gtk", nl_langinfo(CODESET));
 #endif
-  bind_textdomain_codeset("mp3splt-gtk", "UTF-8");
 
 #ifdef __WIN32__
   if (executable != NULL)
