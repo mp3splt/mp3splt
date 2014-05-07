@@ -658,7 +658,11 @@ struct _splt_state {
 #include <locale.h>
 
 #ifdef ENABLE_NLS
-#  include <libintl.h>
+ #include <libintl.h>
+
+ #ifndef __WIN32
+  #include <langinfo.h>
+ #endif
 #endif
 
 #ifdef __WIN32__
