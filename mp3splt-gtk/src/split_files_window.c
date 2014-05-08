@@ -226,8 +226,8 @@ static void remove_all_files_button_event(GtkWidget *widget, ui_state *ui)
 static void create_queue_buttons(ui_state *ui)
 {
   //button for queueing all files
-  GtkWidget *queue_files_button =
-    wh_create_cool_button(GTK_STOCK_INDEX, _("_Queue to player"),FALSE);
+  GtkWidget *queue_files_button = 
+    wh_create_cool_button(NULL, _("_Queue to player"),FALSE);
   ui->gui->queue_files_button = queue_files_button;
   gtk_widget_set_sensitive(queue_files_button, FALSE);
   g_signal_connect(G_OBJECT(queue_files_button), "clicked",
@@ -235,7 +235,7 @@ static void create_queue_buttons(ui_state *ui)
 
   //button for removing a file
   GtkWidget *remove_file_button =
-    wh_create_cool_button(GTK_STOCK_DELETE, _("_Delete selected"), FALSE);
+    wh_create_cool_button(NULL, _("_Delete selected"), FALSE);
   ui->gui->remove_file_button = remove_file_button;
   gtk_widget_set_sensitive(remove_file_button, FALSE);
   g_signal_connect(G_OBJECT(remove_file_button), "clicked",
@@ -243,7 +243,7 @@ static void create_queue_buttons(ui_state *ui)
 
   //button for removing a file
   GtkWidget *remove_all_files_button =
-    wh_create_cool_button(GTK_STOCK_DELETE, _("D_elete all"), FALSE);
+    wh_create_cool_button("list-remove", _("D_elete all"), FALSE);
   ui->gui->remove_all_files_button = remove_all_files_button;
   gtk_widget_set_sensitive(remove_all_files_button, FALSE);
   g_signal_connect(G_OBJECT(remove_all_files_button), "clicked",

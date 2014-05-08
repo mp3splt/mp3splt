@@ -61,7 +61,7 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
     ui_state *ui);
 void put_status_message_in_idle(const gchar *text, ui_state *ui);
 
-void create_application();
+void create_application(ui_state *ui);
 void print_status_bar_confirmation(gint error, ui_state *ui);
 void cancel_button_event(GtkWidget *widget, ui_state *ui);
 

@@ -56,9 +56,9 @@ void import_event(GtkWidget *widget, ui_state *ui)
     gtk_file_chooser_dialog_new(_("Choose file to import"),
         NULL,
         GTK_FILE_CHOOSER_ACTION_OPEN,
-        GTK_STOCK_CANCEL,
+        _("_Cancel"),
         GTK_RESPONSE_CANCEL,
-        GTK_STOCK_OPEN,
+        _("_Open"),
         GTK_RESPONSE_ACCEPT,
         NULL);
 

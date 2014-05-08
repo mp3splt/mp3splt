@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-02 22:25+0200\n"
+"POT-Creation-Date: 2014-05-08 23:10+0200\n"
 "PO-Revision-Date: 2013-04-29 08:45+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,12 +47,22 @@ msgstr "kHz"
 msgid "Processing file '%s' ..."
 msgstr "Zpracovává se soubor »%s«…"
 
-#: src/export.c:153
+#: src/export.c:154
 #, fuzzy
 msgid "Cue filename to export"
 msgstr "Vybrat soubor pro zavedení"
 
-#: src/export.c:165
+#: src/export.c:157 src/multiple_files_window.c:83
+#: src/splitpoints_window.c:1126 src/splitpoints_window.c:1183
+#: src/main_window.c:1168 src/import.c:59
+msgid "_Cancel"
+msgstr ""
+
+#: src/export.c:159
+msgid "_Save"
+msgstr ""
+
+#: src/export.c:166
 msgid "cue files (*.cue)"
 msgstr "Soubory CUE (*.cue)"
 
@@ -122,6 +132,11 @@ msgstr ""
 #: src/player_window.c:599 src/player_window.c:603
 msgid "Cannot connect to player"
 msgstr "Žádné spojení s přehrávacím programem"
+
+#: src/player_window.c:604 src/splitpoints_window.c:1124
+#: src/splitpoints_window.c:1181
+msgid "_OK"
+msgstr ""
 
 #: src/player_window.c:900
 #, fuzzy
@@ -277,50 +292,51 @@ msgstr "Úplný název souboru"
 msgid "Choose files or directories"
 msgstr "Vybrat soubory nebo adresáře"
 
-#: src/multiple_files_window.c:100 src/main_window.c:724
+#: src/multiple_files_window.c:98 src/main_window.c:671
 #, fuzzy
 msgid "mp3, ogg vorbis and flac files (*.mp3 *.ogg *.flac)"
 msgstr "Soubory mp3 a ogg (*.mp3 *.ogg)"
 
-#: src/multiple_files_window.c:110 src/main_window.c:734
+#: src/multiple_files_window.c:108 src/main_window.c:681
 msgid "mp3 files (*.mp3)"
 msgstr "Soubory mp3 (*.mp3)"
 
-#: src/multiple_files_window.c:116 src/main_window.c:740
+#: src/multiple_files_window.c:114 src/main_window.c:687
 #, fuzzy
 msgid "ogg vorbis files (*.ogg)"
 msgstr "Soubory ogg (*.ogg)"
 
-#: src/multiple_files_window.c:122 src/main_window.c:746
+#: src/multiple_files_window.c:120 src/main_window.c:693
 #, fuzzy
 msgid "flac files (*.flac)"
 msgstr "Soubory CUE (*.cue)"
 
-#: src/multiple_files_window.c:129
+#: src/multiple_files_window.c:127
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: src/multiple_files_window.c:260
+#: src/multiple_files_window.c:258
 msgid "_Add files or directories"
 msgstr "Přid_at soubory nebo adresáře"
 
-#: src/multiple_files_window.c:261
+#: src/multiple_files_window.c:259
 msgid "Only the supported file types are added"
 msgstr ""
 
-#: src/multiple_files_window.c:269
+#: src/multiple_files_window.c:267
 msgid "_Remove selected"
 msgstr "Ods_tranit vybrané"
 
-#: src/multiple_files_window.c:279 src/splitpoints_window.c:1427
+#: src/multiple_files_window.c:277 src/splitpoints_window.c:1427
 msgid "R_emove all"
 msgstr "Odstranit _vše"
 
-#: src/multiple_files_window.c:287 src/main_window.c:823
-msgid "Batch split !"
+#: src/multiple_files_window.c:285
+#, fuzzy
+msgid "Batch split"
 msgstr "Dávkové rozdělení!"
 
-#: src/multiple_files_window.c:288
+#: src/multiple_files_window.c:286
 #, fuzzy
 msgid "Split all the files"
 msgstr "Rozdělené soubory"
@@ -333,11 +349,11 @@ msgstr "Povolit zprávy o _ladění"
 msgid "C_lear"
 msgstr "_Smazat"
 
-#: src/messages_window.c:168 src/main_window.c:834
+#: src/messages_window.c:168
 msgid "Messages history"
 msgstr "Historie zpráv"
 
-#: src/split_files_window.c:69 src/splitpoints_window.c:1929
+#: src/split_files_window.c:69 src/splitpoints_window.c:1911
 msgid "Filename"
 msgstr "Název souboru"
 
@@ -438,13 +454,13 @@ msgstr "Sekundy:"
 msgid "Hundredths:"
 msgstr "Setina:"
 
-#: src/splitpoints_window.c:1414 src/main_window.c:877
+#: src/splitpoints_window.c:1414
 msgid "Add splitpoint"
 msgstr "Přidat bod rozdělení"
 
 #: src/splitpoints_window.c:1417
-msgid "_Remove"
-msgstr "_Odstranit"
+msgid "list-remove"
+msgstr ""
 
 #: src/splitpoints_window.c:1424
 #, fuzzy
@@ -464,7 +480,7 @@ msgstr "Zastřihnout body rozdělení"
 msgid "_Silence detection"
 msgstr "_Zjištění ticha"
 
-#: src/splitpoints_window.c:1534 src/mp3splt-gtk.c:125
+#: src/splitpoints_window.c:1534 src/mp3splt-gtk.c:129
 msgid " finished"
 msgstr " Dokončeno"
 
@@ -480,96 +496,96 @@ msgstr " Náhled na poslední bod rozdělení není možný"
 msgid "Clone all tags"
 msgstr ""
 
-#: src/splitpoints_window.c:1805
+#: src/splitpoints_window.c:1803
 #, fuzzy
 msgid "Clone title"
 msgstr "Název alba"
 
-#: src/splitpoints_window.c:1811
+#: src/splitpoints_window.c:1807
 msgid "Clone artist"
 msgstr ""
 
-#: src/splitpoints_window.c:1817
+#: src/splitpoints_window.c:1811
 msgid "Clone album"
 msgstr ""
 
-#: src/splitpoints_window.c:1823
+#: src/splitpoints_window.c:1815
 msgid "Clone genre"
 msgstr ""
 
-#: src/splitpoints_window.c:1829
+#: src/splitpoints_window.c:1819
 msgid "Clone year"
 msgstr ""
 
-#: src/splitpoints_window.c:1835
+#: src/splitpoints_window.c:1823
 msgid "Clone track"
 msgstr ""
 
-#: src/splitpoints_window.c:1841
+#: src/splitpoints_window.c:1827
 msgid "Clone comment"
 msgstr ""
 
-#: src/splitpoints_window.c:1849
+#: src/splitpoints_window.c:1833
 msgid "Auto-increment track"
 msgstr ""
 
-#: src/splitpoints_window.c:1921
+#: src/splitpoints_window.c:1903
 msgid "Keep"
 msgstr "Ponechat"
 
-#: src/splitpoints_window.c:1937
+#: src/splitpoints_window.c:1919
 msgid "Secs"
 msgstr "Sek"
 
-#: src/splitpoints_window.c:1945
+#: src/splitpoints_window.c:1927
 msgid "Mins"
 msgstr "Min"
 
-#: src/splitpoints_window.c:1953
+#: src/splitpoints_window.c:1935
 msgid "Hundr"
 msgstr "1/100s"
 
-#: src/splitpoints_window.c:1961
+#: src/splitpoints_window.c:1943
 msgid "Length"
 msgstr "Délka"
 
-#: src/splitpoints_window.c:1968
+#: src/splitpoints_window.c:1950
 msgid "LiveP"
 msgstr "LiveP"
 
-#: src/splitpoints_window.c:1976
+#: src/splitpoints_window.c:1958
 msgid "SplitP"
 msgstr "SplitP"
 
-#: src/splitpoints_window.c:2026
+#: src/splitpoints_window.c:2008
 msgid "Title"
 msgstr ""
 
-#: src/splitpoints_window.c:2029
+#: src/splitpoints_window.c:2011
 #, fuzzy
 msgid "Artist"
 msgstr "<artist>: "
 
-#: src/splitpoints_window.c:2032
+#: src/splitpoints_window.c:2014
 #, fuzzy
 msgid "Album"
 msgstr "Název alba"
 
-#: src/splitpoints_window.c:2035
+#: src/splitpoints_window.c:2017
 #, fuzzy
 msgid "Genre"
 msgstr "Značka žánru:"
 
-#: src/splitpoints_window.c:2039
+#: src/splitpoints_window.c:2021
 #, fuzzy
 msgid "Comment"
 msgstr "Značka poznámky:"
 
-#: src/splitpoints_window.c:2042
+#: src/splitpoints_window.c:2024
 msgid "Year"
 msgstr ""
 
-#: src/splitpoints_window.c:2046
+#: src/splitpoints_window.c:2028
 #, fuzzy
 msgid "Track"
 msgstr "TrackType"
@@ -990,7 +1006,7 @@ msgstr "Stejná verze značky jako u vstupního souboru"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Verze značky (jen pro mp3)</b>"
 
-#: src/preferences_window.c:1538
+#: src/preferences_window.c:1538 src/main_window.c:774
 msgid "Split"
 msgstr "Rozdělení"
 
@@ -1139,342 +1155,108 @@ msgid ""
 "Example: test.cddb will be looked for when splitting test.mp3"
 msgstr ""
 
-#: src/mp3splt-gtk.c:108
+#: src/mp3splt-gtk.c:112
 msgid " error: no files found in batch mode"
 msgstr "Chyba: V dávkovém režimu nebyly nalezeny žádné soubory"
 
-#: src/mp3splt-gtk.c:346
+#: src/mp3splt-gtk.c:350
 msgid " info: stopping the split process before exiting"
 msgstr " Informace: Proces rozdělení se zastavuje před ukončením"
-
-#: src/mp3splt-gtk.c:457
-#, c-format
-msgid "Setting the output directory to %s.\n"
-msgstr "Výstupní adresář se nastavuje na %s.\n"
-
-#: src/mp3splt-gtk.c:471
-#, c-format
-msgid "Option -%c requires an argument.\n"
-msgstr "Volba -%c vyžaduje argument.\n"
-
-#: src/mp3splt-gtk.c:473
-#, c-format
-msgid "Unknown option `-%c'.\n"
-msgstr "Neznámá volba »-%c«.\n"
-
-#: src/mp3splt-gtk.c:475
-#, c-format
-msgid "Unknown option character `\\x%x'.\n"
-msgstr "Neznámý znak ve volbě »\\x%x«.\n"
-
-#: src/mp3splt-gtk.c:489
-#, c-format
-msgid "Cannot open input file %s\n"
-msgstr "Vstupní soubor %s nelze otevřít\n"
 
 #: src/main_window.c:170
 msgid "Error launching external command"
 msgstr "Chyba při spuštění vnějšího příkazu"
 
-#: src/main_window.c:201
+#: src/main_window.c:203
 msgid "using"
 msgstr "za použití"
 
-#: src/main_window.c:205
+#: src/main_window.c:207
 msgid "release of "
 msgstr "vydání "
 
-#: src/main_window.c:308
+#: src/main_window.c:310
 msgid " info: stopping the split process.. please wait"
 msgstr " Informace: Proces rozdělení se zastavuje, prosím, čekejte"
 
-#: src/main_window.c:316 src/main_window.c:811
-msgid "Preferences"
-msgstr "Nastavení"
-
-#: src/main_window.c:328
-msgid "TrackType"
-msgstr "TrackType"
-
-#: src/main_window.c:343 src/main_window.c:814
-msgid "Split files"
-msgstr "Rozdělené soubory"
-
-#: src/main_window.c:358 src/main_window.c:817
-msgid "Splitpoints"
-msgstr "Body rozdělení"
-
-#: src/main_window.c:429
+#: src/main_window.c:375
 msgid " error: split in progress..."
 msgstr " Chyba: Probíhá rozdělování..."
 
-#: src/main_window.c:439
+#: src/main_window.c:385
 msgid " error: no path of split selected"
 msgstr "Chyba: Nebyla vybrána žádná cesta rozdělení"
 
-#: src/main_window.c:758
-msgid "Choose File"
-msgstr "Vybrat soubor"
-
-#: src/main_window.c:788
-msgid "_File"
-msgstr "_Soubor"
-
-#: src/main_window.c:789
-msgid "_View"
-msgstr "Po_hled"
-
-#: src/main_window.c:790
-msgid "_Player"
-msgstr "_Přehrávač"
-
-#: src/main_window.c:791
-msgid "_Help"
-msgstr "_Nápověda"
-
-#: src/main_window.c:793
-#, fuzzy
-msgid "_Open single file..."
-msgstr "Otevřít soubor..."
-
-#: src/main_window.c:793
-msgid "Open"
-msgstr "Otevřít"
-
-#: src/main_window.c:797
-msgid "_Add files or directories to batch ..."
-msgstr "Př_idat soubory nebo adresáře do dávkového zpracování..."
-
-#: src/main_window.c:798
-msgid "Add files or directories to batch"
-msgstr "Přidat soubory nebo adresáře do dávkového zpracování"
-
-#: src/main_window.c:801
-msgid "_Import splitpoints from file..."
-msgstr "_Zavést body rozdělení ze souboru..."
-
-#: src/main_window.c:802
-msgid "Import splitpoints from file..."
-msgstr "Zavést body rozdělení ze souboru..."
-
-#: src/main_window.c:804
-msgid "Import splitpoints from _TrackType.org..."
-msgstr "Zavést body rozdělení z _TrackType.org..."
-
-#: src/main_window.c:805
-msgid "Import splitpoints from TrackType.org..."
-msgstr "Zavést body rozdělení z TrackType.org..."
-
-#: src/main_window.c:808
-msgid "_Export splitpoints..."
-msgstr "_Vyvést body rozdělení..."
-
-#: src/main_window.c:809
-msgid "Export splitpoints"
-msgstr "Vyvést body rozdělení"
-
-#: src/main_window.c:811
-msgid "_Preferences"
-msgstr "_Nastavení"
-
-#: src/main_window.c:814
-msgid "Split _files"
-msgstr "Rozdělit _soubory"
-
-#: src/main_window.c:817
-msgid "_Splitpoints"
-msgstr "_Body rozdělení"
-
-#: src/main_window.c:820
-msgid "_Split !"
-msgstr "_Rozdělit!"
-
-#: src/main_window.c:820 src/main_window.c:1042
-msgid "Split !"
-msgstr "Rozdělit!"
-
-#: src/main_window.c:823
-msgid "_Batch split !"
-msgstr "_Dávkové rozdělení!"
-
-#: src/main_window.c:826
-msgid "_Quit"
-msgstr "_Ukončit"
-
-#: src/main_window.c:826
-msgid "Quit"
-msgstr "Ukončit"
-
-#: src/main_window.c:830
-msgid "_Contents"
-msgstr "_Obsah"
-
-#: src/main_window.c:830
-msgid "Contents"
-msgstr "Obsah"
-
-#: src/main_window.c:834
-msgid "Messages _history"
-msgstr "_Historie zpráv"
-
-#: src/main_window.c:837
-msgid "_About"
-msgstr "_O programu"
-
-#: src/main_window.c:837
-msgid "About"
-msgstr "O programu"
-
-#: src/main_window.c:841
-msgid "P_ause / Play"
-msgstr "Př_ehrát/Pozastavit"
-
-#: src/main_window.c:841
-msgid "Pause/Play"
-msgstr "Pozastavit/Přehrát"
-
-#: src/main_window.c:844
-msgid "Seek _forward"
-msgstr "Hledat _dopředu"
-
-#: src/main_window.c:844
-msgid "Seek forward"
-msgstr "Hledat dopředu"
-
-#: src/main_window.c:846
-msgid "Seek _backward"
-msgstr "Hledat _dozadu"
-
-#: src/main_window.c:846
-msgid "Seek backward"
-msgstr "Hledat dozadu"
-
-#: src/main_window.c:849
-msgid "Small seek f_orward"
-msgstr "Malé hledání d_opředu"
-
-#: src/main_window.c:849
-msgid "Small seek forward"
-msgstr "Malé hledání dopředu"
-
-#: src/main_window.c:851
-msgid "Small seek back_ward"
-msgstr "Malé hledání doz_adu"
-
-#: src/main_window.c:851
-msgid "Small seek backward"
-msgstr "Malé hledání dozadu"
-
-#: src/main_window.c:854
-msgid "Big seek fo_rward"
-msgstr "Velké hledání do_předu"
-
-#: src/main_window.c:854
-msgid "Big seek forward"
-msgstr "Velké hledání dopředu"
-
-#: src/main_window.c:856
-msgid "Big seek bac_kward"
-msgstr "Velké hledání dozad_u"
-
-#: src/main_window.c:856
-msgid "Big seek backward"
-msgstr "Velké hledání do_zadu"
-
-#: src/main_window.c:859
-msgid "Seek to _next splitpoint"
-msgstr "Velké hledání dozadu"
-
-#: src/main_window.c:860
-msgid "Seek to next splitpoint"
-msgstr "Hledat po další bod rozdělení"
-
-#: src/main_window.c:861
-msgid "Seek to _previous splitpoint"
-msgstr "Hledat po _předchozí bod rozdělení"
-
-#: src/main_window.c:862
-msgid "Seek to previous splitpoint"
-msgstr "Hledat po předchozí bod rozdělení"
-
-#: src/main_window.c:865
-#, fuzzy
-msgid "Preview before c_losest splitpoint"
-msgstr "Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:865
-#, fuzzy
-msgid "Preview before closest splitpoint"
-msgstr "Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:869
-#, fuzzy
-msgid "Preview clos_est splitpoint"
-msgstr "Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:869
-#, fuzzy
-msgid "Preview closest splitpoint"
-msgstr "Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:873
-#, fuzzy
-msgid "Preview _closest splitpoint & pause"
-msgstr "Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:873
-#, fuzzy
-msgid "Preview closest splitpoint & pause"
-msgstr "Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:876
-msgid "Add _splitpoint"
-msgstr "Přidat _bod rozdělení"
-
-#: src/main_window.c:879
-msgid "_Delete closest splitpoint"
-msgstr "_Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:880
-msgid "Delete closest splitpoint"
-msgstr "Smazat nejbližší bod rozdělení"
-
-#: src/main_window.c:882
-msgid "Zoom _in"
-msgstr "_Přiblížit"
-
-#: src/main_window.c:882
-msgid "Zoom in"
-msgstr "Přiblížit"
-
-#: src/main_window.c:883
-msgid "Zoom _out"
-msgstr "_Oddálit"
-
-#: src/main_window.c:883
-msgid "Zoom out"
-msgstr "Oddálit"
-
-#: src/main_window.c:997
+#: src/main_window.c:729
 msgid "Open file ..."
 msgstr "Otevřít soubor..."
 
-#: src/main_window.c:1045
+#: src/main_window.c:777
 #, fuzzy
 msgid "Split the current file"
 msgstr "Rozdělené soubory"
 
-#: src/main_window.c:1054
+#: src/main_window.c:786
 msgid "Manual single file split"
 msgstr "Ruční rozdělení jednoho souboru"
 
-#: src/main_window.c:1072
+#: src/main_window.c:804
 msgid "Batch & automatic split"
 msgstr "Dávkové a automatické rozdělení"
 
-#: src/main_window.c:1092
+#: src/main_window.c:824
 msgid "S_top"
 msgstr "Za_stavit"
+
+#: src/main_window.c:1091
+#, c-format
+msgid "Setting the output directory to %s.\n"
+msgstr "Výstupní adresář se nastavuje na %s.\n"
+
+#: src/main_window.c:1105
+#, c-format
+msgid "Option -%c requires an argument.\n"
+msgstr "Volba -%c vyžaduje argument.\n"
+
+#: src/main_window.c:1107
+#, c-format
+msgid "Unknown option `-%c'.\n"
+msgstr "Neznámá volba »-%c«.\n"
+
+#: src/main_window.c:1109
+#, c-format
+msgid "Unknown option character `\\x%x'.\n"
+msgstr "Neznámý znak ve volbě »\\x%x«.\n"
+
+#: src/main_window.c:1123
+#, c-format
+msgid "Cannot open input file %s\n"
+msgstr "Vstupní soubor %s nelze otevřít\n"
+
+#: src/main_window.c:1166
+msgid "Choose File"
+msgstr "Vybrat soubor"
+
+#: src/main_window.c:1170 src/import.c:61
+#, fuzzy
+msgid "_Open"
+msgstr "Otevřít"
+
+#: src/main_window.c:1210
+msgid "TrackType"
+msgstr "TrackType"
+
+#: src/main_window.c:1227
+msgid "Preferences"
+msgstr "Nastavení"
+
+#: src/main_window.c:1259
+msgid "Splitpoints"
+msgstr "Body rozdělení"
+
+#: src/main_window.c:1275
+msgid "Split files"
+msgstr "Rozdělené soubory"
 
 #: src/libmp3splt_manager.c:71
 #, c-format
@@ -1563,6 +1345,187 @@ msgstr "Informace: %s"
 #: src/gstreamer_control.c:354
 msgid " error: cannot create gstreamer playbin\n"
 msgstr "Chyba: gstreamer-playbin nelze vytvořit\n"
+
+#~ msgid "Split !"
+#~ msgstr "Rozdělit!"
+
+#~ msgid "_Remove"
+#~ msgstr "_Odstranit"
+
+#~ msgid "_File"
+#~ msgstr "_Soubor"
+
+#~ msgid "_View"
+#~ msgstr "Po_hled"
+
+#~ msgid "_Player"
+#~ msgstr "_Přehrávač"
+
+#~ msgid "_Help"
+#~ msgstr "_Nápověda"
+
+#, fuzzy
+#~ msgid "_Open single file..."
+#~ msgstr "Otevřít soubor..."
+
+#~ msgid "_Add files or directories to batch ..."
+#~ msgstr "Př_idat soubory nebo adresáře do dávkového zpracování..."
+
+#~ msgid "Add files or directories to batch"
+#~ msgstr "Přidat soubory nebo adresáře do dávkového zpracování"
+
+#~ msgid "_Import splitpoints from file..."
+#~ msgstr "_Zavést body rozdělení ze souboru..."
+
+#~ msgid "Import splitpoints from file..."
+#~ msgstr "Zavést body rozdělení ze souboru..."
+
+#~ msgid "Import splitpoints from _TrackType.org..."
+#~ msgstr "Zavést body rozdělení z _TrackType.org..."
+
+#~ msgid "Import splitpoints from TrackType.org..."
+#~ msgstr "Zavést body rozdělení z TrackType.org..."
+
+#~ msgid "_Export splitpoints..."
+#~ msgstr "_Vyvést body rozdělení..."
+
+#~ msgid "Export splitpoints"
+#~ msgstr "Vyvést body rozdělení"
+
+#~ msgid "_Preferences"
+#~ msgstr "_Nastavení"
+
+#~ msgid "Split _files"
+#~ msgstr "Rozdělit _soubory"
+
+#~ msgid "_Splitpoints"
+#~ msgstr "_Body rozdělení"
+
+#~ msgid "_Split !"
+#~ msgstr "_Rozdělit!"
+
+#~ msgid "_Batch split !"
+#~ msgstr "_Dávkové rozdělení!"
+
+#~ msgid "_Quit"
+#~ msgstr "_Ukončit"
+
+#~ msgid "Quit"
+#~ msgstr "Ukončit"
+
+#~ msgid "_Contents"
+#~ msgstr "_Obsah"
+
+#~ msgid "Contents"
+#~ msgstr "Obsah"
+
+#~ msgid "Messages _history"
+#~ msgstr "_Historie zpráv"
+
+#~ msgid "_About"
+#~ msgstr "_O programu"
+
+#~ msgid "About"
+#~ msgstr "O programu"
+
+#~ msgid "P_ause / Play"
+#~ msgstr "Př_ehrát/Pozastavit"
+
+#~ msgid "Pause/Play"
+#~ msgstr "Pozastavit/Přehrát"
+
+#~ msgid "Seek _forward"
+#~ msgstr "Hledat _dopředu"
+
+#~ msgid "Seek forward"
+#~ msgstr "Hledat dopředu"
+
+#~ msgid "Seek _backward"
+#~ msgstr "Hledat _dozadu"
+
+#~ msgid "Seek backward"
+#~ msgstr "Hledat dozadu"
+
+#~ msgid "Small seek f_orward"
+#~ msgstr "Malé hledání d_opředu"
+
+#~ msgid "Small seek forward"
+#~ msgstr "Malé hledání dopředu"
+
+#~ msgid "Small seek back_ward"
+#~ msgstr "Malé hledání doz_adu"
+
+#~ msgid "Small seek backward"
+#~ msgstr "Malé hledání dozadu"
+
+#~ msgid "Big seek fo_rward"
+#~ msgstr "Velké hledání do_předu"
+
+#~ msgid "Big seek forward"
+#~ msgstr "Velké hledání dopředu"
+
+#~ msgid "Big seek bac_kward"
+#~ msgstr "Velké hledání dozad_u"
+
+#~ msgid "Big seek backward"
+#~ msgstr "Velké hledání do_zadu"
+
+#~ msgid "Seek to _next splitpoint"
+#~ msgstr "Velké hledání dozadu"
+
+#~ msgid "Seek to next splitpoint"
+#~ msgstr "Hledat po další bod rozdělení"
+
+#~ msgid "Seek to _previous splitpoint"
+#~ msgstr "Hledat po _předchozí bod rozdělení"
+
+#~ msgid "Seek to previous splitpoint"
+#~ msgstr "Hledat po předchozí bod rozdělení"
+
+#, fuzzy
+#~ msgid "Preview before c_losest splitpoint"
+#~ msgstr "Smazat nejbližší bod rozdělení"
+
+#, fuzzy
+#~ msgid "Preview before closest splitpoint"
+#~ msgstr "Smazat nejbližší bod rozdělení"
+
+#, fuzzy
+#~ msgid "Preview clos_est splitpoint"
+#~ msgstr "Smazat nejbližší bod rozdělení"
+
+#, fuzzy
+#~ msgid "Preview closest splitpoint"
+#~ msgstr "Smazat nejbližší bod rozdělení"
+
+#, fuzzy
+#~ msgid "Preview _closest splitpoint & pause"
+#~ msgstr "Smazat nejbližší bod rozdělení"
+
+#, fuzzy
+#~ msgid "Preview closest splitpoint & pause"
+#~ msgstr "Smazat nejbližší bod rozdělení"
+
+#~ msgid "Add _splitpoint"
+#~ msgstr "Přidat _bod rozdělení"
+
+#~ msgid "_Delete closest splitpoint"
+#~ msgstr "_Smazat nejbližší bod rozdělení"
+
+#~ msgid "Delete closest splitpoint"
+#~ msgstr "Smazat nejbližší bod rozdělení"
+
+#~ msgid "Zoom _in"
+#~ msgstr "_Přiblížit"
+
+#~ msgid "Zoom in"
+#~ msgstr "Přiblížit"
+
+#~ msgid "Zoom _out"
+#~ msgstr "_Oddálit"
+
+#~ msgid "Zoom out"
+#~ msgstr "Oddálit"
 
 #, fuzzy
 #~ msgid "_Quick preview before closest splitpoint"

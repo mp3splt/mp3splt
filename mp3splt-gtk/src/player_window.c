@@ -601,7 +601,7 @@ void connect_button_event(GtkWidget *widget, ui_state *ui)
     }
 
     GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Cannot connect to player"),
-        GTK_WINDOW(ui->gui->window), GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_NONE, NULL);
+        GTK_WINDOW(ui->gui->window), GTK_DIALOG_MODAL, _("_OK"), GTK_RESPONSE_NONE, NULL);
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
     gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), label);
     gtk_widget_show_all(dialog);
@@ -973,7 +973,7 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   gtk_box_pack_start(player_buttons_hbox, vol_button, FALSE, FALSE, 5);
  
   //add button
-  GtkWidget *player_add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
+  GtkWidget *player_add_button = wh_create_cool_button("list-add", _("_Add"), FALSE);
   ui->gui->player_add_button = player_add_button;
   gtk_box_pack_start(player_buttons_hbox, player_add_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(player_add_button), GTK_RELIEF_NONE);
@@ -983,7 +983,7 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   gtk_widget_set_tooltip_text(player_add_button,_("Add splitpoint at the current player position"));
 
   //set splitpoints from trim silence button
-  GtkWidget *scan_trim_silence_button = wh_create_cool_button(GTK_STOCK_CUT, NULL, FALSE);
+  GtkWidget *scan_trim_silence_button = wh_create_cool_button("edit-find", NULL, FALSE);
   ui->gui->scan_trim_silence_button_player = scan_trim_silence_button;
   gtk_widget_set_sensitive(scan_trim_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
@@ -994,7 +994,7 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   gtk_button_set_relief(GTK_BUTTON(scan_trim_silence_button), GTK_RELIEF_NONE);
  
   //set splitpoints from silence button
-  GtkWidget *scan_silence_button = wh_create_cool_button(GTK_STOCK_FIND_AND_REPLACE, NULL, FALSE);
+  GtkWidget *scan_silence_button = wh_create_cool_button("edit-find-replace", NULL, FALSE);
   ui->gui->scan_silence_button_player = scan_silence_button;
   gtk_widget_set_sensitive(scan_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
@@ -1014,13 +1014,13 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   gtk_widget_set_tooltip_text(silence_wave_check_button, _("Shows the amplitude level wave"));
 
   /* connect player button */
-  GtkWidget *connect_button = wh_create_cool_button(GTK_STOCK_CONNECT,_("_Connect"), FALSE);
+  GtkWidget *connect_button = wh_create_cool_button(NULL, _("_Connect"), FALSE);
   ui->gui->connect_button = connect_button;
   g_signal_connect(G_OBJECT(connect_button), "clicked", G_CALLBACK(connect_button_event), ui);
   gtk_widget_set_tooltip_text(connect_button,_("Connect to player"));
   
   /* disconnect player button */
-  GtkWidget *disconnect_button = wh_create_cool_button(GTK_STOCK_DISCONNECT,_("_Disconnect"), FALSE);
+  GtkWidget *disconnect_button = wh_create_cool_button(NULL, _("_Disconnect"), FALSE);
   ui->gui->disconnect_button = disconnect_button;
   g_signal_connect(G_OBJECT(disconnect_button), "clicked", G_CALLBACK(disconnect_button_event), ui);
   gtk_widget_set_tooltip_text(disconnect_button,_("Disconnect from player"));
@@ -3260,7 +3260,7 @@ static GtkWidget *create_delete_buttons_hbox(ui_state *ui)
   GtkWidget *hbox = wh_hbox_new();
 
   GtkWidget *playlist_remove_file_button = 
-    wh_create_cool_button(GTK_STOCK_REMOVE, _("_Erase selected entries"), FALSE);
+    wh_create_cool_button("list-remove", _("_Erase selected entries"), FALSE);
   ui->gui->playlist_remove_file_button = playlist_remove_file_button;
   gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
@@ -3268,7 +3268,7 @@ static GtkWidget *create_delete_buttons_hbox(ui_state *ui)
                    G_CALLBACK(playlist_remove_file_button_event), ui);
  
   GtkWidget *playlist_remove_all_files_button =
-    wh_create_cool_button(GTK_STOCK_CLEAR, _("E_rase all history"),FALSE);
+    wh_create_cool_button("edit-clear", _("E_rase all history"),FALSE);
   ui->gui->playlist_remove_all_files_button = playlist_remove_all_files_button;
   gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);
@@ -3320,30 +3320,30 @@ GtkWidget *create_player_playlist_frame(ui_state *ui)
   return main_hbox;
 }
 
-static void action_set_sensitivity(gchar *name, gboolean sensitivity, gui_state *gui)
+static void action_set_sensitivity(const gchar *name, gboolean sensitivity, gui_state *gui)
 {
-  GtkAction *action = gtk_action_group_get_action(gui->action_group, name);
-  gtk_action_set_sensitive(action, sensitivity);
+  GAction *action = g_action_map_lookup_action(G_ACTION_MAP(gui->application), name);
+  g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sensitivity);
 }
 
 void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui)
 {
-  action_set_sensitivity("Player_pause", sensitivity, gui);
-  action_set_sensitivity("Player_forward", sensitivity, gui);
-  action_set_sensitivity("Player_backward", sensitivity, gui);
-  action_set_sensitivity("Player_small_forward", sensitivity, gui);
-  action_set_sensitivity("Player_small_backward", sensitivity, gui);
-  action_set_sensitivity("Player_big_forward", sensitivity, gui);
-  action_set_sensitivity("Player_big_backward", sensitivity, gui);
-  action_set_sensitivity("Player_next_splitpoint", sensitivity, gui);
-  action_set_sensitivity("Player_previous_splitpoint", sensitivity, gui);
-  action_set_sensitivity("Player_closest_splitpoint", sensitivity, gui);
-  action_set_sensitivity("Player_closest_splitpoint_and_pause", sensitivity, gui);
-  action_set_sensitivity("Player_before_closest_splitpoint", sensitivity, gui);
-  action_set_sensitivity("Add_splitpoint", sensitivity, gui);
-  action_set_sensitivity("Delete_closest_splitpoint", sensitivity, gui);
-  action_set_sensitivity("Zoom_in", sensitivity, gui);
-  action_set_sensitivity("Zoom_out", sensitivity, gui);
+  action_set_sensitivity("pause_play", sensitivity, gui);
+  action_set_sensitivity("seek_forward", sensitivity, gui);
+  action_set_sensitivity("seek_backward", sensitivity, gui);
+  action_set_sensitivity("small_seek_forward", sensitivity, gui);
+  action_set_sensitivity("small_seek_backward", sensitivity, gui);
+  action_set_sensitivity("big_seek_forward", sensitivity, gui);
+  action_set_sensitivity("big_seek_backward", sensitivity, gui);
+  action_set_sensitivity("seek_next_splitpoint", sensitivity, gui);
+  action_set_sensitivity("seek_previous_splitpoint", sensitivity, gui);
+  action_set_sensitivity("preview_closest", sensitivity, gui);
+  action_set_sensitivity("preview_closest_and_pause", sensitivity, gui);
+  action_set_sensitivity("preview_before_closest", sensitivity, gui);
+  action_set_sensitivity("add_splitpoint", sensitivity, gui);
+  action_set_sensitivity("delete_closest_splitpoint", sensitivity, gui);
+  action_set_sensitivity("zoom_in", sensitivity, gui);
+  action_set_sensitivity("zoom_out", sensitivity, gui);
 }
 
 static void pause_quick_preview_now(ui_state *ui)

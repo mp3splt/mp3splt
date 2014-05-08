@@ -566,7 +566,7 @@ GtkWidget *create_freedb_frame(ui_state *ui)
   g_signal_connect(G_OBJECT(freedb_entry), "activate",
       G_CALLBACK(freedb_entry_activate_event), ui);
 
-  GtkWidget *freedb_search_button = wh_create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
+  GtkWidget *freedb_search_button = wh_create_cool_button("edit-find", _("_Search"),FALSE);
   ui->gui->freedb_search_button = freedb_search_button;
   g_signal_connect(G_OBJECT(freedb_search_button), "clicked",
       G_CALLBACK(freedb_search_button_event), ui);
@@ -595,7 +595,7 @@ GtkWidget *create_freedb_frame(ui_state *ui)
                     G_CALLBACK(freedb_selection_changed), ui);
 
   /* add button */
-  GtkWidget *freedb_add_button = wh_create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
+  GtkWidget *freedb_add_button = wh_create_cool_button("list-add", _("_Add splitpoints"), FALSE);
   ui->gui->freedb_add_button = freedb_add_button;
 
   gtk_widget_set_sensitive(freedb_add_button, FALSE);

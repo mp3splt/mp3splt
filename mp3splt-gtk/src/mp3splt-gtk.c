@@ -355,14 +355,9 @@ gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data)
     player_quit(ui);
   }
 
-  gtk_main_quit();
+  g_application_quit(G_APPLICATION(ui->gui->application));
 
   return FALSE;
-}
-
-void exit_application_bis(GtkWidget *widget, gpointer data)
-{
-  exit_application(widget, NULL, data);
 }
 
 static gboolean sigint_called = FALSE;
@@ -450,59 +445,6 @@ static void init_i18n_and_plugin_paths(gchar *argv[], ui_state *ui)
 #endif
 }
 
-static void parse_command_line_options(gint argc, gchar * argv[], ui_state *ui)
-{
-  opterr = 0;
-  int option;
-  while ((option = getopt(argc, argv, "d:")) != -1)
-  {
-    switch (option)
-    {
-      case 'd':
-        fprintf(stdout, _("Setting the output directory to %s.\n"), optarg);
-        set_output_directory_and_update_ui((gchar *)optarg, ui);
-#ifdef __WIN32__
-        mkdir(optarg);
-#else
-        mkdir(optarg, 0777);
-#endif
-        if (!directory_exists(optarg))
-        {
-          ui_fail(ui, "Error: The specified output directory is inaccessible!\n");
-        }
-        break;
-      case '?':
-        if (optopt == 'd')
-          ui_fail(ui, _("Option -%c requires an argument.\n"), optopt);
-        else if (isprint(optopt))
-          ui_fail(ui, _("Unknown option `-%c'.\n"), optopt, NULL);
-        else
-          ui_fail(ui, _("Unknown option character `\\x%x'.\n"), optopt);
-        break;
-      default:
-        ui_fail(ui, NULL);
-    }
-  }
-
-  if (optind == argc)
-  {
-    return;
-  }
-
-  if (!file_exists(argv[optind]))
-  {
-    ui_fail(ui, _("Cannot open input file %s\n"), argv[optind]);
-  }
-
-#ifndef __WIN32__
-  char *input_filename = realpath(argv[optind], NULL);
-  import_file(input_filename, ui, FALSE);
-  free(input_filename);
-#else
-  import_file(argv[optind], ui, FALSE);
-#endif
-}
-
 #ifdef __WIN32__
 //!sets the language, loaded only at start
 static void set_language_env_variable_from_preferences()
@@ -552,9 +494,12 @@ static void set_language_env_variable_from_preferences()
    if the pathname we give to it is 0 => find a solution that works 
    everywhere.
  */
-gint main(gint argc, gchar *argv[], gchar **envp)
+gint main(gint argc, gchar **argv, gchar **envp)
 {
   ui = ui_state_new();
+
+  ui->argc = argc;
+  ui->argv = argv;
 
   register_application_signals();
   init_i18n_and_plugin_paths(argv, ui);
@@ -568,15 +513,16 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 #endif
 
   create_application(ui);
-
-  import_cue_file_from_the_configuration_directory(ui);
-
-  parse_command_line_options(argc, argv, ui);
-
-  gtk_main();
+  int application_code =
+    g_application_run(G_APPLICATION(ui->gui->application), argc, argv);
 
   gint return_code = ui->return_code;
   ui_state_free(ui);
+
+  if (application_code != 0)
+  {
+    return application_code;
+  }
 
   return return_code;
 }
