@@ -1121,9 +1121,9 @@ void create_trim_silence_window(GtkWidget *button, ui_state *ui)
     gtk_dialog_new_with_buttons(_("Set trim splitpoints using silence detection"),
         GTK_WINDOW(ui->gui->window),
         GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-        GTK_STOCK_OK,
+        _("_OK"),
         GTK_RESPONSE_YES,
-        GTK_STOCK_CANCEL,
+        _("_Cancel"),
         GTK_RESPONSE_CANCEL,
         NULL);
 
@@ -1178,9 +1178,9 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
     gtk_dialog_new_with_buttons(_("Set splitpoints from silence detection"),
         GTK_WINDOW(gui->window),
         GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-        GTK_STOCK_OK,
+        _("_OK"),
         GTK_RESPONSE_YES,
-        GTK_STOCK_CANCEL,
+        _("_Cancel"),
         GTK_RESPONSE_CANCEL,
         NULL);
 
@@ -1404,7 +1404,7 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   ui->gui->spinner_hundr_secs = create_init_spinner(hbox, 0, 99, _("Hundredths:"), 2, ui);
 
   /* add button */
-  GtkWidget *add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
+  GtkWidget *add_button = wh_create_cool_button("list-add", _("_Add"), FALSE);
   ui->gui->add_button = add_button;
 
   gtk_button_set_relief(GTK_BUTTON(add_button), GTK_RELIEF_NONE);
@@ -1414,7 +1414,7 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   gtk_widget_set_tooltip_text(add_button,_("Add splitpoint"));
 
   /* remove row button */
-  GtkWidget *remove_row_button = wh_create_cool_button(GTK_STOCK_REMOVE, _("_Remove"), FALSE);
+  GtkWidget *remove_row_button = wh_create_cool_button("list-remove", _("list-remove"), FALSE);
   ui->gui->remove_row_button = remove_row_button;
 
   gtk_button_set_relief(GTK_BUTTON(remove_row_button), GTK_RELIEF_NONE);
@@ -1424,7 +1424,7 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   gtk_widget_set_tooltip_text(remove_row_button, _("Remove selected splitpoints"));
 
   /* remove all rows button */
-  GtkWidget *remove_all_button = wh_create_cool_button(GTK_STOCK_CLEAR, _("R_emove all"), FALSE);
+  GtkWidget *remove_all_button = wh_create_cool_button("edit-clear", _("R_emove all"), FALSE);
   ui->gui->remove_all_button = remove_all_button;
 
   gtk_button_set_relief(GTK_BUTTON(remove_all_button), GTK_RELIEF_NONE);
@@ -1441,7 +1441,7 @@ static void create_init_special_buttons(ui_state *ui)
 {
   /* set splitpoints from trim silence detection */
   GtkWidget *scan_trim_silence_button =
-    wh_create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
+    wh_create_cool_button("edit-find", _("_Trim splitpoints"), FALSE);
   ui->gui->scan_trim_silence_button = scan_trim_silence_button;
   gtk_widget_set_sensitive(scan_trim_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
@@ -1451,7 +1451,7 @@ static void create_init_special_buttons(ui_state *ui)
 
   /* set splitpoints from silence detection */
   GtkWidget *scan_silence_button =
-    wh_create_cool_button(GTK_STOCK_FIND_AND_REPLACE, _("_Silence detection"), FALSE);
+    wh_create_cool_button("edit-find-replace", _("_Silence detection"), FALSE);
   ui->gui->scan_silence_button = scan_silence_button;
   gtk_widget_set_sensitive(scan_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
@@ -1794,61 +1794,43 @@ static void build_and_show_popup_menu(GtkWidget *treeview, GdkEventButton *event
 {
   GtkWidget *menu = gtk_menu_new();
 
-  GtkWidget *item = gtk_image_menu_item_new_with_label(_("Clone all tags"));
-  GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  GtkWidget *item = gtk_menu_item_new_with_label(_("Clone all tags"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_all_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-  item = gtk_image_menu_item_new_with_label(_("Clone title"));
-  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Clone title"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_title_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-  item = gtk_image_menu_item_new_with_label(_("Clone artist"));
-  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Clone artist"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_artist_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-  item = gtk_image_menu_item_new_with_label(_("Clone album"));
-  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Clone album"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_album_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-  item = gtk_image_menu_item_new_with_label(_("Clone genre"));
-  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Clone genre"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_genre_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-  item = gtk_image_menu_item_new_with_label(_("Clone year"));
-  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Clone year"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_year_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-  item = gtk_image_menu_item_new_with_label(_("Clone track"));
-  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Clone track"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_track_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-  item = gtk_image_menu_item_new_with_label(_("Clone comment"));
-  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Clone comment"));
   g_signal_connect(item, "activate", G_CALLBACK(clone_comment_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-  item = gtk_image_menu_item_new_with_label(_("Auto-increment track"));
-  image = gtk_image_new_from_stock(GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  item = gtk_menu_item_new_with_label(_("Auto-increment track"));
   g_signal_connect(item, "activate", G_CALLBACK(auto_increment_track_event), ui);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
@@ -1962,7 +1944,7 @@ static void create_columns(ui_state *ui)
 
   /* column preview */
   renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
-  g_object_set(renderer_pix, "stock-id", GTK_STOCK_MEDIA_PLAY,
+  g_object_set(renderer_pix, "icon-name", "media-playback-start",
       "stock-size", GTK_ICON_SIZE_MENU, NULL);
   column_preview = gtk_tree_view_column_new_with_attributes 
     (_("LiveP"), GTK_CELL_RENDERER(renderer_pix), NULL);
@@ -1970,7 +1952,7 @@ static void create_columns(ui_state *ui)
 
   /* split preview */
   renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
-  g_object_set(renderer_pix, "stock-id", GTK_STOCK_MEDIA_PLAY,
+  g_object_set(renderer_pix, "icon-name", "media-playback-start",
       "stock-size", GTK_ICON_SIZE_MENU, NULL);
   column_split_preview = gtk_tree_view_column_new_with_attributes 
     (_("SplitP"), GTK_CELL_RENDERER(renderer_pix), NULL);

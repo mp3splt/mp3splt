@@ -147,15 +147,16 @@ static gpointer export_to_cue_file_for_thread(ui_with_pat *ui_pat)
   return NULL;
 }
 
-//! Choose the file to save the session to
-void export_cue_file_event(GtkWidget *widget, ui_state *ui)
+void export_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Cue filename to export"),
       NULL,
       GTK_FILE_CHOOSER_ACTION_SAVE,
-      GTK_STOCK_CANCEL,
+      _("_Cancel"),
       GTK_RESPONSE_CANCEL,
-      GTK_STOCK_SAVE,
+      _("_Save"),
       GTK_RESPONSE_ACCEPT,
       NULL);
 

@@ -93,9 +93,9 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
   return FALSE;
 }
 
-static void initialize_window(ui_state *ui)
+static void initialize_window(GApplication *app, ui_state *ui)
 {
-  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  GtkWidget *window = gtk_application_window_new(GTK_APPLICATION(app));
   ui->gui->window = window;
 
   g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(configure_window_callback), ui);
@@ -181,8 +181,10 @@ static void activate_url(GtkAboutDialog *about, const gchar *link, ui_state *ui)
 #endif
 }
 
-static void about_window(GtkWidget *widget, ui_state *ui)
+static void about_window(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   GtkWidget *dialog = gtk_about_dialog_new();
 
   GString *imagefile = g_string_new("");
@@ -308,62 +310,6 @@ void cancel_button_event(GtkWidget *widget, ui_state *ui)
   put_status_message(_(" info: stopping the split process.. please wait"), ui);
 }
 
-static void show_preferences_window(GtkWidget *widget, ui_state *ui)
-{
-  if (ui->gui->preferences_window == NULL)
-  {
-    ui->gui->preferences_window = 
-      wh_create_window_with_close_button(_("Preferences"), 750, 450, GTK_WIN_POS_CENTER, 
-          GTK_WINDOW(ui->gui->window), ui->gui->preferences_widget, NULL);
-  }
-
-  wh_show_window(ui->gui->preferences_window);
-}
-
-static void show_tracktype_window(GtkWidget *widget, ui_state *ui)
-{
-  if (ui->gui->freedb_window == NULL)
-  {
-    ui->gui->freedb_window = 
-      wh_create_window_with_close_button(_("TrackType"), 500, 300, GTK_WIN_POS_CENTER, 
-          GTK_WINDOW(ui->gui->window),
-          ui->gui->freedb_widget, 
-          ui->gui->freedb_add_button, NULL);
-  }
-
-  wh_show_window(ui->gui->freedb_window);
-  hide_freedb_spinner(ui->gui);
-}
-
-static void show_split_files_window(GtkWidget *widget, ui_state *ui)
-{
-  if (ui->gui->split_files_window == NULL)
-  {
-    ui->gui->split_files_window = 
-      wh_create_window_with_close_button(_("Split files"), 500, 300, GTK_WIN_POS_CENTER, 
-          GTK_WINDOW(ui->gui->window),
-          ui->gui->split_files_widget, 
-          ui->gui->queue_files_button, ui->gui->remove_file_button,
-          ui->gui->remove_all_files_button, NULL);
-  }
-
-  wh_show_window(ui->gui->split_files_window);
-}
-
-static void show_splitpoints_window(GtkWidget *widget, ui_state *ui)
-{
-  if (ui->gui->splitpoints_window == NULL)
-  {
-    ui->gui->splitpoints_window = 
-      wh_create_window_with_close_button(_("Splitpoints"), 500, 300, GTK_WIN_POS_CENTER, 
-          GTK_WINDOW(ui->gui->window),
-          ui->gui->splitpoints_widget, 
-          ui->gui->scan_trim_silence_button, ui->gui->scan_silence_button, NULL);
-  }
-
-  wh_show_window(ui->gui->splitpoints_window);
-}
-
 void set_is_splitting_safe(gboolean value, ui_state *ui)
 {
   lock_mutex(&ui->variables_mutex);
@@ -456,32 +402,30 @@ static void single_file_mode_split_button_event(GtkWidget *widget, ui_state *ui)
   split_button_event(widget, ui);
 }
 
-//!event for the "messages history" button
-static void show_messages_history_window(GtkWidget *widget, ui_state *ui)
+static void show_messages_history_window(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
   wh_show_window(ui->gui->mess_history_window);
 }
 
 #ifndef NO_GNOME
-static void ShowHelp(GtkWidget *widget, ui_state *ui)
+static void ShowHelp(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
   GError* gerror = NULL;
   gtk_show_uri(gdk_screen_get_default(), "ghelp:mp3splt-gtk",  gtk_get_current_event_time(), &gerror);
 }
 #endif
 
-static gchar *my_dgettext(const gchar *key, const gchar *domain)
+static void player_pause_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
-  return dgettext("mp3splt-gtk", key);
-}
-
-static void player_pause_action(GtkWidget *widget, ui_state *ui)
-{
+  ui_state *ui = (ui_state *) data;
   pause_event(ui->gui->pause_button, ui);
 }
  
-static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
+static void player_seek_forward_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 + 
     (ui->infos->seek_jump_value != 0 ? ui->infos->seek_jump_value :
@@ -490,8 +434,10 @@ static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
   player_seek(new_time, ui);
 }
  
-static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
+static void player_seek_backward_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 - 
     (ui->infos->seek_jump_value != 0 ? ui->infos->seek_jump_value :
@@ -500,8 +446,10 @@ static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
   player_seek(new_time, ui);
 }
 
-static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
+static void player_big_seek_forward_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 + 
     (ui->infos->big_seek_jump_value != 0 ? ui->infos->big_seek_jump_value :
@@ -510,8 +458,10 @@ static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
   player_seek(new_time, ui);
 }
  
-static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
+static void player_big_seek_backward_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 - 
     (ui->infos->big_seek_jump_value != 0 ? ui->infos->big_seek_jump_value :
@@ -520,23 +470,29 @@ static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
   player_seek(new_time, ui);
 }
 
-static void player_small_seek_forward_action(GtkWidget *widget, ui_state *ui)
+static void player_small_seek_forward_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 + ui->infos->small_seek_jump_value;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_seek(new_time, ui);
 }
  
-static void player_small_seek_backward_action(GtkWidget *widget, ui_state *ui)
+static void player_small_seek_backward_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gfloat new_time = ui->infos->current_time * 10 - ui->infos->small_seek_jump_value;
   if (new_time <= 0) { new_time = 0; }
   player_seek(new_time, ui);
 }
 
-static void player_seek_to_next_splitpoint_action(GtkWidget *widget, ui_state *ui)
+static void player_seek_to_next_splitpoint_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gint time_left = -1;
   gint time_right = -1;
   get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui);
@@ -547,8 +503,10 @@ static void player_seek_to_next_splitpoint_action(GtkWidget *widget, ui_state *u
   }
 }
 
-static void player_seek_to_previous_splitpoint_action(GtkWidget *widget, ui_state *ui)
+static void player_seek_to_previous_splitpoint_action(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gint time_left = -1;
   gint time_right = -1;
   get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui);
@@ -606,8 +564,10 @@ static int find_closest_splitpoint(ui_state *ui)
   return right_index_point;
 }
 
-static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+static void delete_closest_splitpoint(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   int closest_splitpoint_index = find_closest_splitpoint(ui);
   if (closest_splitpoint_index == -1)
   {
@@ -617,8 +577,10 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
   remove_splitpoint(closest_splitpoint_index, TRUE, ui);
 }
 
-static void player_seek_before_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+static void player_seek_before_closest_splitpoint(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   int closest_splitpoint_index = find_closest_splitpoint(ui);
   if (closest_splitpoint_index == -1) { return; }
 
@@ -646,8 +608,10 @@ static void player_seek_before_closest_splitpoint(GtkWidget *widget, ui_state *u
   ui->status->quick_preview = TRUE;
 }
 
-static void player_seek_closest_splitpoint_no_pause(GtkWidget *widget, ui_state *ui)
+static void player_seek_closest_splitpoint_no_pause(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   int closest_splitpoint_index = find_closest_splitpoint(ui);
   if (closest_splitpoint_index == -1) { return; }
 
@@ -674,48 +638,31 @@ static void player_seek_closest_splitpoint_no_pause(GtkWidget *widget, ui_state 
   ui->status->quick_preview = TRUE;
 }
 
-static void player_seek_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+static void player_seek_closest_splitpoint(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
-  player_seek_closest_splitpoint_no_pause(widget, ui);
+  ui_state *ui = (ui_state *) data;
+  player_seek_closest_splitpoint_no_pause(NULL, NULL, ui);
   ui->status->stop_preview_right_after_start = TRUE;
 }
 
-static void zoom_in(GtkWidget *widget, ui_state *ui)
+static void zoom_in(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff += fraction;
   adjust_zoom_coeff(ui->infos);
   refresh_drawing_area(ui->gui, ui->infos);
 }
 
-static void zoom_out(GtkWidget *widget, ui_state *ui)
+static void zoom_out(GSimpleAction *action, GVariant *parameter, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff -= fraction; 
   adjust_zoom_coeff(ui->infos);
   refresh_drawing_area(ui->gui, ui->infos);
-}
-
-static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui_state *ui)
-{
-  if (event->type != GDK_KEY_PRESS) { return FALSE; }
-
-  if (event->state != 0)
-  {
-    return FALSE;
-  }
-
-  switch (event->keyval)
-  {
-    case GDK_Left:
-      player_seek_backward_action(NULL, ui);
-      return TRUE;
-    case GDK_Right:
-      player_seek_forward_action(NULL, ui);
-      return TRUE;
-    default:
-      return FALSE;
-  }
 }
 
 void add_filters_to_file_chooser(GtkWidget *file_chooser)
@@ -747,221 +694,6 @@ void add_filters_to_file_chooser(GtkWidget *file_chooser)
   gtk_file_filter_add_pattern(our_filter, "*.flac");
   gtk_file_filter_add_pattern(our_filter, "*.FLAC");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
-}
-
-/*! \brief Events for browse button
-
-Also used for the cddb and cue browses.
-*/
-static void open_file_button_event(GtkWidget *widget, ui_state *ui)
-{
-  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"), NULL,
-      GTK_FILE_CHOOSER_ACTION_OPEN,
-      GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL,
-      GTK_STOCK_OPEN,
-      GTK_RESPONSE_ACCEPT, NULL);
-
-  add_filters_to_file_chooser(file_chooser);
-  wh_set_browser_directory_handler(ui, file_chooser);
-
-  if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
-  {
-    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-    file_chooser_ok_event(filename, ui);
-    if (filename)
-    {
-      g_free(filename);
-      filename = NULL;
-    }
-  }
-
-  gtk_widget_destroy(file_chooser);
-  remove_status_message(ui->gui);
-}
-
-//!creates the menu bar
-static GtkWidget *create_menu_bar(ui_state *ui)
-{
-  static const GtkActionEntry entries[] = {
-    //name, stock id, label, accelerator, tooltip, callback
-    { "FileMenu", NULL, N_("_File"), NULL, NULL, NULL },
-    { "ViewMenu", NULL, N_("_View"), NULL, NULL, NULL },
-    { "PlayerMenu", NULL, N_("_Player"), NULL, NULL, NULL },
-    { "HelpMenu", NULL, N_("_Help"), NULL, NULL, NULL },
-
-    { "Open", GTK_STOCK_OPEN, N_("_Open single file..."), "<Ctrl>O", N_("Open"),
-      G_CALLBACK(open_file_button_event) },
-
-    { "AddFilesToBatch", GTK_STOCK_DIRECTORY,
-      N_("_Add files or directories to batch ..."), "<Ctrl>D", 
-      N_("Add files or directories to batch"),
-      G_CALLBACK(multiple_files_add_button_event) },
-
-    { "Import", GTK_STOCK_FILE, N_("_Import splitpoints from file..."), "<Ctrl>I", 
-      N_("Import splitpoints from file..."), G_CALLBACK(import_event) },
-
-    { "ImportFromTrackType", GTK_STOCK_FIND, N_("Import splitpoints from _TrackType.org..."), "<Ctrl>T",
-      N_("Import splitpoints from TrackType.org..."),
-      G_CALLBACK(show_tracktype_window) },
-
-    { "Export", GTK_STOCK_SAVE_AS, N_("_Export splitpoints..."), "<Ctrl>E",
-      N_("Export splitpoints"), G_CALLBACK(export_cue_file_event) },
-
-    { "Preferences", GTK_STOCK_PREFERENCES, N_("_Preferences"), "<Ctrl>P", N_("Preferences"),
-      G_CALLBACK(show_preferences_window) },
-
-    { "SplitFiles", NULL, N_("Split _files"), "<Ctrl>F", N_("Split files"),
-      G_CALLBACK(show_split_files_window) },
-
-    { "Splitpoints", GTK_STOCK_EDIT, N_("_Splitpoints"), "<Ctrl>L", N_("Splitpoints"),
-      G_CALLBACK(show_splitpoints_window) },
-
-    { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split !"),
-      G_CALLBACK(single_file_mode_split_button_event) },
-
-    { "BatchSplit", GTK_STOCK_EXECUTE, N_("_Batch split !"), "<Ctrl>B", N_("Batch split !"),
-      G_CALLBACK(batch_file_mode_split_button_event) },
-
-    { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
-      G_CALLBACK(exit_application_bis) },
-
-#ifndef NO_GNOME
-    { "Contents", GTK_STOCK_HELP, N_("_Contents"), "F1", N_("Contents"),
-      G_CALLBACK(ShowHelp)},
-#endif
-
-    { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
-      G_CALLBACK(show_messages_history_window) },
-
-    { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
-      G_CALLBACK(about_window)},
-
-    //player key bindings
-    { "Player_pause", NULL, N_("P_ause / Play"), "space", N_("Pause/Play"),
-      G_CALLBACK(player_pause_action)},
-
-    { "Player_forward", GTK_STOCK_MEDIA_FORWARD, N_("Seek _forward"), "Right", N_("Seek forward"),
-      G_CALLBACK(player_seek_forward_action)},
-    { "Player_backward", GTK_STOCK_MEDIA_REWIND, N_("Seek _backward"), "Left", N_("Seek backward"),
-      G_CALLBACK(player_seek_backward_action)},
-
-    { "Player_small_forward", NULL, N_("Small seek f_orward"), "<Alt>Right", N_("Small seek forward"),
-      G_CALLBACK(player_small_seek_forward_action)},
-    { "Player_small_backward", NULL, N_("Small seek back_ward"), "<Alt>Left", N_("Small seek backward"),
-      G_CALLBACK(player_small_seek_backward_action)},
-
-    { "Player_big_forward", NULL, N_("Big seek fo_rward"), "<Shift>Right", N_("Big seek forward"),
-      G_CALLBACK(player_big_seek_forward_action)},
-    { "Player_big_backward", NULL, N_("Big seek bac_kward"), "<Shift>Left", N_("Big seek backward"),
-      G_CALLBACK(player_big_seek_backward_action)},
-
-    { "Player_next_splitpoint", GTK_STOCK_MEDIA_NEXT, N_("Seek to _next splitpoint"), "<Ctrl>Right", 
-      N_("Seek to next splitpoint"), G_CALLBACK(player_seek_to_next_splitpoint_action)},
-    { "Player_previous_splitpoint", GTK_STOCK_MEDIA_PREVIOUS, N_("Seek to _previous splitpoint"), "<Ctrl>Left", 
-      N_("Seek to previous splitpoint"), G_CALLBACK(player_seek_to_previous_splitpoint_action)},
-
-    { "Player_before_closest_splitpoint", NULL,
-      N_("Preview before c_losest splitpoint"), "<Ctrl>Down", N_("Preview before closest splitpoint"),
-      G_CALLBACK(player_seek_before_closest_splitpoint)},
-
-    { "Player_closest_splitpoint", NULL,
-      N_("Preview clos_est splitpoint"), "<Shift>Up", N_("Preview closest splitpoint"),
-      G_CALLBACK(player_seek_closest_splitpoint_no_pause)},
-
-    { "Player_closest_splitpoint_and_pause", NULL,
-      N_("Preview _closest splitpoint & pause"), "<Ctrl>Up", N_("Preview closest splitpoint & pause"),
-      G_CALLBACK(player_seek_closest_splitpoint)},
-
-    { "Add_splitpoint", GTK_STOCK_ADD, N_("Add _splitpoint"), "s", 
-      N_("Add splitpoint"), G_CALLBACK(add_splitpoint_from_player)},
-
-    { "Delete_closest_splitpoint", GTK_STOCK_REMOVE, N_("_Delete closest splitpoint"), "d", 
-      N_("Delete closest splitpoint"), G_CALLBACK(delete_closest_splitpoint)},
-
-    { "Zoom_in", GTK_STOCK_ZOOM_IN, N_("Zoom _in"), "<Ctrl>plus", N_("Zoom in"), G_CALLBACK(zoom_in)},
-    { "Zoom_out", GTK_STOCK_ZOOM_OUT, N_("Zoom _out"), "<Ctrl>minus", N_("Zoom out"), G_CALLBACK(zoom_out)},
-  };
-
-  static const gchar *ui_info = 
-    "<ui>"
-    "  <menubar name='MenuBar'>"
-    "    <menu action='FileMenu'>"
-    "      <menuitem action='Open'/>"
-    "      <menuitem action='AddFilesToBatch'/>"
-    "      <separator/>"
-    "      <menuitem action='Import'/>"
-    "      <menuitem action='ImportFromTrackType'/>"
-    "      <menuitem action='Export'/>"
-    "      <separator/>"
-    "      <menuitem action='Preferences'/>"
-    "      <separator/>"
-    "      <menuitem action='Split'/>"
-    "      <menuitem action='BatchSplit'/>"
-    "      <separator/>"
-    "      <menuitem action='Quit'/>"
-    "    </menu>"
-    "    <menu action='ViewMenu'>"
-    "      <menuitem action='Splitpoints'/>"
-    "      <menuitem action='SplitFiles'/>"
-    "    </menu>"
-    "    <menu action='PlayerMenu'>"
-    "      <menuitem action='Player_pause'/>"
-    "      <separator/>"
-    "      <menuitem action='Player_forward'/>"
-    "      <menuitem action='Player_backward'/>"
-    "      <menuitem action='Player_small_forward'/>"
-    "      <menuitem action='Player_small_backward'/>"
-    "      <menuitem action='Player_big_forward'/>"
-    "      <menuitem action='Player_big_backward'/>"
-    "      <menuitem action='Player_next_splitpoint'/>"
-    "      <menuitem action='Player_previous_splitpoint'/>"
-    "      <separator/>"
-    "      <menuitem action='Player_closest_splitpoint'/>"
-    "      <menuitem action='Player_closest_splitpoint_and_pause'/>"
-    "      <menuitem action='Player_before_closest_splitpoint'/>"
-    "      <separator/>"
-    "      <menuitem action='Add_splitpoint'/>"
-    "      <menuitem action='Delete_closest_splitpoint'/>"
-    "      <separator/>"
-    "      <menuitem action='Zoom_in'/>"
-    "      <menuitem action='Zoom_out'/>"
-    "    </menu>"
-    "    <menu action='HelpMenu'>"
-#ifndef NO_GNOME
-    "      <menuitem action='Contents'/>"
-    "      <separator/>"
-#endif
-    "      <menuitem action='Messages history'/>"
-    "      <separator/>"
-    "      <menuitem action='About'/>"
-    "    </menu>"
-    "  </menubar>"
-    "</ui>";
-
-  GtkActionGroup *action_group = gtk_action_group_new("Actions");
-  ui->gui->action_group = action_group;
-
-  gtk_action_group_set_translation_domain(action_group, "mp3splt-gtk");
-  gtk_action_group_set_translate_func(action_group,
-                  (GtkTranslateFunc)my_dgettext, NULL, NULL);
-
-  gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS(entries), ui);
-  GtkUIManager *uim = gtk_ui_manager_new();
-  gtk_ui_manager_insert_action_group(uim, action_group, 0);
-
-  g_signal_connect(G_OBJECT(ui->gui->window), "key_press_event",
-      G_CALLBACK(window_key_press_event), ui);
-
-  gtk_window_add_accel_group(GTK_WINDOW(ui->gui->window), gtk_ui_manager_get_accel_group(uim));
-  gtk_ui_manager_add_ui_from_string(uim, ui_info, -1, NULL);
- 
-  GtkWidget *menu_box = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(menu_box), gtk_ui_manager_get_widget(uim, "/MenuBar"), FALSE, FALSE, 0);
- 
-  player_key_actions_set_sensitivity(FALSE, ui->gui);
-
-  return menu_box;
 }
 
 static void file_selection_changed(GtkFileChooser *open_file_chooser, ui_state *ui)
@@ -1039,7 +771,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(top_hbox), create_choose_file_frame(ui), TRUE, TRUE, 0);
 
   //single mode split button
-  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_APPLY,_("Split !"), FALSE);
+  GtkWidget *split_button = wh_create_cool_button("system-run",_("Split"), FALSE);
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(single_file_mode_split_button_event), ui);
   gtk_widget_set_tooltip_text(split_button, _("Split the current file"));
@@ -1051,7 +783,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   ui->gui->playlist_box = create_player_playlist_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->playlist_box, TRUE, TRUE, 0);
 
-  GtkWidget *notebook_label = wh_create_cool_label(GTK_STOCK_APPLY, _("Manual single file split"));
+  GtkWidget *notebook_label = wh_create_cool_label(NULL, _("Manual single file split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox, notebook_label);
 
   /* splitpoints page */
@@ -1069,7 +801,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   GtkWidget *frame = create_special_split_page(ui);
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
 
-  notebook_label = wh_create_cool_label(GTK_STOCK_EXECUTE, _("Batch & automatic split"));
+  notebook_label = wh_create_cool_label(NULL, _("Batch & automatic split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
   /* preferences widget */
@@ -1089,7 +821,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(percent_progress_bar), TRUE, TRUE, 0);
 
   //stop button
-  GtkWidget *cancel_button = wh_create_cool_button(GTK_STOCK_STOP, _("S_top"), FALSE);
+  GtkWidget *cancel_button = wh_create_cool_button("process-stop", _("S_top"), FALSE);
   ui->gui->cancel_button = cancel_button;
   g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_button_event), ui);
   gtk_box_pack_start(GTK_BOX(hbox), cancel_button, FALSE, TRUE, 3);
@@ -1128,14 +860,285 @@ static void move_and_resize_main_window(ui_state *ui)
   gtk_window_resize(GTK_WINDOW(ui->gui->window), main_win->width, main_win->height);
 }
 
-void create_application(ui_state *ui)
+static void application_startup(GApplication *app, ui_state *ui)
 {
-  initialize_window(ui);
+  GtkBuilder *builder = gtk_builder_new();
+
+  gtk_builder_add_from_string(builder,
+      "<?xml version=\"1.0\" ?>"
+      "<interface>"
+
+      "  <menu id=\"appmenu\">"
+      "    <section>"
+      "      <item>"
+      "        <attribute name=\"label\" translatable=\"yes\">_Preferences</attribute>"
+      "        <attribute name=\"action\">app.preferences</attribute>"
+      "        <attribute name=\"accel\">&lt;Primary&gt;p</attribute>"
+      "      </item>"
+      "      <item>"
+      "        <attribute name=\"label\" translatable=\"yes\">_Quit</attribute>"
+      "        <attribute name=\"action\">app.quit</attribute>"
+      "        <attribute name=\"accel\">&lt;Primary&gt;q</attribute>"
+      "      </item>"
+      "    </section>"
+      "  </menu>"
+
+      "  <menu id=\"menubar\">"
+
+      "    <submenu>"
+      "      <attribute name=\"label\" translatable=\"yes\">_File</attribute>"
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Open single file...</attribute>"
+      "          <attribute name=\"action\">app.open_single_file</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;o</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Add files or directories to batch...</attribute>"
+      "          <attribute name=\"action\">app.add_files_to_batch</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;d</attribute>"
+      "        </item>"
+      "      </section>"
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Import splitpoints from file...</attribute>"
+      "          <attribute name=\"action\">app.import_splitpoints_from_file</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;i</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Import splitpoints from _TrackType.org...</attribute>"
+      "          <attribute name=\"action\">app.import_splitpoints_from_tracktype</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;t</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Export splitpoints...</attribute>"
+      "          <attribute name=\"action\">app.export_splitpoints</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;e</attribute>"
+      "        </item>"
+      "      </section>"
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Split</attribute>"
+      "          <attribute name=\"action\">app.split</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;s</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Batch split</attribute>"
+      "          <attribute name=\"action\">app.batch_split</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;b</attribute>"
+      "        </item>"
+      "      </section>"
+      "    </submenu>"
+
+      "    <submenu>"
+      "      <attribute name=\"label\" translatable=\"yes\">_View</attribute>"
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Splitpoints</attribute>"
+      "          <attribute name=\"action\">app.view_splitpoints</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;l</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Split _files</attribute>"
+      "          <attribute name=\"action\">app.view_split_files</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;f</attribute>"
+      "        </item>"
+      "      </section>"
+      "    </submenu>"
+
+      "    <submenu>"
+      "      <attribute name=\"label\" translatable=\"yes\">_Player</attribute>"
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">P_ause / Play</attribute>"
+      "          <attribute name=\"action\">app.pause_play</attribute>"
+      "          <attribute name=\"accel\">space</attribute>"
+      "        </item>"
+      "      </section>"
+
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Seek _forward</attribute>"
+      "          <attribute name=\"action\">app.seek_forward</attribute>"
+      "          <attribute name=\"accel\">Right</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Seek _backward</attribute>"
+      "          <attribute name=\"action\">app.seek_backward</attribute>"
+      "          <attribute name=\"accel\">Left</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Small seek f_orward</attribute>"
+      "          <attribute name=\"action\">app.small_seek_forward</attribute>"
+      "          <attribute name=\"accel\">&lt;Alt&gt;Right</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Small seek back_ward</attribute>"
+      "          <attribute name=\"action\">app.small_seek_backward</attribute>"
+      "          <attribute name=\"accel\">&lt;Alt&gt;Left</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Big seek fo_rward</attribute>"
+      "          <attribute name=\"action\">app.big_seek_forward</attribute>"
+      "          <attribute name=\"accel\">&lt;Shift&gt;Right</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Big seek bac_kward</attribute>"
+      "          <attribute name=\"action\">app.big_seek_backward</attribute>"
+      "          <attribute name=\"accel\">&lt;Shift&gt;Left</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Seek to _next splitpoint</attribute>"
+      "          <attribute name=\"action\">app.seek_next_splitpoint</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;Right</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Seek to _previous splitpoint</attribute>"
+      "          <attribute name=\"action\">app.seek_previous_splitpoint</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;Left</attribute>"
+      "        </item>"
+      "      </section>"
+
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Preview clos_est splitpoint</attribute>"
+      "          <attribute name=\"action\">app.preview_closest</attribute>"
+      "          <attribute name=\"accel\">&lt;Shift&gt;Up</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Preview _closest splitpoint &amp; pause</attribute>"
+      "          <attribute name=\"action\">app.preview_closest_and_pause</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;Up</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Preview before c_losest splitpoint</attribute>"
+      "          <attribute name=\"action\">app.preview_before_closest</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;Down</attribute>"
+      "        </item>"
+      "      </section>"
+
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Add _splitpoint</attribute>"
+      "          <attribute name=\"action\">app.add_splitpoint</attribute>"
+      "          <attribute name=\"accel\">s</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Delete closest splitpoint</attribute>"
+      "          <attribute name=\"action\">app.delete_closest_splitpoint</attribute>"
+      "          <attribute name=\"accel\">d</attribute>"
+      "        </item>"
+      "      </section>"
+
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Zoom _in</attribute>"
+      "          <attribute name=\"action\">app.zoom_in</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;plus</attribute>"
+      "        </item>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Zoom _out</attribute>"
+      "          <attribute name=\"action\">app.zoom_out</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;minus</attribute>"
+      "        </item>"
+      "      </section>"
+      "    </submenu>"
+
+      "    <submenu>"
+      "      <attribute name=\"label\" translatable=\"yes\">_Help</attribute>"
+      "      <section>"
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">Messages _history</attribute>"
+      "          <attribute name=\"action\">app.messages_history</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;h</attribute>"
+      "        </item>"
+#ifndef NO_GNOME
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_Contents</attribute>"
+      "          <attribute name=\"action\">app.contents</attribute>"
+      "          <attribute name=\"accel\">F1</attribute>"
+      "        </item>"
+#endif
+      "        <item>"
+      "          <attribute name=\"label\" translatable=\"yes\">_About</attribute>"
+      "          <attribute name=\"action\">app.about</attribute>"
+      "          <attribute name=\"accel\">&lt;Primary&gt;a</attribute>"
+      "        </item>"
+      "      </section>"
+      "    </submenu>"
+
+      "  </menu>"
+      "</interface>", -1, NULL);
+
+  GMenuModel *appmenu = (GMenuModel *) gtk_builder_get_object(builder, "appmenu");
+  gtk_application_set_app_menu(GTK_APPLICATION(app), appmenu);
+
+  GMenuModel *menubar = (GMenuModel *) gtk_builder_get_object (builder, "menubar");
+  gtk_application_set_menubar(GTK_APPLICATION(app), menubar);
+
+  g_object_unref(builder);
+}
+
+static void parse_command_line_options(gint argc, gchar * argv[], ui_state *ui)
+{
+  opterr = 0;
+  int option;
+  while ((option = getopt(argc, argv, "d:")) != -1)
+  {
+    switch (option)
+    {
+      case 'd':
+        fprintf(stdout, _("Setting the output directory to %s.\n"), optarg);
+        set_output_directory_and_update_ui((gchar *)optarg, ui);
+#ifdef __WIN32__
+        mkdir(optarg);
+#else
+        mkdir(optarg, 0777);
+#endif
+        if (!directory_exists(optarg))
+        {
+          ui_fail(ui, "Error: The specified output directory is inaccessible!\n");
+        }
+        break;
+      case '?':
+        if (optopt == 'd')
+          ui_fail(ui, _("Option -%c requires an argument.\n"), optopt);
+        else if (isprint(optopt))
+          ui_fail(ui, _("Unknown option `-%c'.\n"), optopt, NULL);
+        else
+          ui_fail(ui, _("Unknown option character `\\x%x'.\n"), optopt);
+        break;
+      default:
+        ui_fail(ui, NULL);
+    }
+  }
+
+  if (optind == argc)
+  {
+    return;
+  }
+
+  if (!file_exists(argv[optind]))
+  {
+    ui_fail(ui, _("Cannot open input file %s\n"), argv[optind]);
+  }
+
+#ifndef __WIN32__
+  char *input_filename = realpath(argv[optind], NULL);
+  import_file(input_filename, ui, FALSE);
+  free(input_filename);
+#else
+  import_file(argv[optind], ui, FALSE);
+#endif
+}
+
+static void application_activate(GApplication *app, ui_state *ui)
+{
+  initialize_window(app, ui);
 
   GtkWidget *window_vbox = wh_vbox_new();
   gtk_container_add(GTK_CONTAINER(ui->gui->window), window_vbox);
 
-  gtk_box_pack_start(GTK_BOX(window_vbox), create_menu_bar(ui), FALSE, FALSE, 0);  
   gtk_box_pack_start(GTK_BOX(window_vbox), create_main_vbox(ui), TRUE, TRUE, 0);
 
   ui_load_preferences(ui);
@@ -1150,6 +1153,190 @@ void create_application(ui_state *ui)
   }
 
   hide_freedb_spinner(ui->gui);
+
+  import_cue_file_from_the_configuration_directory(ui);
+
+  parse_command_line_options(ui->argc, ui->argv, ui);
+}
+
+static void open_file_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"), NULL,
+      GTK_FILE_CHOOSER_ACTION_OPEN,
+      _("_Cancel"),
+      GTK_RESPONSE_CANCEL,
+      _("_Open"),
+      GTK_RESPONSE_ACCEPT, NULL);
+
+  add_filters_to_file_chooser(file_chooser);
+  wh_set_browser_directory_handler(ui, file_chooser);
+
+  if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
+  {
+    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+    file_chooser_ok_event(filename, ui);
+    if (filename)
+    {
+      g_free(filename);
+      filename = NULL;
+    }
+  }
+
+  gtk_widget_destroy(file_chooser);
+  remove_status_message(ui->gui);
+}
+
+static void multiple_files_add_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+  multiple_files_add_button_event(NULL, ui);
+}
+
+static void import_event_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+  import_event(NULL, ui);
+}
+
+static void show_tracktype_window_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+
+  if (ui->gui->freedb_window == NULL)
+  {
+    ui->gui->freedb_window = 
+      wh_create_window_with_close_button(_("TrackType"), 500, 300, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window),
+          ui->gui->freedb_widget, 
+          ui->gui->freedb_add_button, NULL);
+  }
+
+  wh_show_window(ui->gui->freedb_window);
+  hide_freedb_spinner(ui->gui);
+}
+
+static void show_preferences_window_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+
+  if (ui->gui->preferences_window == NULL)
+  {
+    ui->gui->preferences_window = 
+      wh_create_window_with_close_button(_("Preferences"), 750, 450, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window), ui->gui->preferences_widget, NULL);
+  }
+
+  wh_show_window(ui->gui->preferences_window);
+}
+
+static void split_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+  single_file_mode_split_button_event(NULL, ui);
+}
+
+static void batch_split_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+  batch_file_mode_split_button_event(NULL, ui);
+}
+
+static void exit_application_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+  exit_application(NULL, NULL, ui);
+}
+
+static void show_splitpoints_window_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+
+  if (ui->gui->splitpoints_window == NULL)
+  {
+    ui->gui->splitpoints_window = 
+      wh_create_window_with_close_button(_("Splitpoints"), 500, 300, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window),
+          ui->gui->splitpoints_widget, 
+          ui->gui->scan_trim_silence_button, ui->gui->scan_silence_button, NULL);
+  }
+
+  wh_show_window(ui->gui->splitpoints_window);
+}
+
+static void show_split_files_window_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+
+  if (ui->gui->split_files_window == NULL)
+  {
+    ui->gui->split_files_window = 
+      wh_create_window_with_close_button(_("Split files"), 500, 300, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window),
+          ui->gui->split_files_widget, 
+          ui->gui->queue_files_button, ui->gui->remove_file_button,
+          ui->gui->remove_all_files_button, NULL);
+  }
+
+  wh_show_window(ui->gui->split_files_window);
+}
+
+static void add_splitpoint_from_player_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+  add_splitpoint_from_player(NULL, ui);
+}
+
+const static GActionEntry app_entries[] = {
+  {"open_single_file", open_file_menu_action},
+  {"add_files_to_batch", multiple_files_add_menu_action},
+  {"import_splitpoints_from_file", import_event_menu_action},
+  {"import_splitpoints_from_tracktype", show_tracktype_window_menu_action},
+  {"export_splitpoints", export_menu_action},
+  {"preferences", show_preferences_window_menu_action},
+  {"split", split_menu_action},
+  {"batch_split", batch_split_menu_action},
+  {"quit", exit_application_menu_action},
+
+  {"view_splitpoints", show_splitpoints_window_menu_action},
+  {"view_split_files", show_split_files_window_menu_action},
+
+  {"pause_play", player_pause_action},
+  {"seek_forward", player_seek_forward_action},
+  {"seek_backward", player_seek_backward_action},
+  {"small_seek_forward", player_small_seek_forward_action},
+  {"small_seek_backward", player_small_seek_backward_action},
+  {"big_seek_forward", player_big_seek_forward_action},
+  {"big_seek_backward", player_big_seek_backward_action},
+  {"seek_next_splitpoint", player_seek_to_next_splitpoint_action},
+  {"seek_previous_splitpoint", player_seek_to_previous_splitpoint_action},
+  {"preview_closest", player_seek_closest_splitpoint_no_pause},
+  {"preview_closest_and_pause", player_seek_closest_splitpoint},
+  {"preview_before_closest", player_seek_before_closest_splitpoint},
+  {"add_splitpoint", add_splitpoint_from_player_menu_action},
+  {"delete_closest_splitpoint", delete_closest_splitpoint},
+  {"zoom_in", zoom_in},
+  {"zoom_out", zoom_out},
+
+  {"messages_history", show_messages_history_window},
+#ifndef NO_GNOME
+  {"contents", ShowHelp},
+#endif
+  {"about", about_window}
+};
+
+void create_application(ui_state *ui)
+{
+  GtkApplication *app = gtk_application_new("net.sf.mp3splt", G_APPLICATION_FLAGS_NONE);
+  ui->gui->application = app;
+
+  g_action_map_add_action_entries(G_ACTION_MAP(app), app_entries, G_N_ELEMENTS(app_entries), ui);
+
+  player_key_actions_set_sensitivity(FALSE, ui->gui);
+
+  g_signal_connect(app, "startup", G_CALLBACK(application_startup), ui);
+  g_signal_connect(app, "activate", G_CALLBACK(application_activate), ui);
 }
 
 /*!Output an error message from libmp3splt to the status bar

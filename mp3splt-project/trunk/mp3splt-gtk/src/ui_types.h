@@ -224,9 +224,9 @@ typedef struct {
 } player_infos;
 
 typedef struct {
+  GtkApplication *application;
   GtkWidget *window;
 
-  GtkActionGroup *action_group;
   GtkWidget *open_file_chooser_button;
   GString *input_filename;
 
@@ -518,6 +518,9 @@ typedef struct {
   SPLT_MUTEX variables_mutex;
 
   int importing_cue_from_configuration_directory;
+
+  gint argc;
+  gchar **argv;
 } ui_state;
 
 typedef struct {

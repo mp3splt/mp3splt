@@ -352,21 +352,17 @@ void wh_set_browser_directory_handler(ui_state *ui, GtkWidget* dialog)
       G_CALLBACK(_wh_folder_changed_event), ui);
 }
 
-/*!creates a cool button with image from stock
-
-\param label_text The text that has to be displayed on the button
-\param stock_id The name of the stock image to be displayed on the
-	button 
-\param toggle_or_not TRUE means we create a toggle button
-*/
-GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
+GtkWidget *wh_create_cool_button(gchar *icon_name, gchar *label_text,
     gint toggle_or_not)
 {
   GtkWidget *box = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(box), 0);
 
-  GtkWidget *image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
-  gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+  if (icon_name != NULL)
+  {
+    GtkWidget *image = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_MENU);
+    gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+  }
 
   if (label_text != NULL)
   {
@@ -390,13 +386,16 @@ GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
   return button;
 }
 
-GtkWidget *wh_create_cool_label(gchar *stock_id, gchar *label_text)
+GtkWidget *wh_create_cool_label(gchar *icon_name, gchar *label_text)
 {
   GtkWidget *box = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(box), 0);
 
-  GtkWidget *image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
-  gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+  if (icon_name != NULL)
+  {
+    GtkWidget *image = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_MENU);
+    gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+  }
 
   if (label_text != NULL)
   {
@@ -414,17 +413,18 @@ GtkWidget *wh_create_window_with_close_button(gchar *title, gint width, gint hei
     GtkWindowPosition position, GtkWindow *parent_window,
     GtkWidget *main_area_widget, GtkWidget *bottom_widget, ...)
 {
-  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  g_signal_connect(G_OBJECT(window), "delete_event", 
-		   G_CALLBACK(gtk_widget_hide_on_delete), window);
+  GtkWidget *window = gtk_dialog_new();
+
+  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_widget_hide_on_delete), window);
   gtk_window_set_title(GTK_WINDOW(window), title);
   gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
   gtk_window_set_default_size(GTK_WINDOW(window), width, height);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
   GtkWidget *vbox = wh_vbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
+
+  GtkContainer *dialog_container = GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window)));
+  gtk_box_pack_start(GTK_BOX(dialog_container), vbox, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), main_area_widget, TRUE, TRUE, 2);
 
   GtkWidget *bottom_hbox = wh_hbox_new();
@@ -439,7 +439,7 @@ GtkWidget *wh_create_window_with_close_button(gchar *title, gint width, gint hei
   }
   va_end(ap);
 
-  GtkWidget *close_button = wh_create_cool_button(GTK_STOCK_CLOSE, _("_Close"), FALSE);
+  GtkWidget *close_button = wh_create_cool_button("window-close", _("_Close"), FALSE);
   gtk_box_pack_end(GTK_BOX(bottom_hbox), close_button, FALSE, FALSE, 3);
   g_signal_connect(G_OBJECT(close_button), "clicked",
       G_CALLBACK(hide_window_from_button), window);

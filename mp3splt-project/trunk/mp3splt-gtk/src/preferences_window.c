@@ -556,7 +556,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
   GtkWidget *set_default_prefs_button =
-    wh_create_cool_button(GTK_STOCK_PROPERTIES, _("Set _default split options"),FALSE); 
+    wh_create_cool_button("document-properties", _("Set _default split options"),FALSE); 
   g_signal_connect(G_OBJECT(set_default_prefs_button), "clicked",
       G_CALLBACK(set_default_prefs_event), ui);
   gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button, FALSE, FALSE, 5);

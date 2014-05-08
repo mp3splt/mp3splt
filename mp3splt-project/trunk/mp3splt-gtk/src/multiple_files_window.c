@@ -80,15 +80,13 @@ void multiple_files_add_button_event(GtkWidget *widget, ui_state *ui)
   GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose files or directories"),
       NULL,
       GTK_FILE_CHOOSER_ACTION_OPEN,
-      GTK_STOCK_CANCEL,
+      _("_Cancel"),
       GTK_RESPONSE_CANCEL,
       NULL);
 
   wh_set_browser_directory_handler(ui, file_chooser);
 
-  GtkWidget *button = gtk_dialog_add_button(GTK_DIALOG(file_chooser),
-      GTK_STOCK_ADD, MY_GTK_RESPONSE);
-  gtk_button_set_use_stock(GTK_BUTTON(button), TRUE);
+  GtkWidget *button = gtk_dialog_add_button(GTK_DIALOG(file_chooser), "Add", MY_GTK_RESPONSE);
   g_signal_connect(G_OBJECT(button), "clicked",
       G_CALLBACK(multiple_files_open_button_event), file_chooser);
   g_signal_connect(G_OBJECT(file_chooser), "file-activated",
@@ -257,7 +255,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
 
   //button for adding file(s)
   GtkWidget *multiple_files_add_button =
-    wh_create_cool_button(GTK_STOCK_DIRECTORY, _("_Add files or directories"), FALSE);
+    wh_create_cool_button("folder", _("_Add files or directories"), FALSE);
   gtk_widget_set_tooltip_text(multiple_files_add_button, _("Only the supported file types are added"));
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
@@ -266,7 +264,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
 
   //button for removing a file
   GtkWidget *multiple_files_remove_file_button =
-    wh_create_cool_button(GTK_STOCK_REMOVE, _("_Remove selected"),FALSE);
+    wh_create_cool_button("list-remove", _("_Remove selected"),FALSE);
   ui->gui->multiple_files_remove_file_button = multiple_files_remove_file_button;
   gtk_box_pack_start(GTK_BOX(hbox),
       multiple_files_remove_file_button, FALSE, FALSE, 5);
@@ -276,7 +274,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
   
   //button for removing a file
   GtkWidget *multiple_files_remove_all_files_button =
-    wh_create_cool_button(GTK_STOCK_CLEAR, _("R_emove all"),FALSE);
+    wh_create_cool_button("edit-clear", _("R_emove all"),FALSE);
   ui->gui->multiple_files_remove_all_files_button = multiple_files_remove_all_files_button;
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
       FALSE, FALSE, 5);
@@ -284,7 +282,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
   g_signal_connect(G_OBJECT(multiple_files_remove_all_files_button), "clicked",
                    G_CALLBACK(multiple_files_remove_all_button_event), ui);
 
-  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_EXECUTE,_("Batch split !"), FALSE);
+  GtkWidget *split_button = wh_create_cool_button("system-run",_("Batch split"), FALSE);
   gtk_widget_set_tooltip_text(split_button, _("Split all the files"));
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(batch_file_mode_split_button_event), ui);
