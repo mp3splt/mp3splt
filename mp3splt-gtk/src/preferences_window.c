@@ -789,17 +789,9 @@ static gint get_wave_preview_width_drawing_area(ui_state *ui)
   return ui->infos->width_drawing_area;
 }
 
-#if GTK_MAJOR_VERSION <= 2
-static gboolean wave_quality_draw_event(GtkWidget *drawing_area, GdkEventExpose *event,
-    preview_index_and_data *data)
-{
-  cairo_t *cairo_surface = gdk_cairo_create(drawing_area->window);
-#else
 static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface,
     preview_index_and_data *data)
 {
-#endif
-
   ui_state *ui = data->data;
   gint index = data->index;
 
@@ -840,10 +832,6 @@ static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_
 
   update_wave_preview_label_markup(index, interpolation_level, ui);
 
-#if GTK_MAJOR_VERSION <= 2
-  cairo_destroy(cairo_surface);
-#endif
-
   return TRUE;
 }
 
@@ -872,13 +860,9 @@ static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
     ui->infos->preview_indexes[i].index = i;
     ui->infos->preview_indexes[i].data = ui;
 
-#if GTK_MAJOR_VERSION <= 2
-    g_signal_connect(wave_quality_da, "expose_event", G_CALLBACK(wave_quality_draw_event),
-        &ui->infos->preview_indexes[i]);
-#else
     g_signal_connect(wave_quality_da, "draw", G_CALLBACK(wave_quality_draw_event),
         &ui->infos->preview_indexes[i]);
-#endif
+
     wh_put_in_hbox_and_attach_to_vbox(wave_quality_da, vbox, 0);
 
     GtkWidget *minutes_label = gtk_label_new(NULL);

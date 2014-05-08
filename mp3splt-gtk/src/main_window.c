@@ -813,9 +813,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_progress_bar_set_fraction(percent_progress_bar, 0.0);
   gtk_progress_bar_set_text(percent_progress_bar, "");
 
-#if GTK_MAJOR_VERSION >= 3
   gtk_progress_bar_set_show_text(percent_progress_bar, TRUE);
-#endif
 
   GtkWidget *hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(percent_progress_bar), TRUE, TRUE, 0);
