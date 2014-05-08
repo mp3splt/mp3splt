@@ -1419,14 +1419,7 @@ static GtkWidget *create_filename_player_hbox(gui_state *gui)
   gtk_label_set_ellipsize(GTK_LABEL(song_name_label), PANGO_ELLIPSIZE_END); 
 
   GtkWidget *filename_player_hbox = wh_hbox_new();
-
-#if GTK_MAJOR_VERSION <= 2
-  //ellipsize does not work as in gtk+2, so we show the label in the middle
-  gtk_box_pack_start(GTK_BOX(filename_player_hbox), song_name_label, 
-      TRUE, TRUE, 15);
-#else
   gtk_box_pack_start(GTK_BOX(filename_player_hbox), song_name_label, FALSE, FALSE, 15);
-#endif
 
   return filename_player_hbox;
 }
@@ -2132,15 +2125,8 @@ static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface, ui_state
   }
 }
 
-#if GTK_MAJOR_VERSION <= 2
-static gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, ui_state *ui)
-{
-  cairo_t *gc = gdk_cairo_create(da->window);
-#else
 static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
 {
-#endif
-
   ui_infos *infos = ui->infos;
   gui_state *gui = ui->gui;
   gui_status *status = ui->status;
@@ -2503,10 +2489,6 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
   draw_splitpoints(left_mark, right_mark, da, gc, ui);
 
   save_previous_pixels_for_time(infos->current_time, infos, status);
-
-#if GTK_MAJOR_VERSION <= 2
-  cairo_destroy(gc);
-#endif
 
   set_process_in_progress_safe(FALSE, ui);
 
@@ -3036,12 +3018,7 @@ static GtkWidget *create_drawing_area(ui_state *ui)
 
   gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT);
 
-#if GTK_MAJOR_VERSION <= 2
-  g_signal_connect(drawing_area, "expose_event", G_CALLBACK(da_draw_event), ui);
-#else
   g_signal_connect(drawing_area, "draw", G_CALLBACK(da_draw_event), ui);
-#endif
-
   g_signal_connect(drawing_area, "button_press_event", G_CALLBACK(da_press_event), ui);
   g_signal_connect(drawing_area, "button_release_event", G_CALLBACK(da_unpress_event), ui);
   g_signal_connect(drawing_area, "motion_notify_event", G_CALLBACK(da_notify_event), ui);

@@ -74,16 +74,10 @@ GtkWidget *wh_set_title_and_get_vbox(GtkWidget *widget, const gchar *title)
 
 GtkWidget *wh_new_table()
 {
-#if GTK_MAJOR_VERSION >= 3
   GtkWidget *table = gtk_grid_new();
   g_object_set_data(G_OBJECT(table), "rows", GINT_TO_POINTER(0));
   gtk_grid_set_column_spacing(GTK_GRID(table), 5);
   gtk_grid_set_row_spacing(GTK_GRID(table), 4);
-#else
-  GtkWidget *table = gtk_table_new(1, 2, FALSE);
-  gtk_table_set_col_spacing(GTK_TABLE(table), 0, 0);
-  gtk_table_set_col_spacing(GTK_TABLE(table), 1, 5);
-#endif
   return table;
 }
 
@@ -155,20 +149,6 @@ GtkWidget *wh_new_button(const gchar *button_label)
 
 void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height)
 {
-#if GTK_MAJOR_VERSION <= 2
-  GtkAllocation allocation;
-  gtk_widget_get_allocation(widget, &allocation);
-
-  if (width != NULL)
-  {
-    *width = allocation.width;
-  }
-
-  if (height != NULL)
-  {
-    *height= allocation.height;
-  }
-#else
   if (width != NULL)
   {
     *width = gtk_widget_get_allocated_width(widget);
@@ -178,7 +158,6 @@ void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height)
   {
     *height = gtk_widget_get_allocated_height(widget);
   }
-#endif
 }
 
 GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gchar *after_label,
@@ -240,51 +219,31 @@ GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
 
 GtkWidget *wh_hbox_new()
 {
-#if GTK_MAJOR_VERSION <= 2
-  return gtk_hbox_new(FALSE, 0);
-#else
   GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_set_homogeneous(GTK_BOX(hbox), FALSE);
   return hbox;
-#endif
 }
 
 GtkWidget *wh_vbox_new()
 {
-#if GTK_MAJOR_VERSION <= 2
-  return gtk_vbox_new(FALSE, 0);
-#else
   GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_set_homogeneous(GTK_BOX(vbox), FALSE);
   return vbox;
-#endif
 }
 
 GtkWidget *wh_hscale_new(GtkAdjustment *adjustment)
 {
-#if GTK_MAJOR_VERSION <= 2
-  return gtk_hscale_new(adjustment);
-#else
   return gtk_scale_new(GTK_ORIENTATION_HORIZONTAL, adjustment);
-#endif
 }
 
 GtkWidget *wh_hscale_new_with_range(gdouble min, gdouble max, gdouble step)
 {
-#if GTK_MAJOR_VERSION <= 2
-  return gtk_hscale_new_with_range(min, max, step);
-#else
   return gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, step);
-#endif
 }
 
 void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *state)
 {
-#if GTK_MAJOR_VERSION <= 2
-  gdk_window_get_pointer(event->window, x, y, state);
-#else
   gdk_window_get_device_position(event->window, event->device, x, y, state); 
-#endif
 }
 
 //!creates a scrolled window
@@ -466,28 +425,11 @@ static void hide_window_from_button(GtkWidget *widget, gpointer data)
 
 static guint _wh_add_row_to_table(GtkWidget *table)
 {
-#if GTK_MAJOR_VERSION >= 3
   int number_of_rows = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(table), "rows"));
   number_of_rows++;
   g_object_set_data(G_OBJECT(table), "rows", GINT_TO_POINTER(number_of_rows));
   gtk_grid_insert_row(GTK_GRID(table), number_of_rows);
   return number_of_rows;
-#else
-  guint rows;
-  guint columns;
-
-  g_object_get(G_OBJECT(table),
-      "n-rows", &rows,
-      "n-columns", &columns,
-      NULL);
-
-  guint new_rows = rows + 1;
-
-  gtk_table_resize(GTK_TABLE(table), new_rows, columns);
-  gtk_table_set_row_spacing(GTK_TABLE(table), new_rows - 1, 4);
-
-  return new_rows;
-#endif
 }
 
 static void _wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
@@ -508,18 +450,11 @@ static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
   GtkWidget *my_widget = widget;
   GtkWidget *hbox;
 
-#if GTK_MAJOR_VERSION >= 3
   gtk_widget_set_halign(my_widget, GTK_ALIGN_FILL);
-#else
-  GtkAttachOptions xoptions = GTK_FILL;
-#endif
+
   if (expand)
   {
-#if GTK_MAJOR_VERSION >= 3
     gtk_widget_set_hexpand(my_widget, TRUE);
-#else
-    xoptions |= GTK_EXPAND;
-#endif
   }
   else
   {
@@ -528,13 +463,6 @@ static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
     my_widget = hbox;
   }
 
-#if GTK_MAJOR_VERSION >= 3
   gtk_grid_attach(GTK_GRID(table), my_widget, start_column, row - 1, end_column - start_column, 1);
-#else
-  gtk_table_attach(GTK_TABLE(table), my_widget,
-      start_column, end_column, row-1, row,
-      xoptions, GTK_FILL | GTK_EXPAND,
-      0, 0);
-#endif
 }
 
