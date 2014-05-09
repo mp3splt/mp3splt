@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-08 23:10+0200\n"
+"POT-Creation-Date: 2014-05-08 23:50+0200\n"
 "PO-Revision-Date: 2013-04-29 21:06+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr "Choisir un fichier à importer"
 
 #: src/export.c:157 src/multiple_files_window.c:83
 #: src/splitpoints_window.c:1126 src/splitpoints_window.c:1183
-#: src/main_window.c:1168 src/import.c:59
+#: src/main_window.c:1166 src/import.c:59
 msgid "_Cancel"
 msgstr ""
 
@@ -63,7 +63,7 @@ msgstr ""
 msgid "cue files (*.cue)"
 msgstr "Fichiers cue (*.cue)"
 
-#: src/widgets_helper.c:442
+#: src/widgets_helper.c:401
 msgid "_Close"
 msgstr "_Fermer"
 
@@ -198,75 +198,75 @@ msgstr "Se déconnecter du lecteur"
 msgid "before %s"
 msgstr "avant %s"
 
-#: src/player_window.c:1988
+#: src/player_window.c:1981
 msgid "No available wave"
 msgstr "Pas de signal disponible"
 
-#: src/player_window.c:2080 src/preferences_window.c:912
+#: src/player_window.c:2073 src/preferences_window.c:896
 msgid "No wave interpolation"
 msgstr "Pas d'interpolation de signal"
 
-#: src/player_window.c:2086
+#: src/player_window.c:2079
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr "Niveau d'interpolation de signal  à %d"
 
-#: src/player_window.c:2155
+#: src/player_window.c:2141
 msgid " Please wait for the process to finish ..."
 msgstr "Attendre la fin du traitement svp..."
 
-#: src/player_window.c:2177
+#: src/player_window.c:2163
 msgid " Please wait ... currently computing Douglas Peucker filters."
 msgstr "Attendre svp, traitement des filtres Douglas-Peucker."
 
-#: src/player_window.c:2261
+#: src/player_window.c:2247
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr " clic gauche sur le point le sélectionne, clic droit l'efface"
 
-#: src/player_window.c:2266
+#: src/player_window.c:2252
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " clic gauche + déplacement change la position, clic droit + déplacement "
 "change le zoom"
 
-#: src/player_window.c:2272
+#: src/player_window.c:2258
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " clic gauche sur le point + déplacement change la position du point, clic "
 "droit aperçu"
 
-#: src/player_window.c:2277
+#: src/player_window.c:2263
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr " clic gauche sur rectangle coche/décoche 'garder le point'"
 
-#: src/player_window.c:2713
+#: src/player_window.c:2695
 #, fuzzy
 msgid " preview..."
 msgstr " aperçu rapide..."
 
-#: src/player_window.c:3057
+#: src/player_window.c:3034
 msgid "Splitpoints and amplitude wave v_iew"
 msgstr "Afficher points de découpages et _signal d'amplitude"
 
-#: src/player_window.c:3173
+#: src/player_window.c:3150
 msgid "History"
 msgstr "Historique"
 
-#: src/player_window.c:3263
+#: src/player_window.c:3240
 msgid "_Erase selected entries"
 msgstr "_Effacer les éléments sélectionnés"
 
-#: src/player_window.c:3271
+#: src/player_window.c:3248
 msgid "E_rase all history"
 msgstr "Effa_cer tout l'historique"
 
-#: src/player_window.c:3313
+#: src/player_window.c:3290
 msgid "Files h_istory"
 msgstr "Historique des fichiers"
 
-#: src/player_window.c:3353
+#: src/player_window.c:3330
 #, fuzzy
 msgid " preview finished, song paused"
 msgstr " aperçu rapide fini, lecteur sur pause"
@@ -729,65 +729,65 @@ msgstr ""
 msgid "<b>Player options</b>"
 msgstr "<b>Options du lecteur</b>"
 
-#: src/preferences_window.c:859
+#: src/preferences_window.c:847
 #, fuzzy
 msgid "Only available if the amplitude wave is shown in the player"
 msgstr ""
 "La prévisualisation du signal n'est disponible que si l'option est "
 "sélectionnée dans le lecteur"
 
-#: src/preferences_window.c:893
+#: src/preferences_window.c:877
 msgid "Wave preview"
 msgstr ""
 
-#: src/preferences_window.c:903
+#: src/preferences_window.c:887
 #, c-format
 msgid "%d minute(s) window"
 msgstr "fenêtre %d minute(s)"
 
-#: src/preferences_window.c:908
+#: src/preferences_window.c:892
 #, c-format
 msgid "Wave interpolation level %d with threshold of %.1lf"
 msgstr "Niveau d'interpolation de signal %d avec un seuil de %.1lf"
 
-#: src/preferences_window.c:930
+#: src/preferences_window.c:914
 msgid "Wave quality (higher is better but consumes more CPU):"
 msgstr ""
 "Qualité de signal (+ élevé = meilleur mais consomme davantage de CPU) :"
 
-#: src/preferences_window.c:952
+#: src/preferences_window.c:936
 msgid "<b>Amplitude wave options</b>"
 msgstr "<b>Options de signal d'amplitude</b>"
 
-#: src/preferences_window.c:1045
+#: src/preferences_window.c:1029
 msgid "Default format"
 msgstr "Format par défaut"
 
-#: src/preferences_window.c:1052
+#: src/preferences_window.c:1036
 msgid "  Default output: "
 msgstr "Sortie par défaut :"
 
-#: src/preferences_window.c:1058
+#: src/preferences_window.c:1042
 msgid "  CDDB, CUE and tracktype.org default: "
 msgstr "  CDDB, CUE et  tracktype.org par défaut : "
 
-#: src/preferences_window.c:1064
+#: src/preferences_window.c:1048
 msgid "  Split with silence detection default: "
 msgstr "  Découpage par détection de silence par défaut :"
 
-#: src/preferences_window.c:1070
+#: src/preferences_window.c:1054
 msgid "  Trim using silence detection default: "
 msgstr "  Troncature par détection de silence par défaut :"
 
-#: src/preferences_window.c:1076
+#: src/preferences_window.c:1060
 msgid "  Error mode default: "
 msgstr "  Mode erreur par défaut :"
 
-#: src/preferences_window.c:1091
+#: src/preferences_window.c:1075
 msgid "Custom format"
 msgstr "Format personnalisé"
 
-#: src/preferences_window.c:1110
+#: src/preferences_window.c:1094
 msgid ""
 "  @A: performer if found, otherwise artist\n"
 "  @a: artist name\n"
@@ -835,87 +835,87 @@ msgstr ""
 "    (**) un chiffre peut suivre pour indiquer le nombre de chiffres à "
 "générer\n"
 
-#: src/preferences_window.c:1135
+#: src/preferences_window.c:1119
 #, fuzzy
 msgid "<b>Output format for batch split and when importing splitpoints</b>"
 msgstr ""
 "<b>Format du nom de fichier destination pour découpage par lot, CUE, CDDB et "
 "tracktype.org</b>"
 
-#: src/preferences_window.c:1184
+#: src/preferences_window.c:1168
 msgid "Original file tags"
 msgstr "Tags du fichier d'entrée"
 
-#: src/preferences_window.c:1187
+#: src/preferences_window.c:1171
 #, fuzzy
 msgid "Custom tags (from the splitpoints table)"
 msgstr "Mettre les points au tableau de points de coupure"
 
-#: src/preferences_window.c:1190
+#: src/preferences_window.c:1174
 msgid "No tags"
 msgstr "Aucun tag"
 
-#: src/preferences_window.c:1193
+#: src/preferences_window.c:1177
 msgid "Extract tags from filename"
 msgstr "Extraire les tags à partir du nom de fichier"
 
-#: src/preferences_window.c:1202
+#: src/preferences_window.c:1186
 msgid "<b>Split files tags</b>"
 msgstr "<b>Tags des fichiers coupés</b>"
 
-#: src/preferences_window.c:1224
+#: src/preferences_window.c:1208
 msgid "No change"
 msgstr "Sans changement"
 
-#: src/preferences_window.c:1225
+#: src/preferences_window.c:1209
 msgid "lowercase"
 msgstr "minuscules"
 
-#: src/preferences_window.c:1226
+#: src/preferences_window.c:1210
 msgid "UPPERCASE"
 msgstr "MAJUSCULES"
 
-#: src/preferences_window.c:1227
+#: src/preferences_window.c:1211
 msgid "First uppercase"
 msgstr "1ère lettre en majuscule"
 
-#: src/preferences_window.c:1228
+#: src/preferences_window.c:1212
 msgid "Word Uppercase"
 msgstr "1ère lettre des Mots en majuscule"
 
-#: src/preferences_window.c:1274
+#: src/preferences_window.c:1258
 msgid "<artist>: "
 msgstr "<artiste> : "
 
-#: src/preferences_window.c:1283
+#: src/preferences_window.c:1267
 msgid "<album>: "
 msgstr "<album> : "
 
-#: src/preferences_window.c:1293
+#: src/preferences_window.c:1277
 msgid "<title>: "
 msgstr "<titre> : "
 
-#: src/preferences_window.c:1302
+#: src/preferences_window.c:1286
 msgid "<genre>: "
 msgstr "<genre> : "
 
-#: src/preferences_window.c:1311
+#: src/preferences_window.c:1295
 msgid "<comment>: "
 msgstr "<commentaire> : "
 
-#: src/preferences_window.c:1320
+#: src/preferences_window.c:1304
 msgid "<year>: "
 msgstr "<année> :"
 
-#: src/preferences_window.c:1329
+#: src/preferences_window.c:1313
 msgid "<track>: "
 msgstr "<piste> :"
 
-#: src/preferences_window.c:1369
+#: src/preferences_window.c:1353
 msgid "Regular expression:"
 msgstr "Expression régulière :"
 
-#: src/preferences_window.c:1372
+#: src/preferences_window.c:1356
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -938,88 +938,88 @@ msgstr ""
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - commentaire"
 
-#: src/preferences_window.c:1399
+#: src/preferences_window.c:1383
 msgid "_Replace underscores by spaces"
 msgstr "_Remplacer les soulignés par des espaces"
 
-#: src/preferences_window.c:1409
+#: src/preferences_window.c:1393
 msgid "Artist text properties:"
 msgstr "Propriétés texte auteur :"
 
-#: src/preferences_window.c:1414
+#: src/preferences_window.c:1398
 msgid "Album text properties:"
 msgstr "Propriétés texte album :"
 
-#: src/preferences_window.c:1419
+#: src/preferences_window.c:1403
 msgid "Title text properties:"
 msgstr "Propriétés texte titre :"
 
-#: src/preferences_window.c:1424
+#: src/preferences_window.c:1408
 msgid "Comment text properties:"
 msgstr "Propriétés commentaire :"
 
-#: src/preferences_window.c:1428
+#: src/preferences_window.c:1412
 msgid "Genre tag:"
 msgstr "Tag genre :"
 
-#: src/preferences_window.c:1432
+#: src/preferences_window.c:1416
 msgid "Comment tag:"
 msgstr "Tag commentaire :"
 
-#: src/preferences_window.c:1434
+#: src/preferences_window.c:1418
 msgid "Regular expression test"
 msgstr "Test expression régulière"
 
-#: src/preferences_window.c:1450
+#: src/preferences_window.c:1434
 msgid "_Test"
 msgstr "_Test"
 
-#: src/preferences_window.c:1454
+#: src/preferences_window.c:1438
 msgid "Sample filename:"
 msgstr "Exemple nom de fichier :"
 
-#: src/preferences_window.c:1459
+#: src/preferences_window.c:1443
 msgid "Sample result:"
 msgstr "Exemple résultat :"
 
-#: src/preferences_window.c:1471
+#: src/preferences_window.c:1455
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Tags ID3v1 & ID3v2"
 
-#: src/preferences_window.c:1478
+#: src/preferences_window.c:1462
 msgid "ID3v2 tags"
 msgstr "Tags ID3v2"
 
-#: src/preferences_window.c:1485
+#: src/preferences_window.c:1469
 msgid "ID3v1 tags"
 msgstr "Tags ID3v1"
 
-#: src/preferences_window.c:1492
+#: src/preferences_window.c:1476
 msgid "Same tags version as the input file"
 msgstr "Même version des tags que le fichier d'entrée"
 
-#: src/preferences_window.c:1498
+#: src/preferences_window.c:1482
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_window.c:1538 src/main_window.c:774
+#: src/preferences_window.c:1522 src/main_window.c:774
 msgid "Split"
 msgstr "Découper"
 
-#: src/preferences_window.c:1543
+#: src/preferences_window.c:1527
 msgid "Tags"
 msgstr "Tags"
 
-#: src/preferences_window.c:1548
+#: src/preferences_window.c:1532
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/preferences_window.c:1553
+#: src/preferences_window.c:1537
 #, fuzzy
 msgid "Output format"
 msgstr "Format de nom de fichier destination"
 
-#: src/preferences_window.c:1559
+#: src/preferences_window.c:1543
 msgid "Language"
 msgstr "Langue"
 
@@ -1201,57 +1201,57 @@ msgstr "Découpage manuel fichier unique"
 msgid "Batch & automatic split"
 msgstr "Découpage par lot et automatique"
 
-#: src/main_window.c:824
+#: src/main_window.c:822
 msgid "S_top"
 msgstr "S_top"
 
-#: src/main_window.c:1091
+#: src/main_window.c:1089
 #, c-format
 msgid "Setting the output directory to %s.\n"
 msgstr "Le dossier de sortie sera %s.\n"
 
-#: src/main_window.c:1105
+#: src/main_window.c:1103
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr "L'option -%c doit être suivie d'un paramètre.\n"
 
-#: src/main_window.c:1107
+#: src/main_window.c:1105
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr "Option inconnue `-%c'.\n"
 
-#: src/main_window.c:1109
+#: src/main_window.c:1107
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr "Caractère d'option inconnu `\\x%x'.\n"
 
-#: src/main_window.c:1123
+#: src/main_window.c:1121
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr "Impossible d'ouvrir le fichier %s.\n"
 
-#: src/main_window.c:1166
+#: src/main_window.c:1164
 msgid "Choose File"
 msgstr "Choisir fichier"
 
-#: src/main_window.c:1170 src/import.c:61
+#: src/main_window.c:1168 src/import.c:61
 #, fuzzy
 msgid "_Open"
 msgstr "Ouvrir"
 
-#: src/main_window.c:1210
+#: src/main_window.c:1208
 msgid "TrackType"
 msgstr "TrackType"
 
-#: src/main_window.c:1227
+#: src/main_window.c:1225
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_window.c:1259
+#: src/main_window.c:1257
 msgid "Splitpoints"
 msgstr "Points de découpage"
 
-#: src/main_window.c:1275
+#: src/main_window.c:1273
 msgid "Split files"
 msgstr "Fichiers découpés"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2014-04-29 12:15+0200\n"
+"POT-Creation-Date: 2014-05-07 21:22+0200\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -430,29 +430,29 @@ msgstr ""
 msgid " error: one of the splitpoints has not been auto-adjusted"
 msgstr ""
 
-#: src/mp3splt.c:1138
+#: src/mp3splt.c:1140
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:1193
+#: src/mp3splt.c:1195
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:1201
+#: src/mp3splt.c:1203
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:1222
+#: src/mp3splt.c:1224
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
 "%.2f Min: %.2f sec)\n"
 msgstr ""
 
-#: src/mp3splt.c:2002 src/tags_parser.c:107
+#: src/mp3splt.c:2004 src/tags_parser.c:107
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
