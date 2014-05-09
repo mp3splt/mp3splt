@@ -1,5 +1,11 @@
 libmp3splt (0.9.1) trusty; urgency=low
 
+  * New version
+
+ -- Alexandru Munteanu <m@ioalex.net>  Fri, 9 May 2014 00:00:00 +0100
+
+libmp3splt (0.9.0) trusty; urgency=low
+
   * Non-maintainer upload.
   * New Upstream Version
   * Updated the debian control file
