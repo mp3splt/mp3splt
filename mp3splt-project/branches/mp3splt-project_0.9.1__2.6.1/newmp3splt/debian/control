@@ -1,8 +1,7 @@
 Source: mp3splt
 Section: sound
 Priority: optional
-Maintainer: Ryan Niebur <ryanryan52@gmail.com>
-DM-Upload-Allowed: yes
+Maintainer: Alexandru Munteanu <m@ioalex.net>
 Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= 0.9.1)
 Standards-Version: 3.9.1
 Homepage: http://mp3splt.sourceforge.net/
