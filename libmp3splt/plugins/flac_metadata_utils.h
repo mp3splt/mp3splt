@@ -2,7 +2,7 @@
  *
  * libmp3splt flac plugin 
  *
- * Copyright (c) 2013 Alexandru Munteanu - <m@ioalex.net>
+ * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
  * http://mp3splt.sourceforge.net
  *

@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2013 Alexandru Munteanu - <m@ioalex.net>
+ * Copyright (c) 2005-2014 Alexandru Munteanu - <m@ioalex.net>
  *
  * Parts of this file have been copied from the 'vcut' 1.6
  * program provided with 'vorbis-tools' :

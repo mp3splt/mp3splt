@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2010 David Belohrad
- * Copyright (c) 2010-2013 Alexandru Munteanu - m@ioalex.net
+ * Copyright (c) 2010-2014 Alexandru Munteanu - m@ioalex.net
  *
  * http://mp3splt.sourceforge.net
  *
