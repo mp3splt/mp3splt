@@ -3,7 +3,7 @@
  *
  *
  * Contact: m@ioalex.net
- * Copyright: (C) 2005-2013 Alexandru Munteanu
+ * Copyright: (C) 2005-2014 Alexandru Munteanu
  *
  * http://mp3splt.sourceforge.net/
  *

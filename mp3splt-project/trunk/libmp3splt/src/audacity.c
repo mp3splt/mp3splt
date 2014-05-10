@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2002-2004 M. Trotta - <matteo.trotta@lib.unimib.it>
  * Copyright (c) 2007 Federico Grau - <donfede@casagrau.org>
- * Copyright (c) 2005-2013 Alexandru Munteanu - <m@ioalex.net>
+ * Copyright (c) 2005-2014 Alexandru Munteanu - <m@ioalex.net>
  *
  * http://mp3splt.sourceforge.net
  * http://audacity.sourceforge.net/
