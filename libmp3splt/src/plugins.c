@@ -38,6 +38,7 @@ Loading and unloading of plug-ins
 #include <errno.h>
 
 #include <ltdl.h>
+#include <stdlib.h>
 
 #ifdef __WIN32__
 #include <direct.h>
