@@ -490,6 +490,7 @@ typedef struct {
   int warn_if_no_auto_adjust_found;
   int stop_if_no_auto_adjust_found;
   int decode_and_write_flac_md5sum;
+  int handle_bit_reservoir;
   int id3v2_encoding;
   int input_tags_encoding;
   long time_minimum_length;

@@ -69,6 +69,8 @@ ui_for_split *build_ui_for_split(ui_state *ui)
   ui_fs->ui = ui;
 
   ui_fs->frame_mode = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->frame_mode));
+  ui_fs->bit_reservoir_mode =
+    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->bit_reservoir_mode));
 
   ui_fs->adjust_mode = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->adjust_mode));
   ui_fs->adjust_offset = gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_offset));
@@ -192,6 +194,9 @@ void put_options_from_preferences(ui_for_split *ui_fs)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_FRAME_MODE, SPLT_FALSE);
   }
+
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_HANDLE_BIT_RESERVOIR,
+      ui_fs->bit_reservoir_mode);
 
   if (ui_fs->adjust_mode)
   {

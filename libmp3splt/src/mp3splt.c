@@ -1088,6 +1088,12 @@ splt_code mp3splt_split(splt_state *state)
 
       splt_d_print_debug(state,"Starting to split file ...\n");
 
+      if (splt_o_get_int_option(state, SPLT_OPT_HANDLE_BIT_RESERVOIR))
+      {
+        splt_c_put_warning_message_to_client(state,
+            _(" warning: bit reservoir handling for gapless playback is still experimental\n"));
+      }
+
       char *new_filename_path = NULL;
       char *fname_to_split = splt_t_get_filename_to_split(state);
 

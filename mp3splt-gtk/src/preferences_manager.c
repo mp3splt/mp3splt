@@ -275,6 +275,10 @@ void load_preferences(ui_state *ui)
   item = g_key_file_get_boolean(key_file, "split", "frame_mode", NULL);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode), item);
 
+  //bit reservoir mode
+  item = g_key_file_get_boolean(key_file, "split", "bit_reservoir_mode", NULL);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->bit_reservoir_mode), item);
+
   //adjust mode
   item = g_key_file_get_boolean(key_file, "split", "adjust_mode", NULL);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode), item);
@@ -503,6 +507,9 @@ void save_preferences(ui_state *ui)
   g_key_file_set_boolean(my_key_file, "split", "frame_mode",
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode)));
 
+  g_key_file_set_boolean(my_key_file, "split", "bit_reservoir_mode",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->bit_reservoir_mode)));
+
   //adjust mode
   g_key_file_set_boolean(my_key_file, "split", "adjust_mode",
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode)));
@@ -671,6 +678,11 @@ static void write_default_preferences_file(ui_state *ui)
   if (!g_key_file_has_key(my_key_file, "split", "frame_mode",NULL))
   {
     g_key_file_set_boolean(my_key_file, "split", "frame_mode", FALSE);
+  }
+
+  if (!g_key_file_has_key(my_key_file, "split", "bit_reservoir_mode",NULL))
+  {
+    g_key_file_set_boolean(my_key_file, "split", "bit_reservoir_mode", FALSE);
   }
 
   //adjust mode

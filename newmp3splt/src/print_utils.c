@@ -308,6 +308,7 @@ void show_small_help_exit(main_data *data)
         "      (default is to set the same version as the file to split)"));
   print_message(_(" -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
         " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
+        " -b   [Experimental] Bit reservoir handling for gapless playback (mp3 only).\n"
         " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"));
   print_message(_(" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots, trackjoin): "
                   "user arguments for -s, -a, -t.\n"

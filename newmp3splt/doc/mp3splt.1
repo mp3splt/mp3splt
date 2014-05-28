@@ -418,6 +418,12 @@ that uses time seeking with bitrate guessing, so make your choice.
 Frame mode will print extra info on split process, such as sync errors.
 If you obtain some sync errors, try also to split with \-e option.
 
+.IP "\fB\-b\fP         " 10
+\fB[Experimental] Bit reservoir handling for gapless playback (mp3 only)\fP. Handles bit reservoir issues when
+splitting mp3 files. Split files will play gapless only on players supporting the
+LAME tag delay and padding values. This feature is heavily inspired by pcutmp3.
+Use with caution because it is still an experimental feature.
+
 .IP "\fB\-k\fP         " 10
 \fBInput not seekable\fP. Consider input not seekable (default when using STDIN as input).
 This allows you to split mp3 streams which can be read only one time and can't be

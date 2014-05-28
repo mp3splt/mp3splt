@@ -154,7 +154,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   while ((option = getopt(data->argc, data->argv,
-          "Mm:O:DvifKkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:F:C:I:")) != -1)
+          "Mm:O:DvifKkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:F:C:I:b")) != -1)
   {
     switch (option)
     {
@@ -436,6 +436,9 @@ int main(int argc, char **orig_argv)
         opt->qq_option = SPLT_TRUE;
         console_progress = stdout;
         fclose(stdout);
+        break;
+      case 'b':
+        mp3splt_set_int_option(state, SPLT_OPT_HANDLE_BIT_RESERVOIR, SPLT_TRUE);
         break;
       default:
         print_error_exit(_("read man page for documentation or type 'mp3splt -h'."), data);

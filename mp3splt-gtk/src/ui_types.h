@@ -312,6 +312,7 @@ typedef struct {
   GtkWidget *playlist_remove_all_files_button;
 
   GtkWidget *frame_mode;
+  GtkWidget *bit_reservoir_mode;
   GtkWidget *adjust_mode;
 
   GtkWidget *spinner_adjust_offset;
@@ -565,6 +566,7 @@ typedef struct {
   ui_state *ui;
 
   int frame_mode;
+  int bit_reservoir_mode;
 
   //adjust options
   int adjust_mode;
