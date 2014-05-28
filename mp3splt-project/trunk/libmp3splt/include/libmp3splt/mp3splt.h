@@ -704,6 +704,15 @@ typedef enum {
    * Default is #SPLT_FALSE.
    */
   SPLT_OPT_DECODE_AND_WRITE_FLAC_MD5SUM_FOR_CREATED_FILES,
+  /**
+   * If #SPLT_TRUE, handles bit-reservoir for gapless playback when splitting.
+   * It currently works only for mp3 files.
+   *
+   * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
+   *
+   * Default is #SPLT_FALSE.
+   */
+  SPLT_OPT_HANDLE_BIT_RESERVOIR,
 } splt_options;
 
 /**

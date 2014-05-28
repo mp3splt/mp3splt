@@ -327,9 +327,9 @@ int splt_mp3_get_samples_per_frame(struct splt_mp3 *mp3file)
   return SPLT_MP3_LAYER3_MPEG2_SAMPLES_PER_FRAME;
 }
 
-static int splt_mp3_must_handle_bit_reservoir(splt_state *state)
+static int splt_mp3_handle_bit_reservoir(splt_state *state)
 {
-  return SPLT_FALSE;
+  return splt_o_get_int_option(state, SPLT_OPT_HANDLE_BIT_RESERVOIR);
 }
 
 int splt_mp3_get_mpeg_as_int(int mpgid)
@@ -386,7 +386,7 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
     return;
   }
 
-  if (splt_mp3_xing_frame_has_lame(mp3state) && splt_mp3_must_handle_bit_reservoir(state))
+  if (splt_mp3_xing_frame_has_lame(mp3state) && splt_mp3_handle_bit_reservoir(state))
   {
     int delay = mp3state->mp3file.lame_delay;
     int padding = mp3state->mp3file.lame_padding;
@@ -406,8 +406,6 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
 
     padding = number_of_samples - number_of_samples_to_play - delay;
 
-    //TODO: pctump3 always builds the reservoir frame, thus, the delay is different for the first
-    //file
     if (reservoir_frame)
     {
       delay += mp3state->mp3file.samples_per_frame;
@@ -470,7 +468,7 @@ static void splt_mp3_back_br_header_index(splt_mp3_state *mp3state)
 unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3state,
     splt_state *state)
 {
-  if (!splt_mp3_must_handle_bit_reservoir(state))
+  if (!splt_mp3_handle_bit_reservoir(state))
   {
     return (unsigned long) (fbegin_sec * mp3state->mp3file.fps);
   }
@@ -579,7 +577,7 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
 unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state,
     splt_state *state)
 {
-  if (!splt_mp3_must_handle_bit_reservoir(state))
+  if (!splt_mp3_handle_bit_reservoir(state))
   {
     //prefer to split a bit after the end than loosing some frame
     //before the end
@@ -597,11 +595,11 @@ unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state,
 
   mp3state->last_frame_inclusive = last_frame_inclusive;
 
-  fprintf(stdout, "samples_per_frame = %d\n", mp3state->mp3file.samples_per_frame);
+  /*fprintf(stdout, "samples_per_frame = %d\n", mp3state->mp3file.samples_per_frame);
   fprintf(stdout, "lame_delay = %d\n", mp3state->mp3file.lame_delay);
   fprintf(stdout, "end_sample = %ld\n", end_sample);
   fprintf(stdout, "computed end frame = %ld\n", last_frame_inclusive + 1);
-  fflush(stdout);
+  fflush(stdout);*/
 
   return (unsigned long) (last_frame_inclusive + 1);
 }
@@ -792,7 +790,7 @@ static void splt_mp3_build_reservoir_frame(splt_mp3_state *mp3state, splt_state 
 void splt_mp3_extract_reservoir_and_build_reservoir_frame(splt_mp3_state *mp3state,
     splt_state *state, splt_code *error)
 {
-  if (!splt_mp3_must_handle_bit_reservoir(state))
+  if (!splt_mp3_handle_bit_reservoir(state))
   {
     return;
   }

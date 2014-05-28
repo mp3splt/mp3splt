@@ -327,6 +327,7 @@ static void set_default_prefs_event(GtkWidget *widget, ui_state *ui)
   gui_state *gui = ui->gui;
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->frame_mode), FALSE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->bit_reservoir_mode), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->adjust_mode), FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_threshold),
       SPLT_DEFAULT_PARAM_THRESHOLD);
@@ -468,6 +469,17 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   gui->frame_mode = frame_mode;
   gtk_box_pack_start(GTK_BOX(vbox), frame_mode, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(frame_mode), "toggled", G_CALLBACK(frame_event), ui);
+
+  //bit reservoir handling option
+  GtkWidget *bit_reservoir_mode =
+    gtk_check_button_new_with_mnemonic(_("_[Experimental] Bit reservoir handling for gapless playback (mp3 only)"));
+  gtk_widget_set_tooltip_text(bit_reservoir_mode,
+      _("Split files will play gapless only on players "
+        "supporting the LAME tag delay and padding values"));
+  gui->bit_reservoir_mode = bit_reservoir_mode;
+  gtk_box_pack_start(GTK_BOX(vbox), bit_reservoir_mode, FALSE, FALSE, 0);
+  g_signal_connect(G_OBJECT(bit_reservoir_mode), "toggled", 
+      G_CALLBACK(ui_save_preferences), ui);
 
   //auto adjust option
   GtkWidget *adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (use"
