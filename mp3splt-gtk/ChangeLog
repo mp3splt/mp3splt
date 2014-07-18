@@ -4,6 +4,11 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.9.1a
+
+- FLAC: fixed an important bug not allowing to split some files (libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.9.1
 
 - FLAC internal cue sheets support

@@ -2,6 +2,11 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.9.1a
+-------------------------------------------------------------
+
+- FLAC: fixed an important bug not allowing to split some files
+
 libmp3splt version 0.9.1
 -------------------------------------------------------------
 - FLAC internal cue sheets support
