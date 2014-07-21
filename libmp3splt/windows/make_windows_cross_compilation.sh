@@ -28,21 +28,21 @@ tar jxf libmp3splt_mingw_required_libs.tar.bz2 || exit 1
 sed -i 's/-luuid//' lib/libltdl.la
 
 #
-cp bin/libltdl-7.dll ../trunk/ || exit 1
-cp bin/libogg-0.dll ../trunk/ || exit 1
-cp lib/libFLAC*.dll ../trunk/ || exit 1
-cp bin/libvorbis-0.dll ../trunk/ || exit 1
-cp bin/libvorbisenc-2.dll ../trunk/ || exit 1
-cp bin/libvorbisfile-3.dll ../trunk/ || exit 1
-cp bin/libmad-0.dll ../trunk/ || exit 1
-cp bin/libid3tag.dll ../trunk/ || exit 1
-cp bin/zlib1.dll ../trunk/ || exit 1
-cp bin/pcre3.dll ../trunk/ || exit 1
-cp bin/pcreposix3.dll ../trunk/ || exit 1
+cp bin/libltdl-7.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/libogg-0.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp lib/libFLAC*.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/libvorbis-0.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/libvorbisenc-2.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/libvorbisfile-3.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/libmad-0.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/libid3tag.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/zlib1.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/pcre3.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
+cp bin/pcreposix3.dll ../branches/mp3splt-project_0.9.1__2.6.1/ || exit 1
 #
-cp lib/libz.a ../trunk/libmp3splt/ || exit 1
-cp lib/libz.a ../trunk/libmp3splt/src/ || exit 1
-cd ..
+cp lib/libz.a ../branches/mp3splt-project_0.9.1__2.6.1/libmp3splt/ || exit 1
+cp lib/libz.a ../branches/mp3splt-project_0.9.1__2.6.1/libmp3splt/src/ || exit 1
+cd ../branches/
 
 #cross compile flags
 export CFLAGS="-mms-bitfields -enable-stdcall-fixup -I`pwd`/libs/include -D_WIN32 -D__MINGW32__ $CFLAGS"
@@ -57,10 +57,10 @@ for f in `pwd`/libs/lib/pkgconfig/*.pc ; do
   mv $f.tmp $f
 done  
 
-make -C trunk/libmp3splt/libltdl
+make -C mp3splt-project_0.9.1__2.6.1/libmp3splt/libltdl
 
 #we compile and install libmp3splt
-cd trunk/libmp3splt &&\
+cd mp3splt-project_0.9.1__2.6.1/libmp3splt &&\
     ./configure --enable-optimise --prefix=`pwd`/../../libs --host=$HOST --target=$HOST --disable-cutter --disable-oggtest --disable-vorbistest\
     && make clean && make && make install || exit 1
 
