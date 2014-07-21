@@ -50,7 +50,7 @@ else
   done
 
   cd ../../../libs &&\
-  tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../trunk || exit 1 &&\
+  tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../branches/mp3splt-project_0.9.1__2.6.1 || exit 1 &&\
   cd - &> /dev/null
 fi
 
