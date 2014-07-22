@@ -15,14 +15,14 @@ Section: sound
 Priority: optional
 Maintainer: Ryan Niebur <ryanryan52@gmail.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= $LIBMP3SPLT_VERSION), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev, gnome-doc-utils, libgnomeui-dev, rarian-compat
+Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= $LIBMP3SPLT_VERSION), libgtk2.0-dev, libgstreamer1.0-dev, libgstreamer-plugins-base1.0-dev, audacious-dev, gnome-doc-utils, libgnomeui-dev, rarian-compat
 Standards-Version: 3.9.1
 Homepage: http://mp3splt.sourceforge.net/
 
 Package: mp3splt-gtk
 Architecture: any
 Depends: \${shlibs:Depends}, \${misc:Depends}, libmp3splt0 (>= $LIBMP3SPLT_VERSION), libmp3splt0-mp3 | libmp3splt-plugin
-Recommends: gstreamer0.10-plugins-good, libmp3splt0-ogg
+Recommends: gstreamer1.0-plugins-good, libmp3splt0-ogg
 Suggests: audacious
 Description: Gnome application for lossless linear editing of audio files
  This application allows to cut an audio file into several tracks.
