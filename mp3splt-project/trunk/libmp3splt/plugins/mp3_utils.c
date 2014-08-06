@@ -466,7 +466,7 @@ static void splt_mp3_back_br_header_index(splt_mp3_state *mp3state)
 }
 
 unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3state,
-    splt_state *state)
+    splt_state *state, splt_code *error)
 {
   if (!splt_mp3_handle_bit_reservoir(state))
   {
@@ -514,14 +514,14 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
 
     off_t previous_position = ftello(mp3state->file_input);
 
-    //TODO: free mp3state->overlapped_frames at end of split
-    if (mp3state->overlapped_frames) { free(mp3state->overlapped_frames); }
+    if (mp3state->overlapped_frames) {
+      free(mp3state->overlapped_frames);
+    }
     mp3state->overlapped_frames = malloc(sizeof(unsigned char) * mp3state->overlapped_frames_bytes);
     if (mp3state->overlapped_frames == NULL)
     {
-      //TODO: handle error;
-      fprintf(stdout, "error allocating memory for overlapped frames !\n");
-      fflush(stdout);
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return 0;
     }
 
     long current_index_in_frames = 0;
@@ -531,20 +531,18 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
 
       if (fseeko(mp3state->file_input, frame_offset, SEEK_SET) == -1)
       {
-        //splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
-        //*error = SPLT_ERROR_SEEKING_FILE;
-        //TODO: handle error
-        fprintf(stdout, "failed to seek\n");
-        fflush(stdout);
+        splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
+        *error = SPLT_ERROR_SEEKING_FILE;
+        return 0;
       }
 
       int frame_size = frame_sizes[i];
       unsigned char *frame = splt_io_fread(mp3state->file_input, frame_size);
       if (!frame)
       {
-        //TODO: handle error
-        fprintf(stdout, "error reading frame\n");
-        fflush(stdout);
+        splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+        *error = SPLT_ERROR_WHILE_READING_FILE;
+        return 0;
       }
 
       memcpy(mp3state->overlapped_frames + current_index_in_frames, frame, frame_size);
@@ -556,11 +554,9 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
 
     if (fseeko(mp3state->file_input, previous_position, SEEK_SET) == -1)
     {
-      fprintf(stdout, "error seekx\n");
-      fflush(stdout);
-      //TODO: handle error
-      //splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
-      //*error = SPLT_ERROR_SEEKING_FILE;
+      splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
+      *error = SPLT_ERROR_SEEKING_FILE;
+      return 0;
     }
 
     /*int j = 0;
@@ -619,9 +615,8 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
 
   if (back_pointer > 511)
   {
-    //TODO: handle error
-    fprintf(stdout, "error: back pointer bigger than 511\n");
-    fflush(stdout);
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
     return;
   }
 
@@ -634,6 +629,7 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return;
   }
+
   int number_of_frames = 0;
 
   while (back_pointer > 0)
@@ -643,10 +639,9 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
 
     if (number_of_headers_stored < 0)
     {
-      fprintf(stdout, "error headers stored ?\n");
-      fflush(stdout);
-      //TODO: handle error
-      break;
+      splt_e_set_error_data(state, "Bit reservoir number of headers stored is negative !");
+      *error = SPLT_ERROR_INVALID_CODE;
+      goto end;
     }
 
     h = &mp3state->br_headers[current_header_index];
@@ -670,6 +665,7 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
     {
       splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
       *error = SPLT_ERROR_SEEKING_FILE;
+      goto end;
     }
 
     unsigned char *data_from_frame = splt_io_fread(mp3state->file_input, number_of_bytes_to_copy);
@@ -689,10 +685,9 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
     }
     else
     {
-      //TODO: handle error
-      fprintf(stdout, "failed to read bytes for reservoir ...\n");
-      fflush(stdout);
-      break;
+      splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+      *error = SPLT_ERROR_WHILE_READING_FILE;
+      goto end;
     }
 
     back_pointer -= number_of_bytes_to_copy;
@@ -712,9 +707,6 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
     free(data_from_frame);
   }
 
-  free(bytes_to_copy);
-  free(data_from_frames);
-
   /*unsigned int index = 0;
   fprintf(stdout, "reservoir= _");
   for (;index < res->reservoir_end;index++)
@@ -732,6 +724,10 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
       *error = SPLT_ERROR_SEEKING_FILE;
     }
   }
+
+end:
+  free(bytes_to_copy);
+  free(data_from_frames);
 }
 
 static void splt_mp3_build_reservoir_frame(splt_mp3_state *mp3state, splt_state *state, splt_code *error)

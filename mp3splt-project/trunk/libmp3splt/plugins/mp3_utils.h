@@ -50,7 +50,7 @@ int splt_mp3_get_samples_per_frame(struct splt_mp3 *mp3file);
 void splt_mp3_parse_xing_lame(splt_mp3_state *mp3state);
 
 unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3state,
-    splt_state *state);
+    splt_state *state, splt_code *error);
 unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state, 
     splt_state *state);
 
