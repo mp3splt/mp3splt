@@ -446,6 +446,9 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
       return splt_su_get_formatted_message(state, _(" regular expression ok"));
     case SPLT_ERROR_NO_AUTO_ADJUST_FOUND:
       return splt_su_get_formatted_message(state, _(" error: one of the splitpoints has not been auto-adjusted"));
+    case SPLT_ERROR_INVALID_CODE:
+      return splt_su_get_formatted_message(state, _(" invalid code error: '%s'"),
+          state->err.error_data);
   }
 
   return NULL;

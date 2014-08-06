@@ -255,6 +255,13 @@ static void splt_mp3_state_free(splt_state *state)
     reservoir->reservoir_frame_size = 0;
   }
 
+  if (mp3state->overlapped_frames) {
+    free(mp3state->overlapped_frames);
+    mp3state->overlapped_frames = NULL;
+    mp3state->overlapped_frames_bytes = 0;
+    mp3state->overlapped_number_of_frames = 0;
+  }
+ 
   free(mp3state);
   state->codec = NULL;
 }
@@ -1823,7 +1830,7 @@ silence detection
 */
 
 static double splt_mp3_split(const char *output_fname, splt_state *state,
-    double fbegin_sec, double fend_sec, int *error, int save_end_point)
+    double fbegin_sec, double fend_sec, splt_code *error, int save_end_point)
 {
   splt_d_print_debug(state,"Mp3 split...\n");
   splt_d_print_debug(state,"Output filename is _%s_\n", output_fname);
@@ -2247,7 +2254,8 @@ bloc_end:
 
       unsigned long fbegin, fend = 0, adjust = 0;
 
-      fbegin = splt_mp3_find_begin_frame(fbegin_sec, mp3state, state);
+      fbegin = splt_mp3_find_begin_frame(fbegin_sec, mp3state, state, error);
+      if (*error < 0) { goto bloc_end2; }
 
       if (fend_sec_is_not_eof)
       {

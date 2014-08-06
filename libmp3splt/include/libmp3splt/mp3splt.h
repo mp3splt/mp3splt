@@ -209,6 +209,8 @@ typedef enum {
   SPLT_REGEX_UNAVAILABLE = -802,
 
   SPLT_ERROR_NO_AUTO_ADJUST_FOUND = -900,
+
+  SPLT_ERROR_INVALID_CODE = -1000,
 } splt_code;
 
 //@}
