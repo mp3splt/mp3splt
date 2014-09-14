@@ -1092,6 +1092,12 @@ splt_code mp3splt_split(splt_state *state)
       {
         splt_c_put_warning_message_to_client(state,
             _(" warning: bit reservoir handling for gapless playback is still experimental\n"));
+
+        if (splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
+        {
+          splt_c_put_warning_message_to_client(state, 
+              _(" warning: bit reservoir is not compatible with overlap option.\n"));
+        }
       }
 
       char *new_filename_path = NULL;
@@ -1884,18 +1890,6 @@ char *mp3splt_win32_utf16_to_utf8(const wchar_t *source)
 }
 #endif
 
-/*! TODO: What does this function do
-
-\param state The splt_state The central structure containing all data
-for our library
-\param num_of_files_found The number of files this library has found
-\param error The error code
-
-\attention The resulting string is malloc'ed and must be freed by the
-caller after use.
-
-\todo What does this function do?
-*/
 char **mp3splt_find_filenames(splt_state *state, const char *filename,
     int *num_of_files_found, splt_code *error)
 {
