@@ -329,7 +329,26 @@ int splt_mp3_get_samples_per_frame(struct splt_mp3 *mp3file)
 
 static int splt_mp3_handle_bit_reservoir(splt_state *state)
 {
-  return splt_o_get_int_option(state, SPLT_OPT_HANDLE_BIT_RESERVOIR);
+  int with_bit_reservoir = splt_o_get_int_option(state, SPLT_OPT_HANDLE_BIT_RESERVOIR);
+  long overlap_time = splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
+  int with_auto_adjust = splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST);
+  int input_not_seekable = splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE);
+
+  int supported_split_mode = SPLT_TRUE;
+  int split_mode = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+  if ((split_mode == SPLT_OPTION_SILENCE_MODE) || (split_mode == SPLT_OPTION_TRIM_SILENCE_MODE))
+  {
+    supported_split_mode = SPLT_FALSE;
+  }
+
+  int with_tags = splt_o_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS;
+  int with_xing = splt_o_get_int_option(state, SPLT_OPT_XING);
+
+  int handle_bit_reservoir = with_bit_reservoir &&
+    overlap_time == 0 && !with_auto_adjust && !input_not_seekable &&
+    supported_split_mode && with_tags && with_xing;
+
+  return handle_bit_reservoir;
 }
 
 int splt_mp3_get_mpeg_as_int(int mpgid)
@@ -376,13 +395,13 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
   if (end == -1) { end = mp3state->mp3file.len; }
 
   unsigned long frames = (unsigned long) (mp3state->frames - fbegin + 1);
-  //TODO: wrong bytes
+  //TODO3: wrong bytes
   unsigned long bytes = (unsigned long) (end - begin + mp3state->mp3file.xing +
       reservoir_bytes + mp3state->overlapped_frames_bytes);
 
   if (mp3state->mp3file.xing <= 0)
   {
-    //TODO: build new xing lame frame if not existing
+    //TODO2: build new xing Info lame frame if not existing
     return;
   }
 
@@ -429,9 +448,9 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
 
   splt_mp3_update_existing_xing(mp3state, frames, bytes);
 
-  //TODO: make bigger frame
+  //TODO5: make bigger frame if no lame
 
-  //TODO: update lame crc16
+  //TODO4: update lame crc16
 }
 
 static int splt_mp3_current_br_header_index(splt_mp3_state *mp3state)
@@ -472,11 +491,6 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
     (unsigned long) (fbegin_sec * mp3state->mp3file.fps);
 
   if (!splt_mp3_handle_bit_reservoir(state))
-  {
-    return without_bit_reservoir_begin_frame;
-  }
-
-  if (splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
   {
     return without_bit_reservoir_begin_frame;
   }
@@ -592,7 +606,7 @@ unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state,
   long last_frame_inclusive = (long)
     ((end_sample + mp3state->mp3file.lame_delay + SPLT_MP3_MIN_OVERLAP_SAMPLES_END)
      / mp3state->mp3file.samples_per_frame);
-  //TODO: last frame inclusive will be wrong for last file; must not be more than max frames
+  //TODO1: last frame inclusive will be wrong for last file; must not be more than max frames
 
   mp3state->last_frame_inclusive = last_frame_inclusive;
 
@@ -797,29 +811,27 @@ void splt_mp3_extract_reservoir_and_build_reservoir_frame(splt_mp3_state *mp3sta
     return;
   }
 
-  //TODO: bytes reservoir with auto adjust in a second phase
   splt_mp3_extract_reservoir_main_data_bytes(mp3state, state, error);
   if (*error < 0) { return; }
 
-  //TODO: don't build reservoir frame for CBR files
   splt_mp3_build_reservoir_frame(mp3state, state, error);
 
   /*struct splt_reservoir *reservoir = &mp3state->reservoir;
-  if (reservoir->reservoir_frame == NULL)
-  {
-        fprintf(stdout, "reservoir frame follows : NO reservoir frame\n");
-        fflush(stdout);
+    if (reservoir->reservoir_frame == NULL)
+    {
+    fprintf(stdout, "reservoir frame follows : NO reservoir frame\n");
+    fflush(stdout);
     return;
-  }
+    }
 
     fprintf(stdout, "reservoir frame follows : _ ");
-      int i = 0;
-      for (i = 0;i < reservoir->reservoir_frame_size; i++)
-      {
-      fprintf(stdout, "%02x ", reservoir->reservoir_frame[i]);
-      }
-      fprintf(stdout, "_\n");
-      fflush(stdout);*/
+    int i = 0;
+    for (i = 0;i < reservoir->reservoir_frame_size; i++)
+    {
+    fprintf(stdout, "%02x ", reservoir->reservoir_frame[i]);
+    }
+    fprintf(stdout, "_\n");
+    fflush(stdout);*/
 }
 
 //!finds first header from start_pos. Returns -1 if no header is found
