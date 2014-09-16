@@ -1098,6 +1098,45 @@ splt_code mp3splt_split(splt_state *state)
           splt_c_put_warning_message_to_client(state, 
               _(" warning: bit reservoir is not compatible with overlap option.\n"));
         }
+
+        if (splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST))
+        {
+          splt_c_put_warning_message_to_client(state, 
+              _(" warning: bit reservoir is not compatible with auto adjust option.\n"));
+        }
+
+        if (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
+        {
+          splt_c_put_warning_message_to_client(state, 
+              _(" warning: bit reservoir is not compatible with input not seekable.\n"));
+        }
+
+        int supported_split_mode = SPLT_TRUE;
+        int split_mode = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+        if ((split_mode == SPLT_OPTION_SILENCE_MODE) || (split_mode == SPLT_OPTION_TRIM_SILENCE_MODE))
+        {
+          supported_split_mode = SPLT_FALSE;
+        }
+
+        if (!supported_split_mode)
+        {
+          splt_c_put_warning_message_to_client(state, 
+              _(" warning: bit reservoir is not compatible with silence detection or trimming.\n"));
+        }
+
+        int with_tags = splt_o_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS;
+        if (!with_tags)
+        {
+          splt_c_put_warning_message_to_client(state, 
+              _(" warning: bit reservoir is not compatible with 'no tags'.\n"));
+        }
+
+        int with_xing = splt_o_get_int_option(state, SPLT_OPT_XING);
+        if (!with_xing)
+        {
+          splt_c_put_warning_message_to_client(state, 
+              _(" warning: bit reservoir is not compatible with 'no xing'.\n"));
+        }
       }
 
       char *new_filename_path = NULL;
