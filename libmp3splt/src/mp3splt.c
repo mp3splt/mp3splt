@@ -1096,19 +1096,19 @@ splt_code mp3splt_split(splt_state *state)
         if (splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
         {
           splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with overlap option.\n"));
+              _(" warning: bit reservoir is not compatible with overlap option\n"));
         }
 
         if (splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST))
         {
           splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with auto adjust option.\n"));
+              _(" warning: bit reservoir is not compatible with auto adjust option\n"));
         }
 
         if (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
         {
           splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with input not seekable.\n"));
+              _(" warning: bit reservoir is not compatible with input not seekable\n"));
         }
 
         int supported_split_mode = SPLT_TRUE;
@@ -1121,21 +1121,21 @@ splt_code mp3splt_split(splt_state *state)
         if (!supported_split_mode)
         {
           splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with silence detection or trimming.\n"));
-        }
-
-        int with_tags = splt_o_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS;
-        if (!with_tags)
-        {
-          splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with 'no tags'.\n"));
+              _(" warning: bit reservoir is not compatible with silence detection or trimming\n"));
         }
 
         int with_xing = splt_o_get_int_option(state, SPLT_OPT_XING);
         if (!with_xing)
         {
           splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with 'no xing'.\n"));
+              _(" warning: bit reservoir is not compatible with 'no xing'\n"));
+        }
+
+        int with_frame_mode = splt_o_get_int_option(state, SPLT_OPT_FRAME_MODE);
+        if (!with_frame_mode)
+        {
+          splt_c_put_warning_message_to_client(state, 
+              _(" warning: please enable frame mode to make bit reservoir work\n"));
         }
       }
 

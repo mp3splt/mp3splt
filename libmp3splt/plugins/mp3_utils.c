@@ -341,12 +341,12 @@ static int splt_mp3_handle_bit_reservoir(splt_state *state)
     supported_split_mode = SPLT_FALSE;
   }
 
-  int with_tags = splt_o_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS;
   int with_xing = splt_o_get_int_option(state, SPLT_OPT_XING);
+  int with_frame_mode = splt_o_get_int_option(state, SPLT_OPT_FRAME_MODE);
 
   int handle_bit_reservoir = with_bit_reservoir &&
     overlap_time == 0 && !with_auto_adjust && !input_not_seekable &&
-    supported_split_mode && with_tags && with_xing;
+    supported_split_mode && with_xing && with_frame_mode;
 
   return handle_bit_reservoir;
 }
@@ -395,13 +395,13 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
   if (end == -1) { end = mp3state->mp3file.len; }
 
   unsigned long frames = (unsigned long) (mp3state->frames - fbegin + 1);
-  //TODO3: wrong bytes
+  //TODO2: wrong bytes
   unsigned long bytes = (unsigned long) (end - begin + mp3state->mp3file.xing +
       reservoir_bytes + mp3state->overlapped_frames_bytes);
 
   if (mp3state->mp3file.xing <= 0)
   {
-    //TODO2: build new xing Info lame frame if not existing
+    //TODO1: build new xing Info lame frame if not existing
     return;
   }
 
@@ -414,9 +414,15 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
         mp3state->first_frame_inclusive * mp3state->mp3file.samples_per_frame);
 
     long number_of_frames = 0;
-    if (mp3state->last_frame_inclusive != mp3state->first_frame_inclusive)
+    long last_frame = mp3state->last_frame_inclusive;
+    if (last_frame > mp3state->frames)
     {
-      number_of_frames = mp3state->last_frame_inclusive - mp3state->first_frame_inclusive + 1;
+      last_frame = mp3state->frames;
+    }
+
+    if (last_frame != mp3state->first_frame_inclusive)
+    {
+      number_of_frames = last_frame - mp3state->first_frame_inclusive + 1;
     }
     frames = number_of_frames;
 
@@ -448,9 +454,9 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
 
   splt_mp3_update_existing_xing(mp3state, frames, bytes);
 
-  //TODO5: make bigger frame if no lame
+  //TODO3: update lame crc16
 
-  //TODO4: update lame crc16
+  //TODO4: make bigger frame if no lame
 }
 
 static int splt_mp3_current_br_header_index(splt_mp3_state *mp3state)
@@ -606,7 +612,6 @@ unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state,
   long last_frame_inclusive = (long)
     ((end_sample + mp3state->mp3file.lame_delay + SPLT_MP3_MIN_OVERLAP_SAMPLES_END)
      / mp3state->mp3file.samples_per_frame);
-  //TODO1: last frame inclusive will be wrong for last file; must not be more than max frames
 
   mp3state->last_frame_inclusive = last_frame_inclusive;
 
