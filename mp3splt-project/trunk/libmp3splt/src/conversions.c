@@ -39,10 +39,9 @@
 
 #include "splt.h"
 
-//! Convert a string to an integer containing the hundreths of a second
-long splt_co_convert_to_hundreths(const char *s)
+long splt_co_convert_cue_line_to_hundreths(const char *s)
 {
-  long minutes = 0, seconds = 0, hundredths = 0, i = 0;
+  long minutes = 0, seconds = 0, frames = 0, i = 0;
 
   for(i=0; i< strlen(s); i++)
   {
@@ -52,27 +51,22 @@ long splt_co_convert_to_hundreths(const char *s)
     }
   }
 
-  if (sscanf(s, "%ld:%ld:%ld", &minutes, &seconds, &hundredths) < 2)
+  if (sscanf(s, "%ld:%ld:%ld", &minutes, &seconds, &frames) < 2)
   {
     return -1;
   }
 
-  if ((minutes < 0) || (seconds < 0) || (hundredths < 0))
+  if ((minutes < 0) || (seconds < 0) || (frames < 0))
   {
     return -1;
   }
 
-  if ((seconds > 59) || (hundredths > 99))
+  if ((seconds > 59) || (frames > 99))
   {
     return -1;
   }
 
-  if (s[strlen(s)-2]==':')
-  {
-    hundredths *= 10;
-  }
-
-  long hun = hundredths;
+  long hun = (long) round((double) frames * 100.0 / 75.0);
   hun += (minutes * 60 + seconds) * 100;
 
   return hun;
