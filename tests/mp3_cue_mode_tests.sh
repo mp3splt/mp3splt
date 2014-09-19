@@ -22,6 +22,27 @@ FILE ${Q}xx$MP3_FILE${Q} MP3
 " > $CUE_FILE
 }
 
+function _create_cue_file_with_frames
+{
+  Q='"'
+  echo "PERFORMER ${Q}GNU_Linux${Q}
+TITLE ${Q}Gentoo${Q}
+FILE ${Q}xx$MP3_FILE${Q} MP3
+  TRACK 01 AUDIO
+    TITLE ${Q}Our piano${Q}
+    PERFORMER ${Q}First performer${Q}  
+    INDEX 01 00:00:08
+  TRACK 02 AUDIO
+    TITLE ${Q}Our guitar${Q}  
+    INDEX 01   01:43:25  
+  TRACK 03 AUDIO
+    TITLE ${Q}Our laptop${Q}
+    PERFORMER ${Q}Third performer${Q}
+    INDEX 01 03:20:71
+" > $CUE_FILE
+}
+
+
 function _create_incomplete_cue_file
 {
   Q=$1
@@ -420,21 +441,21 @@ function test_cue_mode_and_output_format
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
-   File \"$OUTPUT_DIR/First performer/1/001-First performer-First performer-Gentoo-Our piano.mp3\" created
-   File \"$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux--Gentoo-Our guitar.mp3\" created
-   File \"$OUTPUT_DIR/Third performer/3/003-Third performer-Third performer-Gentoo-Our laptop.mp3\" created
+   File \"$OUTPUT_DIR/GNU_Linux/1/001-First performer-GNU_Linux-First performer-Gentoo-Our piano.mp3\" created
+   File \"$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux-GNU_Linux--Gentoo-Our guitar.mp3\" created
+   File \"$OUTPUT_DIR/GNU_Linux/3/003-Third performer-GNU_Linux-Third performer-Gentoo-Our laptop.mp3\" created
  Processed 9402 frames - Sync errors: 0
  file split (EOF)"
-  mp3splt_args="-d $OUTPUT_DIR -o @a/@n/@n3-@a-@p-@b-@t -q -c $CUE_FILE $MP3_FILE" 
+  mp3splt_args="-d $OUTPUT_DIR -o @a/@n/@n3-@A-@a-@p-@b-@t -q -c $CUE_FILE $MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  current_file="$OUTPUT_DIR/First performer/1/001-First performer-First performer-Gentoo-Our piano.mp3"
+  current_file="$OUTPUT_DIR/GNU_Linux/1/001-First performer-GNU_Linux-First performer-Gentoo-Our piano.mp3"
   check_current_mp3_length "01.43"
 
-  current_file="$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux--Gentoo-Our guitar.mp3"
+  current_file="$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux-GNU_Linux--Gentoo-Our guitar.mp3"
   check_current_mp3_length "01.37"
  
-  current_file="$OUTPUT_DIR/Third performer/3/003-Third performer-Third performer-Gentoo-Our laptop.mp3"
+  current_file="$OUTPUT_DIR/GNU_Linux/3/003-Third performer-GNU_Linux-Third performer-Gentoo-Our laptop.mp3"
   check_current_mp3_length "00.45"
 
   print_ok
@@ -476,6 +497,41 @@ function test_cue_exported_mp3splt_gtk_cue_mode_and_output_format
  
   current_file="$OUTPUT_DIR/3_third.mp3"
   check_current_mp3_length "01.04"
+
+  print_ok
+  echo
+}
+
+function test_cue_with_frames
+{
+  _create_cue_file_with_frames
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cue mode with frames"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/1__00_00_11__01_43_33.mp3\" created
+   File \"$OUTPUT_DIR/2__01_43_33__03_20_95.mp3\" created
+   File \"$OUTPUT_DIR/3__03_20_95__04_05_58.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+$auto_adjust_warning"
+  mp3splt_args="-d $OUTPUT_DIR -o @n__@m_@s_@h__@M_@S_@H -c $CUE_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
 
   print_ok
   echo
