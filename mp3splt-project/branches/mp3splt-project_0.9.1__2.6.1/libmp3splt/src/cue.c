@@ -216,11 +216,11 @@ static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, s
   {
     if (cu->tracks > 0)
     {
-      if ((err = splt_cue_store_value(state, line_content, cu->tracks - 1, SPLT_TAGS_ARTIST, cu)) != SPLT_OK)
+      /*if ((err = splt_cue_store_value(state, line_content, cu->tracks - 1, SPLT_TAGS_ARTIST, cu)) != SPLT_OK)
       {
         cu->error = err;
         return;
-      }
+      }*/
 
       if ((err = splt_cue_store_value(state, line_content, cu->tracks - 1, SPLT_TAGS_PERFORMER, cu)) != SPLT_OK)
       {
@@ -245,7 +245,7 @@ static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_
 
   char *trimmed_line = splt_su_trim_spaces(line_content);
 
-  long hundr_seconds = splt_co_convert_to_hundreths(trimmed_line);
+  long hundr_seconds = splt_co_convert_cue_line_to_hundreths(trimmed_line);
   if (hundr_seconds == -1)
   {
     splt_e_set_error_data(state, cu->file);

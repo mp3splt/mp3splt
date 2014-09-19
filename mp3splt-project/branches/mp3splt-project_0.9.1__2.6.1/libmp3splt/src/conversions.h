@@ -31,7 +31,7 @@
 
 #ifndef SPLT_CONVERSIONS_H
 
-long splt_co_convert_to_hundreths (const char *s);
+long splt_co_convert_cue_line_to_hundreths (const char *s);
 float splt_co_convert_to_db(double input);
 double splt_co_convert_from_db(float input);
 void splt_co_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *hundr);
