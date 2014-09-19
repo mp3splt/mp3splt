@@ -550,8 +550,10 @@ function test_misc_with_complex_input_symlink
   ln -s symlink_dir2/$CBR_MP3 symlink_file1
   ln -s symlink_file1 symlink_file2
 
+  absolute_songs_dir=`readlink -f $SONGS_DIR`
+
   expected=" Processing file 'symlink_file2' ...
- info: resolving linked filename to 'symlink_dir2/${M_FILE}.mp3'
+ info: resolving linked filename to '$absolute_songs_dir/${M_FILE}.mp3'
  info: file matches the plugin 'mp3 (libmad)'
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
  info: starting normal split
