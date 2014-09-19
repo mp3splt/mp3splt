@@ -93,7 +93,20 @@ static int splt_io_file_type_is(const char *fname, int file_type)
 }
 
 #ifndef __WIN32__
-static char *splt_io_readlink(const char *fname)
+static char *splt_io_to_real_path(char *fname)
+{
+  char *resolved_path = realpath(fname, NULL);
+
+  if (resolved_path)
+  {
+    free(fname);
+    return resolved_path;
+  }
+
+  return fname;
+}
+
+static char *splt_io_readlink_as_realpath(const char *fname)
 {
   int bufsize = 1024;
 
@@ -115,7 +128,7 @@ static char *splt_io_readlink(const char *fname)
     if (real_link_size < bufsize)
     {
       linked_fname[real_link_size] = '\0';
-      return linked_fname;
+      return splt_io_to_real_path(linked_fname);
     }
 
     free(linked_fname);
@@ -129,7 +142,7 @@ static char *splt_io_get_linked_fname_one_level(const char *fname, int *number_o
 {
   char *previous_linked_fname = NULL;
 
-  char *linked_fname = splt_io_readlink(fname);
+  char *linked_fname = splt_io_readlink_as_realpath(fname);
   if (!linked_fname)
   {
     return NULL;
@@ -143,7 +156,7 @@ static char *splt_io_get_linked_fname_one_level(const char *fname, int *number_o
       free(previous_linked_fname);
     }
     previous_linked_fname = linked_fname;
-    linked_fname = splt_io_readlink(linked_fname);
+    linked_fname = splt_io_readlink_as_realpath(linked_fname);
 
     count++;
     if (count > MAX_SYMLINKS)
