@@ -57,6 +57,8 @@ void splt_sp_join_minimum_tracks_splitpoints(splt_state *state, int *error);
 
 void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
     long *mins, long *secs, long *hudr);
+void splt_sp_get_mins_secs_frames_from_splitpoint(long splitpoint,
+    long *mins, long *secs, long *frames);
 
 long splt_sp_overlap_time(splt_state *state, int splitpoint_index);
 

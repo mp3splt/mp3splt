@@ -185,7 +185,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_02m_01s_20h__03m_00s_10h"
-    INDEX 01 02:01:20
+    INDEX 01 02:01:15
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
@@ -194,7 +194,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_03m_00s_10h__03m_04s_85h"
-    INDEX 01 03:00:10'
+    INDEX 01 03:00:08'
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
@@ -263,7 +263,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_02m_01s_20h__03m_00s_10h"
-    INDEX 01 02:01:20
+    INDEX 01 02:01:15
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
@@ -272,7 +272,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_03m_00s_10h__03m_04s_85h"
-    INDEX 01 03:00:10'
+    INDEX 01 03:00:08'
 
   print_ok
   echo
@@ -355,7 +355,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_02m_01s_20h__03m_04s_85h"
-    INDEX 01 02:01:20
+    INDEX 01 02:01:15
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
@@ -364,7 +364,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_03m_00s_10h__03m_04s_85h"
-    INDEX 01 03:00:10'
+    INDEX 01 03:00:08'
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
   check_current_ogg_length "1m:31.199s"
@@ -575,7 +575,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM TRACK "8"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_02m_01s_20h__03m_00s_10h"
-    INDEX 01 02:01:20
+    INDEX 01 02:01:15
   TRACK 05 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
@@ -585,7 +585,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM TRACK "20"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Kelly_Allyn__Whiskey_Can_03m_00s_10h__03m_04s_85h"
-    INDEX 01 03:00:10'
+    INDEX 01 03:00:08'
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
   check_all_ogg_tags "a1" "b1" "t1" "2000" "" "10" "my_comment"
