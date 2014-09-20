@@ -84,22 +84,45 @@ FILE ${Q}xx$MP3_FILE${Q} MP3
 
 function _create_mp3splt_gtk_exported_cue
 {
-  echo "REM CREATOR "MP3SPLT_GTK"
-FILE ""
+  Q='"'
+  echo "REM CREATOR ${Q}MP3SPLT_GTK${Q}
+FILE ${Q}${Q}
         TRACK 01 AUDIO
-                TITLE "first"
+                TITLE ${Q}first${Q}
                 INDEX 01 0:00:00
-                REM NAME "first_name"
+                REM NAME ${Q}first_name${Q}
         TRACK 02 AUDIO
-                TITLE "skip"
+                TITLE ${Q}skip${Q}
                 REM NOKEEP
                 INDEX 01 1:00:00
         TRACK 03 AUDIO
-                TITLE "second"
+                TITLE ${Q}second${Q}
                 INDEX 01 1:43:00
         TRACK 04 AUDIO
-                TITLE "third"
+                TITLE ${Q}third${Q}
                 INDEX 01 3:01:00
+" > $CUE_FILE
+}
+
+function _create_exported_cue_with_frames
+{
+  Q='"'
+  echo "FILE ${Q}songs/La_Verue__Today.mp3${Q} MP3
+   TRACK 01 AUDIO
+     TITLE ${Q}first${Q}
+     REM TRACK ${Q}1${Q}
+     REM NAME ${Q}- 1 - first${Q}
+     INDEX 01 00:00:00
+   TRACK 02 AUDIO
+     TITLE ${Q}third${Q}
+     REM TRACK ${Q}4${Q}
+     REM NAME ${Q}- 2 - second${Q}
+     INDEX 01 01:43:48
+   TRACK 03 AUDIO
+     TITLE ${Q}${Q}
+     PERFORMER ${Q}${Q}
+     REM NAME ${Q}- 3 - third${Q}
+     INDEX 01 03:01:73
 " > $CUE_FILE
 }
 
@@ -596,6 +619,56 @@ function test_cue_with_frames
 $auto_adjust_warning"
   mp3splt_args="-d $OUTPUT_DIR -o @n__@m_@s_@h__@M_@S_@H -c $CUE_FILE $MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
+
+  print_ok
+  echo
+}
+
+function test_cue_parse_and_export_same_as_input
+{
+  _create_exported_cue_with_frames
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cue mode & export cue same as input"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ reading informations from CUE file songs/test.cue ...
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/- 1 - first.mp3\" created
+   File \"$OUTPUT_DIR/- 2 - second.mp3\" created
+   File \"$OUTPUT_DIR/- 3 - third.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+ CUE file 'output/output_out.cue' created.
+$auto_adjust_warning"
+  mp3splt_args="-P -E output/out.cue -d $OUTPUT_DIR -c $CUE_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  Q='"'
+
+  check_file_content "output/output_out.cue" "FILE ${Q}songs/La_Verue__Today.mp3${Q} MP3
+  TRACK 01 AUDIO
+    TITLE ${Q}first${Q}
+    REM TRACK ${Q}1${Q}
+    REM NAME ${Q}- 1 - first${Q}
+    INDEX 01 00:00:00
+  TRACK 02 AUDIO
+    TITLE ${Q}third${Q}
+    REM TRACK ${Q}4${Q}
+    REM NAME ${Q}- 2 - second${Q}
+    INDEX 01 01:43:48
+  TRACK 03 AUDIO
+    REM NAME ${Q}- 3 - third${Q}
+    INDEX 01 03:01:73"
 
   print_ok
   echo
