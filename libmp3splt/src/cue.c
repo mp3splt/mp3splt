@@ -785,13 +785,13 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
       fprintf(file_output, "    REM NOKEEP\n");
     }
 
-    long mins = 0, secs = 0, hundr = 0;
+    long mins = 0, secs = 0, frames = 0;
     if (splitpoint == LONG_MAX)
     {
       splitpoint = total_time;
     }
-    splt_sp_get_mins_secs_hundr_from_splitpoint(splitpoint, &mins, &secs, &hundr);
-    fprintf(file_output, "    INDEX 01 %02ld:%02ld:%02ld\n", mins, secs, hundr);
+    splt_sp_get_mins_secs_frames_from_splitpoint(splitpoint, &mins, &secs, &frames);
+    fprintf(file_output, "    INDEX 01 %02ld:%02ld:%02ld\n", mins, secs, frames);
 
     splt_t_set_current_split_file_number_next(state);
   }

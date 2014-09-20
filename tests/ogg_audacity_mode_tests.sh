@@ -133,7 +133,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "first"
-    INDEX 01 01:07:13
+    INDEX 01 01:07:10
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
@@ -232,7 +232,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "first"
-    INDEX 01 01:07:13
+    INDEX 01 01:07:10
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"

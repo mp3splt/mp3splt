@@ -35,6 +35,7 @@ All functions needed for handling split points (adding to the list,
 checking, of this split point already exists,...)
 */
 #include <string.h>
+#include <math.h>
 
 #include "splt.h"
 
@@ -293,6 +294,28 @@ void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
   if (hundr)
   {
     *hundr = splitpoint % 100;
+  }
+
+  splitpoint /= 100;
+
+  if (secs)
+  {
+    *secs = splitpoint % 60;
+  }
+
+  if (mins)
+  {
+    *mins = splitpoint / 60;
+  }
+}
+
+void splt_sp_get_mins_secs_frames_from_splitpoint(long splitpoint,
+    long *mins, long *secs, long *frames)
+{
+  if (frames)
+  {
+    long hundr = splitpoint % 100;
+    *frames = (long) round((double) hundr * 75.0 / 100.0);
   }
 
   splitpoint /= 100;

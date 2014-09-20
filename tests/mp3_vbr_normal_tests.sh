@@ -190,7 +190,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
     REM NAME "La_Verue__Today_02m_00s_20h__03m_05s"
-    INDEX 01 02:00:20
+    INDEX 01 02:00:15
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
@@ -269,7 +269,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
     REM NAME "La_Verue__Today_02m_00s_20h__03m_05s"
-    INDEX 01 02:00:20
+    INDEX 01 02:00:15
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
@@ -362,7 +362,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
     REM NAME "La_Verue__Today_02m_00s_20h__04m_00s"
-    INDEX 01 02:00:20
+    INDEX 01 02:00:15
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"

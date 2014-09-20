@@ -194,7 +194,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
     REM DATE "2009"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Merci_Bonsoir__Je_veux_Only_love_02m_04s_50h__03m_00s"
-    INDEX 01 02:04:50
+    INDEX 01 02:04:38
   TRACK 03 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
@@ -274,7 +274,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
     REM DATE "2009"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Merci_Bonsoir__Je_veux_Only_love_02m_04s_50h__03m_00s"
-    INDEX 01 02:04:50
+    INDEX 01 02:04:38
   TRACK 03 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
@@ -329,7 +329,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
     REM DATE "2009"
     REM COMMENT "http://www.jamendo.com"
     REM NAME "Merci_Bonsoir__Je_veux_Only_love_02m_00s_20h__03m_43s_81h"
-    INDEX 01 02:00:20
+    INDEX 01 02:00:15
   TRACK 03 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
