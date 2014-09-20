@@ -193,7 +193,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM DATE \"2009\"
     REM TRACK \"2\"
     REM NAME \"Don't worry - 2 - Yeah, split me !\"
-    INDEX 01 01:04:67
+    INDEX 01 01:04:50
   TRACK 03 AUDIO
     TITLE \"7 sins campaign\"
     PERFORMER \"MS\"
@@ -202,7 +202,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM DATE \"2009\"
     REM TRACK \"3\"
     REM NAME \"MS - 3 - 7 sins campaign\"
-    INDEX 01 02:11:34
+    INDEX 01 02:11:26
   TRACK 04 AUDIO
     TITLE \"What the hack ?\"
     PERFORMER \"Don't worry\"
@@ -211,7 +211,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM DATE \"2009\"
     REM TRACK \"4\"
     REM NAME \"Don't worry - 4 - What the hack _\"
-    INDEX 01 03:34:40
+    INDEX 01 03:34:30
   TRACK 05 AUDIO
     TITLE \"\"
     PERFORMER \"\"
@@ -304,7 +304,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM DATE \"2009\"
     REM TRACK \"2\"
     REM NAME \"Don't worry - 2 - Yeah, split me !\"
-    INDEX 01 01:04:67
+    INDEX 01 01:04:50
   TRACK 03 AUDIO
     TITLE \"7 sins campaign\"
     PERFORMER \"MS\"
@@ -313,7 +313,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM DATE \"2009\"
     REM TRACK \"3\"
     REM NAME \"MS - 3 - 7 sins campaign\"
-    INDEX 01 02:11:34
+    INDEX 01 02:11:26
   TRACK 04 AUDIO
     TITLE \"What the hack ?\"
     PERFORMER \"Don't worry\"
@@ -322,7 +322,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM DATE \"2009\"
     REM TRACK \"4\"
     REM NAME \"Don't worry - 4 - What the hack _\"
-    INDEX 01 03:34:40
+    INDEX 01 03:34:30
   TRACK 05 AUDIO
     TITLE \"\"
     PERFORMER \"\"

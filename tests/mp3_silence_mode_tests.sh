@@ -174,7 +174,7 @@ FILE "songs/La_Verue__Today_silence.mp3" MP3
     REM GENRE "Rock"
     REM COMMENT "http://www.jamendo.com/"
     REM NAME "La_Verue__Today_silence_silence_2"
-    INDEX 01 01:04:80
+    INDEX 01 01:04:60
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
@@ -182,7 +182,7 @@ FILE "songs/La_Verue__Today_silence.mp3" MP3
     REM GENRE "Rock"
     REM COMMENT "http://www.jamendo.com/"
     REM NAME "La_Verue__Today_silence_silence_3"
-    INDEX 01 02:55:46'
+    INDEX 01 02:55:35'
 
   print_ok
   echo
