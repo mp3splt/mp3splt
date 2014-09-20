@@ -232,11 +232,11 @@ static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, s
 }
 
 //! Process the rest of a cue line that begins with the word INDEX
-static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_state *state)
+static void splt_cue_process_index_line(int index_length, char *line_content, cue_utils *cu, splt_state *state)
 {
   int err = SPLT_OK;
 
-  line_content += 9;
+  line_content += index_length;
 
   if (cu->tracks <= 0)
   {
@@ -429,7 +429,12 @@ static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
   }
   else if ((line_content = strstr(line, "INDEX 01")) != NULL)
   {
-    splt_cue_process_index_line(line_content, cu, state);
+    splt_cue_process_index_line(9, line_content, cu, state);
+  }
+  //also support strange CUE files having INDEX 1
+  else if ((line_content = strstr(line, "INDEX 1 ")) != NULL)
+  {
+    splt_cue_process_index_line(8, line_content, cu, state);
   }
   else if ((line_content = strstr(line, "FILE")) != NULL)
   {
