@@ -22,6 +22,26 @@ FILE ${Q}xx$MP3_FILE${Q} MP3
 " > $CUE_FILE
 }
 
+function _create_cue_with_index1_file
+{
+  Q='"'
+  echo "PERFORMER ${Q}GNU_Linux${Q}
+TITLE ${Q}Gentoo${Q}
+FILE ${Q}xx$MP3_FILE${Q} MP3
+  TRACK 01 AUDIO
+    TITLE ${Q}Our piano${Q}
+    PERFORMER ${Q}First performer${Q}  
+    INDEX 1 00:00:00
+  TRACK 02 AUDIO
+    TITLE ${Q}Our guitar${Q}  
+    INDEX 1   01:43:00  
+  TRACK 03 AUDIO
+    TITLE ${Q}Our laptop${Q}
+    PERFORMER ${Q}Third performer${Q}
+    INDEX 1 03:20:00
+" > $CUE_FILE
+}
+
 function _create_cue_file_with_frames
 {
   Q='"'
@@ -180,6 +200,50 @@ $auto_adjust_warning"
   run_check_output "$mp3splt_args" "$expected"
 
   check_output_directory_is_empty
+
+  print_ok
+  echo
+}
+
+function test_cue_with_index1
+{
+  _create_cue_with_index1_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cue with index 1 instead of index 01"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/First performer - 1 - Our piano.mp3\" created
+   File \"$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3\" created
+   File \"$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+$auto_adjust_warning"
+  mp3splt_args="-d $OUTPUT_DIR -c $CUE_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/First performer - 1 - Our piano.mp3"
+  check_current_mp3_length "01.43"
+
+  current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3"
+  check_current_mp3_length "01.37"
+
+  current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3"
+  check_current_mp3_length "00.45"
 
   print_ok
   echo
