@@ -171,7 +171,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2009"
     REM TRACK "2"
     REM NAME "Don'\''t worry - 2 - Yeah, split me !"
-    INDEX 01 01:04:67
+    INDEX 01 01:04:50
   TRACK 03 AUDIO
     TITLE "7 sins campaign"
     PERFORMER "MS"
@@ -180,7 +180,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2009"
     REM TRACK "3"
     REM NAME "MS - 3 - 7 sins campaign"
-    INDEX 01 02:11:34'
+    INDEX 01 02:11:26'
 
   current_file="$OUTPUT_DIR/Don't worry - 1 - A famous title.ogg"
   check_current_ogg_length "1m:04.670s"
@@ -253,7 +253,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2009"
     REM TRACK "2"
     REM NAME "Don'\''t worry - 2 - Yeah, split me !"
-    INDEX 01 01:04:67
+    INDEX 01 01:04:50
   TRACK 03 AUDIO
     TITLE "7 sins campaign"
     PERFORMER "MS"
@@ -262,7 +262,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM DATE "2009"
     REM TRACK "3"
     REM NAME "MS - 3 - 7 sins campaign"
-    INDEX 01 02:11:34'
+    INDEX 01 02:11:26'
 
   print_ok
   echo
