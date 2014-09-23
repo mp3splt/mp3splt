@@ -7,6 +7,13 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.6.1b
+
+- bug fix: make sure to separate artist and performer in CUE files for use of @p and @a (libmp3splt)
+- bug fix on CUE: from INDEX format MM:SS:FF, handle FF as frames instead of hundreths (libmp3splt)
+- bug fix: issue when having input file inside several recursive symlinks (libmp3splt)
+- small improvement on CUE: also accept INDEX 1 and not only INDEX 01 (libmp3splt)
+
 #mp3splt version 2.6.1a
 
 - FLAC: fixed an important bug not allowing to split some files (libmp3splt)
