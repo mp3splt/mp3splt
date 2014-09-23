@@ -4,6 +4,14 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.9.1b
+
+- bug fix: make sure to separate artist and performer in CUE files for use of @p and @a (libmp3splt)
+- bug fix on CUE: from INDEX format MM:SS:FF, handle FF as frames instead of hundreths (libmp3splt)
+- bug fix: issue when having input file inside several recursive symlinks (libmp3splt)
+- small improvement on CUE: also accept INDEX 1 and not only INDEX 01 (libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.9.1a
 
 - FLAC: fixed an important bug not allowing to split some files (libmp3splt)

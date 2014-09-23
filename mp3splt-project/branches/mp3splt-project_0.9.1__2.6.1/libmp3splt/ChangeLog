@@ -2,6 +2,14 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.9.1b
+-------------------------------------------------------------
+
+- bug fix: make sure to separate artist and performer in CUE files for use of @p and @a
+- bug fix on CUE: from INDEX format MM:SS:FF, handle FF as frames instead of hundreths
+- bug fix: issue when having input file inside several recursive symlinks
+- small improvement on CUE: also accept INDEX 1 and not only INDEX 01
+
 libmp3splt version 0.9.1a
 -------------------------------------------------------------
 
