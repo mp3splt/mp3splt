@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2014-04-29 12:15+0200\n"
+"POT-Creation-Date: 2014-09-21 22:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,19 +29,19 @@ msgid ""
 "  Artist: %s\n"
 msgstr ""
 
-#: src/cue.c:513
+#: src/cue.c:518
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:587 src/cddb.c:133
+#: src/cue.c:592 src/cddb.c:133
 #, c-format
 msgid ""
 "  Tracks: %d\n"
 "\n"
 msgstr ""
 
-#: src/cue.c:810
+#: src/cue.c:815
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -565,7 +565,7 @@ msgstr ""
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
-#: src/split_points.c:398
+#: src/split_points.c:421
 #, c-format
 msgid " info: track too short (%ld.%ld.%ld < %ld.%ld.%ld); skipped.\n"
 msgstr ""
