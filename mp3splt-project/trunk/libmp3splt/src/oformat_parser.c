@@ -83,6 +83,7 @@ static short splt_of_output_variable_is_valid(char v, int *amb)
     case 'A':
     case 'b':
     case 'f':
+    case 'd':
     case 'g':
     case 'p':
       break;
@@ -923,6 +924,30 @@ put_value:
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
+            }
+          }
+          break;
+        case 'd':
+          {
+            char *last_dir = splt_su_get_last_dir_of_fname(splt_t_get_filename_to_split(state), &error);
+            if (error < 0) { goto end; }
+
+            if (last_dir)
+            {
+              snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+
+              int last_dir_length = strlen(last_dir);
+
+              fm_length = strlen(temp) + last_dir_length;
+              if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+              {
+                error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                goto end;
+              }
+
+              snprintf(fm, fm_length, temp, last_dir);
+              free(last_dir);
+              last_dir = NULL;
             }
           }
           break;
