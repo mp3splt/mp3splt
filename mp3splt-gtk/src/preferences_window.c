@@ -1116,6 +1116,7 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
         "  @u: track number identifier as uppercase letter (not the real ID3 track number) **\n"
         "  @U: track tag number as uppercase letter **\n"
         "  @f: input filename (without extension)\n"
+        "  @d: last directory of the input filename or the filename itself if no directory\n"
         "  @m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint **\n"
         "  @M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint **\n"
         "\n"
