@@ -247,6 +247,13 @@ static void splt_mp3_state_free(splt_state *state)
     mp3state->mp3file.xingbuffer = NULL;
   }
 
+  if (mp3state->new_xing_lame_frame)
+  {
+    free(mp3state->new_xing_lame_frame);
+    mp3state->new_xing_lame_frame = NULL;
+    mp3state->new_xing_lame_frame_size = 0;
+  }
+
   struct splt_reservoir *reservoir = &mp3state->reservoir;
   if (reservoir->reservoir_frame != NULL)
   {
@@ -1205,11 +1212,15 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state, int fr
   mp3state->file_input = file_input;
   mp3state->framemode = framemode;
   mp3state->headw = 0;
+  mp3state->first_frame_header_for_reservoir = 0;
+  mp3state->is_guessed_vbr = SPLT_FALSE;
   mp3state->next_br_header_index = 0;
   mp3state->number_of_br_headers_stored = 0;
   mp3state->mp3file.xing = 0;
   mp3state->mp3file.xing_offset = 0;
   mp3state->mp3file.xingbuffer = NULL;
+  mp3state->new_xing_lame_frame_size = 0;
+  mp3state->new_xing_lame_frame = NULL;
   mp3state->overlapped_frames = NULL;
   mp3state->overlapped_frames_bytes = 0;
   mp3state->overlapped_number_of_frames = 0;
@@ -1634,20 +1645,25 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   }
 #endif
 
-  if (mp3state->mp3file.xing != 0)
+  //error mode split must only contain original file data
+  if (splt_o_get_int_option(state, SPLT_OPT_XING) && split_mode != SPLT_OPTION_ERROR_MODE)
   {
-    if (splt_o_get_int_option(state, SPLT_OPT_XING))
+    void *xing_lame_frame = mp3state->new_xing_lame_frame;
+    int xing_size = mp3state->new_xing_lame_frame_size;
+
+    if (mp3state->mp3file.xing > 0)
     {
-      //error mode split must only contain original file data
-      if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
+      xing_lame_frame = mp3state->mp3file.xingbuffer;
+      xing_size = mp3state->mp3file.xing;
+    }
+
+    if (xing_lame_frame)
+    {
+      if (splt_io_fwrite(state, xing_lame_frame, 1, xing_size, file_output) < xing_size)
       {
-        if (splt_io_fwrite(state, mp3state->mp3file.xingbuffer, 1, 
-              mp3state->mp3file.xing, file_output) < mp3state->mp3file.xing)
-        {
-          splt_e_set_error_data(state, output_fname);
-          error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-          goto function_end;
-        }
+        splt_e_set_error_data(state, output_fname);
+        error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
+        goto function_end;
       }
     }
   }
@@ -2377,9 +2393,18 @@ bloc_end:
       splt_c_put_progress_text(state,SPLT_PROGRESS_PREPARE);
 
       long int frames_begin = mp3state->frames;
+
+      mp3state->first_frame_header_for_reservoir = 0;
+      mp3state->is_guessed_vbr = SPLT_FALSE;
+
+      int frames_counter = 0;
+      int first_bitrate = 0;
+
       // Finds end by counting frames
       while (mp3state->frames <= fend)
       {
+        frames_counter++;
+
         mp3state->frames++;
         end = splt_mp3_findhead(mp3state, mp3state->h.ptr + mp3state->h.framesize);
         if (end == -1)
@@ -2402,6 +2427,19 @@ bloc_end:
 
         mp3state->h = splt_mp3_makehead (mp3state->headw, mp3state->mp3file, mp3state->h, end);
         splt_mp3_read_process_side_info_main_data_begin(mp3state, end);
+
+        if (frames_counter > 1)
+        {
+          if (!mp3state->first_frame_header_for_reservoir)
+          {
+            mp3state->first_frame_header_for_reservoir = (unsigned) mp3state->headw;
+            first_bitrate = mp3state->h.bitrate;
+          }
+          else if (mp3state->h.bitrate != first_bitrate)
+          {
+            mp3state->is_guessed_vbr = SPLT_TRUE;
+          }
+        }
 
         //if we have a progress callback function
         //time split only calculates the end of the 

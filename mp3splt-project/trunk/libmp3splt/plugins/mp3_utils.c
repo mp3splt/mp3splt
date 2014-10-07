@@ -381,6 +381,140 @@ void splt_mp3_parse_xing_lame(splt_mp3_state *mp3state)
   mp3state->mp3file.lame_padding = ((middle & 0xF) << 8) | (last & 0xFF);
 }
 
+static unsigned char *splt_mp3_create_new_xing_lame_frame(splt_mp3_state *mp3state, splt_state *state,
+    int *frame_size, int *xing_offset, int *end_xing_offset, splt_code *error)
+{
+  unsigned long frame_header = mp3state->first_frame_header_for_reservoir | 0x00010000; //disable crc
+  int frame_header_created = SPLT_FALSE;
+
+  struct splt_header first_frame_header;
+  first_frame_header = 
+    splt_mp3_makehead(frame_header, mp3state->mp3file, first_frame_header, 0);
+
+  struct splt_header h;
+
+  int i = 1;
+  for (; i < 15; i++) {
+    unsigned long new_frame_header = ((unsigned long) frame_header & 0xFFFF0FFF) | (i << 12);
+
+    h = splt_mp3_makehead(new_frame_header, mp3state->mp3file, h, 0);
+    if (h.framesize < 0xC0) { continue; }
+
+    if (first_frame_header.bitrate == h.bitrate)
+    {
+      frame_header_created = SPLT_TRUE;
+      frame_header = new_frame_header;
+      break;
+    }
+  }
+
+  if (!frame_header_created)
+  {
+    splt_d_print_debug(state,"Failed to create xing lame frame for bitrate %d \n",
+        first_frame_header.bitrate);
+
+    *error = SPLT_ERROR_FAILED_BITRESERVOIR;
+    splt_e_set_error_data(state, "failed to create xing lame frame");
+    return NULL;
+  }
+
+  *frame_size = h.framesize;
+
+  unsigned char *frame = malloc(sizeof(unsigned char) * h.framesize);
+  if (frame == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  frame[0] = (unsigned char) (frame_header >> 24);
+  frame[1] = (unsigned char) (frame_header >> 16);
+  frame[2] = (unsigned char) (frame_header >> 8);
+  frame[3] = (unsigned char) frame_header;
+
+  int j = 4;
+  for (; j < h.framesize;j++) { frame[j] = 0x0; }
+
+  int xing_tag_offset = 4 + h.sideinfo_size;
+
+  if (mp3state->is_guessed_vbr)
+  {
+    frame[xing_tag_offset++] = 'X';
+    frame[xing_tag_offset++] = 'i';
+    frame[xing_tag_offset++] = 'n';
+    frame[xing_tag_offset++] = 'g';
+  }
+  else
+  {
+    frame[xing_tag_offset++] = 'I';
+    frame[xing_tag_offset++] = 'n';
+    frame[xing_tag_offset++] = 'f';
+    frame[xing_tag_offset++] = 'o';
+  }
+
+  *xing_offset = xing_tag_offset;
+
+  frame[xing_tag_offset++] = 0;
+  frame[xing_tag_offset++] = 0;
+  frame[xing_tag_offset++] = 0;
+  frame[xing_tag_offset++] = 0x0F;
+  //0x0F = SPLT_MP3_XING_FRAMES | SPLT_MP3_XING_BYTES | SPLT_MP3_XING_TOC | SPLT_MP3_XING_QUALITY
+
+  xing_tag_offset += (100 + 4 + 4 + 4);
+
+  *end_xing_offset = xing_tag_offset;
+
+  frame[xing_tag_offset++] = 'L';
+  frame[xing_tag_offset++] = 'A';
+  frame[xing_tag_offset++] = 'M';
+  frame[xing_tag_offset++] = 'E';
+
+  return frame;
+}
+
+static void splt_mp3_update_delay_and_padding_on_lame_frame(splt_mp3_state *mp3state,
+    char *delay_padding_ptr, short reservoir_frame, unsigned long *frames)
+{
+  int delay = mp3state->mp3file.lame_delay;
+  int padding = mp3state->mp3file.lame_padding;
+
+  delay += (mp3state->begin_sample -
+      mp3state->first_frame_inclusive * mp3state->mp3file.samples_per_frame);
+
+  long number_of_frames = 0;
+  long last_frame = mp3state->last_frame_inclusive;
+  if (last_frame > mp3state->frames)
+  {
+    last_frame = mp3state->frames;
+  }
+
+  if (last_frame != mp3state->first_frame_inclusive)
+  {
+    number_of_frames = last_frame - mp3state->first_frame_inclusive + 1;
+  }
+  *frames = number_of_frames;
+
+  long number_of_samples = number_of_frames * mp3state->mp3file.samples_per_frame;
+  long number_of_samples_to_play = mp3state->end_sample - mp3state->begin_sample;
+
+  padding = number_of_samples - number_of_samples_to_play - delay;
+
+  if (reservoir_frame)
+  {
+    delay += mp3state->mp3file.samples_per_frame;
+    *frames = *frames + 1;
+  }
+
+  if (delay > SPLT_MP3_LAME_MAX_DELAY) { delay = SPLT_MP3_LAME_MAX_DELAY; }
+  if (padding > SPLT_MP3_LAME_MAX_PADDING) { padding = SPLT_MP3_LAME_MAX_PADDING; }
+  if (delay < 0) { delay = 0; }
+  if (padding < 0) { padding = 0; }
+
+  *delay_padding_ptr = (char) (delay >> 4);
+  *(delay_padding_ptr + 1) = (char) (delay & 0xF) << 4 | (padding >> 8);
+  *(delay_padding_ptr + 2) = (char) padding;
+}
+
 void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t end, 
     unsigned long fbegin, splt_code *error, splt_state *state)
 {
@@ -395,68 +529,68 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
   if (end == -1) { end = mp3state->mp3file.len; }
 
   unsigned long frames = (unsigned long) (mp3state->frames - fbegin + 1);
-  //TODO2: wrong bytes
+  //TODO1: wrong bytes
   unsigned long bytes = (unsigned long) (end - begin + mp3state->mp3file.xing +
       reservoir_bytes + mp3state->overlapped_frames_bytes);
 
+  if (!splt_mp3_handle_bit_reservoir(state))
+  {
+    if (mp3state->mp3file.xing > 0)
+    {
+      splt_mp3_update_existing_xing(mp3state, frames, bytes);
+    }
+
+    return;
+  }
+
   if (mp3state->mp3file.xing <= 0)
   {
-    //TODO1: build new xing Info lame frame if not existing
+    int xing_offset = 0;
+    int end_xing_offset = 0;
+    int frame_size = 0;
+    unsigned char *frame = splt_mp3_create_new_xing_lame_frame(mp3state, state, &frame_size,
+        &xing_offset, &end_xing_offset, error);
+    if (*error < 0) { return; }
+
+    char *delay_padding_ptr = (char *) &frame[end_xing_offset + SPLT_MP3_LAME_DELAY_OFFSET];
+    splt_mp3_update_delay_and_padding_on_lame_frame(mp3state, delay_padding_ptr, reservoir_frame, &frames);
+
+    frame[xing_offset + 4] = (frames >> 24) & 0xFF;
+    frame[xing_offset + 5] = (frames >> 16) & 0xFF;
+    frame[xing_offset + 6] = (frames >> 8) & 0xFF;
+    frame[xing_offset + 7] = frames & 0xFF;
+
+    frame[xing_offset + 8] = (bytes >> 24) & 0xFF;
+    frame[xing_offset + 9] = (bytes >> 16) & 0xFF;
+    frame[xing_offset + 10] = (bytes >> 8) & 0xFF;
+    frame[xing_offset + 11] = bytes & 0xFF;
+
+    if (mp3state->new_xing_lame_frame)
+    {
+      free(mp3state->new_xing_lame_frame);
+    }
+
+    mp3state->new_xing_lame_frame_size = frame_size;
+    mp3state->new_xing_lame_frame = frame;
+
     return;
   }
 
-  if (splt_mp3_xing_frame_has_lame(mp3state) && splt_mp3_handle_bit_reservoir(state))
+  if (splt_mp3_xing_frame_has_lame(mp3state))
   {
-    int delay = mp3state->mp3file.lame_delay;
-    int padding = mp3state->mp3file.lame_padding;
-
-    delay += (mp3state->begin_sample -
-        mp3state->first_frame_inclusive * mp3state->mp3file.samples_per_frame);
-
-    long number_of_frames = 0;
-    long last_frame = mp3state->last_frame_inclusive;
-    if (last_frame > mp3state->frames)
-    {
-      last_frame = mp3state->frames;
-    }
-
-    if (last_frame != mp3state->first_frame_inclusive)
-    {
-      number_of_frames = last_frame - mp3state->first_frame_inclusive + 1;
-    }
-    frames = number_of_frames;
-
-    long number_of_samples = number_of_frames * mp3state->mp3file.samples_per_frame;
-    long number_of_samples_to_play = mp3state->end_sample - mp3state->begin_sample;
-
-    padding = number_of_samples - number_of_samples_to_play - delay;
-
-    if (reservoir_frame)
-    {
-      delay += mp3state->mp3file.samples_per_frame;
-      frames++;
-    }
-
-    if (delay > SPLT_MP3_LAME_MAX_DELAY) { delay = SPLT_MP3_LAME_MAX_DELAY; }
-    if (padding > SPLT_MP3_LAME_MAX_PADDING) { padding = SPLT_MP3_LAME_MAX_PADDING; }
-    if (delay < 0) { delay = 0; }
-    if (padding < 0) { padding = 0; }
-
     char *delay_padding_ptr = &mp3state->mp3file.xingbuffer[splt_mp3_get_delay_offset(mp3state)];
-    *delay_padding_ptr = (char) (delay >> 4);
-    *(delay_padding_ptr + 1) = (char) (delay & 0xF) << 4 | (padding >> 8);
-    *(delay_padding_ptr + 2) = (char) padding;
-
+    splt_mp3_update_delay_and_padding_on_lame_frame(mp3state, delay_padding_ptr, reservoir_frame, &frames);
     splt_mp3_update_existing_xing(mp3state, frames, bytes);
-
     return;
   }
 
-  splt_mp3_update_existing_xing(mp3state, frames, bytes);
+  if (mp3state->mp3file.xing > 0)
+  {
+    *error = SPLT_ERROR_FAILED_BITRESERVOIR;
+    splt_e_set_error_data(state, "input files with Xing frame without LAME not yet supported");
+  }
 
-  //TODO3: update lame crc16
-
-  //TODO4: make bigger frame if no lame
+  //TODO2: update lame crc16
 }
 
 static int splt_mp3_current_br_header_index(splt_mp3_state *mp3state)
@@ -779,32 +913,34 @@ static void splt_mp3_build_reservoir_frame(splt_mp3_state *mp3state, splt_state 
     struct splt_header h;
     h = splt_mp3_makehead(header, mp3state->mp3file, h, 0);
 
-    if (h.frame_data_space >= bytes_in_main_data)
+    if (h.frame_data_space < bytes_in_main_data)
     {
-      unsigned char *frame = malloc(sizeof(unsigned char) * h.framesize);
-      if (frame == NULL)
-      {
-        *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        return;
-      }
+      continue;
+    }
 
-      frame[0] = (unsigned char) (header >> 24);
-      frame[1] = (unsigned char) (header >> 16);
-      frame[2] = (unsigned char) (header >> 8);
-      frame[3] = (unsigned char) header;
-
-      int i = 4;
-      for (; i < 4 + h.sideinfo_size;i++) { frame[i] = 0x0; }
-      for (; i < h.framesize;i++) { frame[i] = 0x78; }
-
-      memcpy(frame + h.framesize - res->reservoir_end, res->reservoir, res->reservoir_end);
-
-      if (res->reservoir_frame) { free(res->reservoir_frame); }
-      res->reservoir_frame = frame;
-      res->reservoir_frame_size = h.framesize;
-
+    unsigned char *frame = malloc(sizeof(unsigned char) * h.framesize);
+    if (frame == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       return;
     }
+
+    frame[0] = (unsigned char) (header >> 24);
+    frame[1] = (unsigned char) (header >> 16);
+    frame[2] = (unsigned char) (header >> 8);
+    frame[3] = (unsigned char) header;
+
+    int i = 4;
+    for (; i < 4 + h.sideinfo_size;i++) { frame[i] = 0x0; }
+    for (; i < h.framesize;i++) { frame[i] = 0x78; }
+
+    memcpy(frame + h.framesize - res->reservoir_end, res->reservoir, res->reservoir_end);
+
+    if (res->reservoir_frame) { free(res->reservoir_frame); }
+    res->reservoir_frame = frame;
+    res->reservoir_frame_size = h.framesize;
+
+    return;
   }
 }
 
