@@ -138,6 +138,9 @@ typedef struct {
   int first;
   unsigned long headw;
 
+  unsigned first_frame_header_for_reservoir;
+  int is_guessed_vbr;
+
   //see the mp3 structure
   struct splt_mp3 mp3file;
 
@@ -154,6 +157,9 @@ typedef struct {
   long overlapped_number_of_frames;
   unsigned char *overlapped_frames;
   size_t overlapped_frames_bytes;
+
+  int new_xing_lame_frame_size;
+  unsigned char *new_xing_lame_frame;
 
   //used internally, libmad structures
   struct mad_stream stream;
