@@ -531,11 +531,12 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
 
   unsigned long frames = (unsigned long) (mp3state->frames - fbegin + 1);
   //TODO1: wrong bytes
-  unsigned long bytes = (unsigned long) (end - begin + mp3state->mp3file.xing +
-      reservoir_bytes + mp3state->overlapped_frames_bytes);
+  unsigned long bytes = (unsigned long) (end - begin + reservoir_bytes + mp3state->overlapped_frames_bytes);
 
   if (!splt_mp3_handle_bit_reservoir(state))
   {
+    bytes += mp3state->mp3file.xing;
+
     if (mp3state->mp3file.xing > 0)
     {
       splt_mp3_update_existing_xing(mp3state, frames, bytes);
@@ -561,6 +562,8 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
     frame[xing_offset + 6] = (frames >> 8) & 0xFF;
     frame[xing_offset + 7] = frames & 0xFF;
 
+    bytes += frame_size;
+
     frame[xing_offset + 8] = (bytes >> 24) & 0xFF;
     frame[xing_offset + 9] = (bytes >> 16) & 0xFF;
     frame[xing_offset + 10] = (bytes >> 8) & 0xFF;
@@ -579,6 +582,8 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
 
   if (splt_mp3_xing_frame_has_lame(mp3state))
   {
+    bytes += mp3state->mp3file.xing;
+
     char *delay_padding_ptr = &mp3state->mp3file.xingbuffer[splt_mp3_get_delay_offset(mp3state)];
     splt_mp3_update_delay_and_padding_on_lame_frame(mp3state, delay_padding_ptr, reservoir_frame, &frames);
     splt_mp3_update_existing_xing(mp3state, frames, bytes);
