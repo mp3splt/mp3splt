@@ -2308,6 +2308,7 @@ bloc_end:
       {
         fend = 0xFFFFFFFF;
         mp3state->end_sample = -1;
+        mp3state->last_frame_inclusive = -1;
       }
 
       splt_d_print_debug(state,"Finding begin...\n");
