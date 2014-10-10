@@ -469,6 +469,11 @@ static unsigned char *splt_mp3_create_new_xing_lame_frame(splt_mp3_state *mp3sta
   frame[xing_tag_offset++] = 'M';
   frame[xing_tag_offset++] = 'E';
 
+  frame[xing_tag_offset++] = '3';
+  frame[xing_tag_offset++] = '.';
+  frame[xing_tag_offset++] = '9';
+  frame[xing_tag_offset++] = '4';
+
   return frame;
 }
 
