@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2014-05-08 23:49+0200\n"
+"POT-Creation-Date: 2014-10-11 14:15+0200\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,56 +41,56 @@ msgid ""
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:441
+#: src/mp3splt.c:444
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "lea la página del manual de documentación o de tipo 'Mp3Splt-h'."
 
-#: src/mp3splt.c:509
+#: src/mp3splt.c:512
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "mal argumento para la opción-p. No fue reconocido valor válido!"
 
-#: src/mp3splt.c:664
+#: src/mp3splt.c:667
 msgid "no input filename(s)."
 msgstr "sin entrada de nombre de archivo (s)."
 
-#: src/mp3splt.c:677
+#: src/mp3splt.c:680
 msgid "multiple splitpoints with stdout !"
 msgstr "splitpoints múltiples con la salida estándar!"
 
-#: src/mp3splt.c:681
+#: src/mp3splt.c:684
 msgid "using time mode with stdout !"
 msgstr "usando el modo de tiempo con la salida estándar!"
 
-#: src/mp3splt.c:722
+#: src/mp3splt.c:725
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:726
+#: src/mp3splt.c:729
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:732
+#: src/mp3splt.c:735
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p -K"
 msgstr ""
 
-#: src/mp3splt.c:806
+#: src/mp3splt.c:809
 msgid "freedb query format ambigous !"
 msgstr "freedb ambigua consulta formato!"
 
-#: src/mp3splt.c:856
+#: src/mp3splt.c:859
 msgid "tags format ambiguous !"
 msgstr "Etiquetas de formato ambiguo!"
 
-#: src/mp3splt.c:888
+#: src/mp3splt.c:891
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:905
+#: src/mp3splt.c:908
 msgid ""
 "\n"
 " +------------------------------------------------------------------------------"
@@ -235,10 +235,13 @@ msgid ""
 msgstr ""
 
 #: src/print_utils.c:309
+#, fuzzy
 msgid ""
 " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
 " -f   Frame mode (mp3 only): process all frames. For higher precision and "
 "VBR.\n"
+" -b   [Experimental] Bit reservoir handling for gapless playback (mp3 "
+"only).\n"
 " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"
 msgstr ""
 "-M + M3U_FILE: Anexa a la m3u especifica los nombres de archivo dividido. -F "
@@ -246,7 +249,7 @@ msgstr ""
 "precisión y VBR. -Un auto-ajuste splitpoints con detección de silencio. (Uso-"
 "p para los argumentos)"
 
-#: src/print_utils.c:312
+#: src/print_utils.c:313
 msgid ""
 " -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots, trackjoin): "
 "user arguments for -s, -a, -t.\n"
@@ -258,7 +261,7 @@ msgid ""
 "      @f: original filename, @g: genre"
 msgstr ""
 
-#: src/print_utils.c:319
+#: src/print_utils.c:320
 msgid ""
 " -g + TAGS: custom tags for the split files.\n"
 "      TAGS can contain those variables: \n"
@@ -268,7 +271,7 @@ msgid ""
 "       (% means that we set the tags for all remaining files)"
 msgstr ""
 
-#: src/print_utils.c:325
+#: src/print_utils.c:326
 msgid ""
 " -G + regex=REGEX: set tags from input filename. REGEX defines how to "
 "extract\n"
@@ -277,7 +280,7 @@ msgid ""
 "<comment>), (?<genre>)"
 msgstr ""
 
-#: src/print_utils.c:329
+#: src/print_utils.c:330
 msgid ""
 " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
 " -k   Consider input not seekable (slower). Default when input is STDIN "
@@ -289,7 +292,7 @@ msgstr ""
 "cuando la entrada es STDIN (-). -O + TIME: Los archivos de superposición "
 "dividir con el tiempo (más lento)."
 
-#: src/print_utils.c:332
+#: src/print_utils.c:333
 msgid ""
 " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean "
 "files.\n"
@@ -303,7 +306,7 @@ msgstr ""
 "desea concatenar el dividir los archivos-N No cree el archivo 'mp3splt.log' "
 "registro cuando se utiliza '-s'."
 
-#: src/print_utils.c:336
+#: src/print_utils.c:337
 msgid ""
 " -P   Pretend to split: simulation of the process, without creating any\n"
 "      files or directories"
@@ -311,13 +314,13 @@ msgstr ""
 "-P Pretende dividida: la simulación del proceso, sin crear archivos o "
 "directorios"
 
-#: src/print_utils.c:338
+#: src/print_utils.c:339
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
 msgstr ""
 "-E + CUE_FILE: splitpoints exportación a archivo CUE (uso con-P, si es "
 "necesario)"
 
-#: src/print_utils.c:339
+#: src/print_utils.c:340
 msgid ""
 " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
 " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"

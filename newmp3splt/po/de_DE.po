@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2014-05-08 23:49+0200\n"
+"POT-Creation-Date: 2014-10-11 14:15+0200\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,37 +49,37 @@ msgstr ""
 "bad overlap time expression.⏎ »Must be min.sec[.0-99] or EOF-min.sec[.0-99], "
 "read man page for details."
 
-#: src/mp3splt.c:441
+#: src/mp3splt.c:444
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "Lesen Sie die Handbuchseite oder geben Sie »mp3splt -h« ein."
 
-#: src/mp3splt.c:509
+#: src/mp3splt.c:512
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "Falsches Argument für Option -p. Kein gültiger Wert erkannt!"
 
-#: src/mp3splt.c:664
+#: src/mp3splt.c:667
 msgid "no input filename(s)."
 msgstr "Kein(e) Name(n) für Eingabedateien."
 
-#: src/mp3splt.c:677
+#: src/mp3splt.c:680
 msgid "multiple splitpoints with stdout !"
 msgstr "Mehrere Teilungspunkte mit Standardausgabe!"
 
-#: src/mp3splt.c:681
+#: src/mp3splt.c:684
 msgid "using time mode with stdout !"
 msgstr "Zeitmodus mit Standardausgabe wird verwendet!"
 
-#: src/mp3splt.c:722
+#: src/mp3splt.c:725
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr " Teilung der Datei »%s« wird simuliert …\n"
 
-#: src/mp3splt.c:726
+#: src/mp3splt.c:729
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Datei »%s« wird verarbeitet …\n"
 
-#: src/mp3splt.c:732
+#: src/mp3splt.c:735
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
@@ -88,20 +88,20 @@ msgstr ""
 "die -k option (oder STDIN) kann mit einer der folgenden Optionen nicht "
 "verwendet werden: -S -s -r -w -l -e -i -a -p"
 
-#: src/mp3splt.c:806
+#: src/mp3splt.c:809
 msgid "freedb query format ambigous !"
 msgstr "Format der Freedb-Abfrage ist nicht eindeutig!"
 
-#: src/mp3splt.c:856
+#: src/mp3splt.c:859
 msgid "tags format ambiguous !"
 msgstr "Tag-Format ist nicht eindeutig!"
 
-#: src/mp3splt.c:888
+#: src/mp3splt.c:891
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr " Durchschnittlicher Pegel der Stille: %.2f dB"
 
-#: src/mp3splt.c:905
+#: src/mp3splt.c:908
 #, fuzzy
 msgid ""
 "\n"
@@ -302,10 +302,13 @@ msgstr ""
 "      (Vorgabe ist die gleiche Version wie die der zu teilenden Datei)"
 
 #: src/print_utils.c:309
+#, fuzzy
 msgid ""
 " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
 " -f   Frame mode (mp3 only): process all frames. For higher precision and "
 "VBR.\n"
+" -b   [Experimental] Bit reservoir handling for gapless playback (mp3 "
+"only).\n"
 " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"
 msgstr ""
 " -m + M3U_DATEI: Hängt an die angegebene m3u-Datei die Namen der geteilten "
@@ -315,7 +318,7 @@ msgstr ""
 " -a   Automatische Einstellung der Teilungspunkte durch Stille-Erkennung.\n"
 "      (-p für weitere Argumente)"
 
-#: src/print_utils.c:312
+#: src/print_utils.c:313
 #, fuzzy
 msgid ""
 " -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots, trackjoin): "
@@ -331,7 +334,7 @@ msgstr ""
 "[ENDZEIT] ZEITFORMAT: min.sec[.0-99], auch wenn Minuten über 59 hinausgehen "
 "(oder EOF für Ende der Datei). "
 
-#: src/print_utils.c:319
+#: src/print_utils.c:320
 msgid ""
 " -g + TAGS: custom tags for the split files.\n"
 "      TAGS can contain those variables: \n"
@@ -346,7 +349,7 @@ msgstr ""
 "wie [ @ a = Artist1 , @ t = title1 ]% [ @ o @ N = 2, @ a = ARTIST2 ] ⏎ (% "
 "bedeutet, dass wir die Tags gesetzt für alle übrigen Dateien) "
 
-#: src/print_utils.c:325
+#: src/print_utils.c:326
 msgid ""
 " -G + regex=REGEX: set tags from input filename. REGEX defines how to "
 "extract\n"
@@ -359,7 +362,7 @@ msgstr ""
 "<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>), (?"
 "<genre>)"
 
-#: src/print_utils.c:329
+#: src/print_utils.c:330
 msgid ""
 " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
 " -k   Consider input not seekable (slower). Default when input is STDIN "
@@ -371,7 +374,7 @@ msgstr ""
 "       Vorgabe, wenn Eingabe STDIN ist (-).\n"
 " -O + ZEIT : Teilungsdateien um ZEIT überlappen (langsamer)."
 
-#: src/print_utils.c:332
+#: src/print_utils.c:333
 msgid ""
 " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean "
 "files.\n"
@@ -385,7 +388,7 @@ msgstr ""
 "      falls Sie die Teilungsdateien zusammenführen wollen\n"
 " -N   Keine Protokolldatei »mp3splt.log« schreiben bei »-s«."
 
-#: src/print_utils.c:336
+#: src/print_utils.c:337
 msgid ""
 " -P   Pretend to split: simulation of the process, without creating any\n"
 "      files or directories"
@@ -393,13 +396,13 @@ msgstr ""
 " -P   Teilung simulieren: Der Vorgang wird simuliert, ohne dass\n"
 "      Dateien oder Ordner erstellt werden"
 
-#: src/print_utils.c:338
+#: src/print_utils.c:339
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
 msgstr ""
 " -E + CUE_DATEI: Exportiert Teilungspunkte in eine CUE-Datei,\n"
 "      wenn nötig, zusammen mit -P verwenden"
 
-#: src/print_utils.c:339
+#: src/print_utils.c:340
 msgid ""
 " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
 " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
