@@ -1414,7 +1414,7 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   gtk_widget_set_tooltip_text(add_button,_("Add splitpoint"));
 
   /* remove row button */
-  GtkWidget *remove_row_button = wh_create_cool_button("list-remove", _("list-remove"), FALSE);
+  GtkWidget *remove_row_button = wh_create_cool_button("list-remove", _("_Remove"), FALSE);
   ui->gui->remove_row_button = remove_row_button;
 
   gtk_button_set_relief(GTK_BUTTON(remove_row_button), GTK_RELIEF_NONE);
