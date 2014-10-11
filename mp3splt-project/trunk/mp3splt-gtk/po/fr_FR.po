@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-08 23:50+0200\n"
+"POT-Creation-Date: 2014-10-11 14:16+0200\n"
 "PO-Revision-Date: 2013-04-29 21:06+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -202,7 +202,7 @@ msgstr "avant %s"
 msgid "No available wave"
 msgstr "Pas de signal disponible"
 
-#: src/player_window.c:2073 src/preferences_window.c:896
+#: src/player_window.c:2073 src/preferences_window.c:908
 msgid "No wave interpolation"
 msgstr "Pas d'interpolation de signal"
 
@@ -405,7 +405,7 @@ msgid " error: you already have the splitpoint in table"
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 #: src/splitpoints_window.c:1146 src/splitpoints_window.c:1200
-#: src/preferences_window.c:494
+#: src/preferences_window.c:506
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
@@ -417,7 +417,7 @@ msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Nombre de pistes (0 signifie toutes les pistes) :"
 
-#: src/splitpoints_window.c:1240 src/preferences_window.c:510
+#: src/splitpoints_window.c:1240 src/preferences_window.c:522
 msgid "Minimum silence length (seconds):"
 msgstr "Durée minimum du silence (secondes) :"
 
@@ -581,54 +581,54 @@ msgstr "TrackType"
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Choisir la langue (nécessite redémarrage)</b>"
 
-#: src/preferences_window.c:355
+#: src/preferences_window.c:356
 #, fuzzy
 msgid "Browse directory ..."
 msgstr "Dossier _explorateur"
 
-#: src/preferences_window.c:373
+#: src/preferences_window.c:374
 #, fuzzy
 msgid "Example for the single file split:"
 msgstr "Découpage manuel fichier unique"
 
-#: src/preferences_window.c:412
+#: src/preferences_window.c:413
 #, fuzzy
 msgid "Custom directory"
 msgstr "Choisir le dossier de sortie du découpage"
 
-#: src/preferences_window.c:414
+#: src/preferences_window.c:415
 msgid "Create split files in a custom directory"
 msgstr ""
 
-#: src/preferences_window.c:419
+#: src/preferences_window.c:420
 #, fuzzy
 msgid "Input file directory"
 msgstr "_Ajouter fichiers ou dossiers"
 
-#: src/preferences_window.c:422
+#: src/preferences_window.c:423
 msgid "Create split files in the same directory as the file being split"
 msgstr ""
 
-#: src/preferences_window.c:428
+#: src/preferences_window.c:429
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Répertoire des fichiers découpés</b>"
 
-#: src/preferences_window.c:441
+#: src/preferences_window.c:442
 msgid "_Splitpoint name from filename (manual single file split only)"
 msgstr ""
 "Nom du _point de découpage à partir du nom de fichier (seulement pour "
 "découpage fichier unique)"
 
-#: src/preferences_window.c:443
+#: src/preferences_window.c:444
 #, fuzzy
 msgid "Name newly added splitpoints as the input file"
 msgstr "Même version des tags que le fichier d'entrée"
 
-#: src/preferences_window.c:451
+#: src/preferences_window.c:452
 msgid "Create directories from _filenames "
 msgstr "Créer dossiers à partir des _noms de fichier"
 
-#: src/preferences_window.c:454
+#: src/preferences_window.c:455
 msgid ""
 "If the splitpoint name is 'a/b/output', the directory chain 'a/b' is created "
 "in the output\n"
@@ -636,158 +636,169 @@ msgid ""
 "'<output_directory>/a/b' directory"
 msgstr ""
 
-#: src/preferences_window.c:464
+#: src/preferences_window.c:465
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Mode 'f_rame' (utile pour mp3 VBR) (seulement mp3)"
 
-#: src/preferences_window.c:466
+#: src/preferences_window.c:467
 msgid ""
 "The split is slower with this option, but some mp3 files having\n"
 "Variable Bit Rate need this mode to be enabled"
 msgstr ""
 
-#: src/preferences_window.c:473
+#: src/preferences_window.c:475
+msgid "_[Experimental] Bit reservoir handling for gapless playback (mp3 only)"
+msgstr ""
+
+#: src/preferences_window.c:477
+msgid ""
+"Split files will play gapless only on players supporting the LAME tag delay "
+"and padding values"
+msgstr ""
+
+#: src/preferences_window.c:485
 #, fuzzy
 msgid "_Auto-adjust mode (use silence detection to auto-adjust splitpoints)"
 msgstr ""
 "Mode _auto ajustement (utilise la détection de silence pour créer les points "
 "de découpage)"
 
-#: src/preferences_window.c:476
+#: src/preferences_window.c:488
 msgid ""
 "Splitpoints will be adjusted to match silences (if found)\n"
 "This mode requires the frame mode"
 msgstr ""
 
-#: src/preferences_window.c:525
+#: src/preferences_window.c:537
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 
-#: src/preferences_window.c:542
+#: src/preferences_window.c:554
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "Fourchette (secondes autour du point pour chercher un silence) :"
 
-#: src/preferences_window.c:559
+#: src/preferences_window.c:571
 msgid "Set _default split options"
 msgstr "Options par _défaut"
 
-#: src/preferences_window.c:564
+#: src/preferences_window.c:576
 msgid "<b>Split options</b>"
 msgstr "<b>Options de coupure</b>"
 
-#: src/preferences_window.c:652
+#: src/preferences_window.c:664
 msgid "Player:"
 msgstr "Lecteur :"
 
-#: src/preferences_window.c:671
+#: src/preferences_window.c:683
 msgid "Refresh player every "
 msgstr "Actualiser lecteur toutes les"
 
-#: src/preferences_window.c:672 src/preferences_window.c:700
+#: src/preferences_window.c:684 src/preferences_window.c:712
 msgid "milliseconds."
 msgstr "millisecondes."
 
-#: src/preferences_window.c:674
+#: src/preferences_window.c:686
 msgid "\t(higher refresh rate decreases CPU usage - default is 200)"
 msgstr ""
 "\t(un taux élevé de rafraîchissement diminue la performance CPU - valeur par "
 "défaut = 200)"
 
-#: src/preferences_window.c:685
+#: src/preferences_window.c:697
 msgid "Stop GStreamer preview"
 msgstr ""
 
-#: src/preferences_window.c:685
+#: src/preferences_window.c:697
 #, fuzzy
 msgid "milliseconds before the end."
 msgstr "millisecondes."
 
-#: src/preferences_window.c:699
+#: src/preferences_window.c:711
 #, fuzzy
 msgid "Small seek jumps for "
 msgstr "Avancer un peu"
 
-#: src/preferences_window.c:708
+#: src/preferences_window.c:720
 msgid "Seek jumps for "
 msgstr ""
 
-#: src/preferences_window.c:709 src/preferences_window.c:718
+#: src/preferences_window.c:721 src/preferences_window.c:730
 #, fuzzy
 msgid "milliseconds. (0=auto)"
 msgstr "millisecondes."
 
-#: src/preferences_window.c:717
+#: src/preferences_window.c:729
 #, fuzzy
 msgid "Big seek jumps for "
 msgstr "Avancer beaucoup"
 
-#: src/preferences_window.c:728
+#: src/preferences_window.c:740
 msgid "Seek times"
 msgstr ""
 
-#: src/preferences_window.c:736
+#: src/preferences_window.c:748
 msgid "<b>Player options</b>"
 msgstr "<b>Options du lecteur</b>"
 
-#: src/preferences_window.c:847
+#: src/preferences_window.c:859
 #, fuzzy
 msgid "Only available if the amplitude wave is shown in the player"
 msgstr ""
 "La prévisualisation du signal n'est disponible que si l'option est "
 "sélectionnée dans le lecteur"
 
-#: src/preferences_window.c:877
+#: src/preferences_window.c:889
 msgid "Wave preview"
 msgstr ""
 
-#: src/preferences_window.c:887
+#: src/preferences_window.c:899
 #, c-format
 msgid "%d minute(s) window"
 msgstr "fenêtre %d minute(s)"
 
-#: src/preferences_window.c:892
+#: src/preferences_window.c:904
 #, c-format
 msgid "Wave interpolation level %d with threshold of %.1lf"
 msgstr "Niveau d'interpolation de signal %d avec un seuil de %.1lf"
 
-#: src/preferences_window.c:914
+#: src/preferences_window.c:926
 msgid "Wave quality (higher is better but consumes more CPU):"
 msgstr ""
 "Qualité de signal (+ élevé = meilleur mais consomme davantage de CPU) :"
 
-#: src/preferences_window.c:936
+#: src/preferences_window.c:948
 msgid "<b>Amplitude wave options</b>"
 msgstr "<b>Options de signal d'amplitude</b>"
 
-#: src/preferences_window.c:1029
+#: src/preferences_window.c:1041
 msgid "Default format"
 msgstr "Format par défaut"
 
-#: src/preferences_window.c:1036
+#: src/preferences_window.c:1048
 msgid "  Default output: "
 msgstr "Sortie par défaut :"
 
-#: src/preferences_window.c:1042
+#: src/preferences_window.c:1054
 msgid "  CDDB, CUE and tracktype.org default: "
 msgstr "  CDDB, CUE et  tracktype.org par défaut : "
 
-#: src/preferences_window.c:1048
+#: src/preferences_window.c:1060
 msgid "  Split with silence detection default: "
 msgstr "  Découpage par détection de silence par défaut :"
 
-#: src/preferences_window.c:1054
+#: src/preferences_window.c:1066
 msgid "  Trim using silence detection default: "
 msgstr "  Troncature par détection de silence par défaut :"
 
-#: src/preferences_window.c:1060
+#: src/preferences_window.c:1072
 msgid "  Error mode default: "
 msgstr "  Mode erreur par défaut :"
 
-#: src/preferences_window.c:1075
+#: src/preferences_window.c:1087
 msgid "Custom format"
 msgstr "Format personnalisé"
 
-#: src/preferences_window.c:1094
+#: src/preferences_window.c:1106
+#, fuzzy
 msgid ""
 "  @A: performer if found, otherwise artist\n"
 "  @a: artist name\n"
@@ -804,6 +815,8 @@ msgid ""
 "number) **\n"
 "  @U: track tag number as uppercase letter **\n"
 "  @f: input filename (without extension)\n"
+"  @d: last directory of the input filename or the filename itself if no "
+"directory\n"
 "  @m, @s or @h: the number of minutes, seconds or hundreths of seconds of "
 "the start splitpoint **\n"
 "  @M, @S or @H: the number of minutes, seconds or hundreths of seconds of "
@@ -835,87 +848,87 @@ msgstr ""
 "    (**) un chiffre peut suivre pour indiquer le nombre de chiffres à "
 "générer\n"
 
-#: src/preferences_window.c:1119
+#: src/preferences_window.c:1132
 #, fuzzy
 msgid "<b>Output format for batch split and when importing splitpoints</b>"
 msgstr ""
 "<b>Format du nom de fichier destination pour découpage par lot, CUE, CDDB et "
 "tracktype.org</b>"
 
-#: src/preferences_window.c:1168
+#: src/preferences_window.c:1181
 msgid "Original file tags"
 msgstr "Tags du fichier d'entrée"
 
-#: src/preferences_window.c:1171
+#: src/preferences_window.c:1184
 #, fuzzy
 msgid "Custom tags (from the splitpoints table)"
 msgstr "Mettre les points au tableau de points de coupure"
 
-#: src/preferences_window.c:1174
+#: src/preferences_window.c:1187
 msgid "No tags"
 msgstr "Aucun tag"
 
-#: src/preferences_window.c:1177
+#: src/preferences_window.c:1190
 msgid "Extract tags from filename"
 msgstr "Extraire les tags à partir du nom de fichier"
 
-#: src/preferences_window.c:1186
+#: src/preferences_window.c:1199
 msgid "<b>Split files tags</b>"
 msgstr "<b>Tags des fichiers coupés</b>"
 
-#: src/preferences_window.c:1208
+#: src/preferences_window.c:1221
 msgid "No change"
 msgstr "Sans changement"
 
-#: src/preferences_window.c:1209
+#: src/preferences_window.c:1222
 msgid "lowercase"
 msgstr "minuscules"
 
-#: src/preferences_window.c:1210
+#: src/preferences_window.c:1223
 msgid "UPPERCASE"
 msgstr "MAJUSCULES"
 
-#: src/preferences_window.c:1211
+#: src/preferences_window.c:1224
 msgid "First uppercase"
 msgstr "1ère lettre en majuscule"
 
-#: src/preferences_window.c:1212
+#: src/preferences_window.c:1225
 msgid "Word Uppercase"
 msgstr "1ère lettre des Mots en majuscule"
 
-#: src/preferences_window.c:1258
+#: src/preferences_window.c:1271
 msgid "<artist>: "
 msgstr "<artiste> : "
 
-#: src/preferences_window.c:1267
+#: src/preferences_window.c:1280
 msgid "<album>: "
 msgstr "<album> : "
 
-#: src/preferences_window.c:1277
+#: src/preferences_window.c:1290
 msgid "<title>: "
 msgstr "<titre> : "
 
-#: src/preferences_window.c:1286
+#: src/preferences_window.c:1299
 msgid "<genre>: "
 msgstr "<genre> : "
 
-#: src/preferences_window.c:1295
+#: src/preferences_window.c:1308
 msgid "<comment>: "
 msgstr "<commentaire> : "
 
-#: src/preferences_window.c:1304
+#: src/preferences_window.c:1317
 msgid "<year>: "
 msgstr "<année> :"
 
-#: src/preferences_window.c:1313
+#: src/preferences_window.c:1326
 msgid "<track>: "
 msgstr "<piste> :"
 
-#: src/preferences_window.c:1353
+#: src/preferences_window.c:1366
 msgid "Regular expression:"
 msgstr "Expression régulière :"
 
-#: src/preferences_window.c:1356
+#: src/preferences_window.c:1369
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -938,88 +951,88 @@ msgstr ""
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - commentaire"
 
-#: src/preferences_window.c:1383
+#: src/preferences_window.c:1396
 msgid "_Replace underscores by spaces"
 msgstr "_Remplacer les soulignés par des espaces"
 
-#: src/preferences_window.c:1393
+#: src/preferences_window.c:1406
 msgid "Artist text properties:"
 msgstr "Propriétés texte auteur :"
 
-#: src/preferences_window.c:1398
+#: src/preferences_window.c:1411
 msgid "Album text properties:"
 msgstr "Propriétés texte album :"
 
-#: src/preferences_window.c:1403
+#: src/preferences_window.c:1416
 msgid "Title text properties:"
 msgstr "Propriétés texte titre :"
 
-#: src/preferences_window.c:1408
+#: src/preferences_window.c:1421
 msgid "Comment text properties:"
 msgstr "Propriétés commentaire :"
 
-#: src/preferences_window.c:1412
+#: src/preferences_window.c:1425
 msgid "Genre tag:"
 msgstr "Tag genre :"
 
-#: src/preferences_window.c:1416
+#: src/preferences_window.c:1429
 msgid "Comment tag:"
 msgstr "Tag commentaire :"
 
-#: src/preferences_window.c:1418
+#: src/preferences_window.c:1431
 msgid "Regular expression test"
 msgstr "Test expression régulière"
 
-#: src/preferences_window.c:1434
+#: src/preferences_window.c:1447
 msgid "_Test"
 msgstr "_Test"
 
-#: src/preferences_window.c:1438
+#: src/preferences_window.c:1451
 msgid "Sample filename:"
 msgstr "Exemple nom de fichier :"
 
-#: src/preferences_window.c:1443
+#: src/preferences_window.c:1456
 msgid "Sample result:"
 msgstr "Exemple résultat :"
 
-#: src/preferences_window.c:1455
+#: src/preferences_window.c:1468
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Tags ID3v1 & ID3v2"
 
-#: src/preferences_window.c:1462
+#: src/preferences_window.c:1475
 msgid "ID3v2 tags"
 msgstr "Tags ID3v2"
 
-#: src/preferences_window.c:1469
+#: src/preferences_window.c:1482
 msgid "ID3v1 tags"
 msgstr "Tags ID3v1"
 
-#: src/preferences_window.c:1476
+#: src/preferences_window.c:1489
 msgid "Same tags version as the input file"
 msgstr "Même version des tags que le fichier d'entrée"
 
-#: src/preferences_window.c:1482
+#: src/preferences_window.c:1495
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_window.c:1522 src/main_window.c:774
+#: src/preferences_window.c:1535 src/main_window.c:774
 msgid "Split"
 msgstr "Découper"
 
-#: src/preferences_window.c:1527
+#: src/preferences_window.c:1540
 msgid "Tags"
 msgstr "Tags"
 
-#: src/preferences_window.c:1532
+#: src/preferences_window.c:1545
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/preferences_window.c:1537
+#: src/preferences_window.c:1550
 #, fuzzy
 msgid "Output format"
 msgstr "Format de nom de fichier destination"
 
-#: src/preferences_window.c:1543
+#: src/preferences_window.c:1556
 msgid "Language"
 msgstr "Langue"
 
