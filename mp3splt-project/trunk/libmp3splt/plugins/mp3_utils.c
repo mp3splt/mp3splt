@@ -799,6 +799,8 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
     return;
   }
 
+  int is_first_file = splt_t_get_current_split_file_number(state) == 1;
+
   int number_of_frames = 0;
 
   while (back_pointer > 0)
@@ -806,7 +808,9 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
     current_header_index = splt_mp3_previous_br_header_index(mp3state, current_header_index);
     number_of_headers_stored--;
 
-    if (number_of_headers_stored < 0)
+    //this might happend for the first file, but we don't care for the first file
+    //(for example when splitting starting at ~7 hundreths of seconds - at frame number ~2)
+    if ((number_of_headers_stored < 0) && !is_first_file)
     {
       splt_e_set_error_data(state, "Bit reservoir number of headers stored is negative !");
       *error = SPLT_ERROR_INVALID_CODE;
@@ -814,6 +818,8 @@ static void splt_mp3_extract_reservoir_main_data_bytes(splt_mp3_state *mp3state,
     }
 
     h = &mp3state->br_headers[current_header_index];
+
+    if (h->frame_data_space == 0) { continue; }
 
     unsigned int number_of_bytes_to_copy = h->frame_data_space;
     if (back_pointer < h->frame_data_space)
