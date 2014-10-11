@@ -300,7 +300,8 @@ static void frame_event(GtkToggleButton *frame_mode, ui_state *ui)
 {
   if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
   {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode),FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode), FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->bit_reservoir_mode), FALSE);
   }
 
   ui_save_preferences(NULL, ui);
@@ -429,6 +430,18 @@ static GtkWidget *create_directory_box(ui_state *ui)
   return wh_set_title_and_get_vbox(vbox, _("<b>Directory for split files</b>"));
 }
 
+static void bit_reservoir_event(GtkToggleButton *bit_reservoir, ui_state *ui)
+{
+  gint with_bit_reservoir = 
+    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->bit_reservoir_mode));
+  if (with_bit_reservoir == TRUE)
+  {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode), TRUE);
+  }
+
+  ui_save_preferences(NULL, ui);
+}
+
 //! Creates the box for split mode selection
 static GtkWidget *create_split_options_box(ui_state *ui)
 {
@@ -478,8 +491,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
         "supporting the LAME tag delay and padding values"));
   gui->bit_reservoir_mode = bit_reservoir_mode;
   gtk_box_pack_start(GTK_BOX(vbox), bit_reservoir_mode, FALSE, FALSE, 0);
-  g_signal_connect(G_OBJECT(bit_reservoir_mode), "toggled", 
-      G_CALLBACK(ui_save_preferences), ui);
+  g_signal_connect(G_OBJECT(bit_reservoir_mode), "toggled", G_CALLBACK(bit_reservoir_event), ui);
 
   //auto adjust option
   GtkWidget *adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (use"
