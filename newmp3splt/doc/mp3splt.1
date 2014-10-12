@@ -420,8 +420,10 @@ If you obtain some sync errors, try also to split with \-e option.
 
 .IP "\fB\-b\fP         " 10
 \fB[Experimental] Bit reservoir handling for gapless playback (mp3 only)\fP. Handles bit reservoir issues when
-splitting mp3 files. Split files will play gapless only on players supporting the
-LAME tag delay and padding values. This feature is heavily inspired by pcutmp3.
+splitting mp3 files. This option also allows playback at the exact sample specified by the input time, instead
+of the music data boundaries. \fBWarning: split files will play gapless only on players supporting mp3 gapless
+playback using the LAME tag delay and padding values\fP (example of gapless mp3 players: cmus, mpg123, foobar2000).
+The feature is heavily inspired by pcutmp3 developed by Sebastian Gesemann.
 Use with caution because it is still an experimental feature.
 
 .IP "\fB\-k\fP         " 10
