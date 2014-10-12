@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2014-10-08 20:16+0200\n"
+"POT-Creation-Date: 2014-10-12 12:04+0200\n"
 "PO-Revision-Date: 2013-04-29 16:15+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -678,41 +678,41 @@ msgstr " - %d Kb/s"
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
 
-#: plugins/mp3.c:2910
+#: plugins/mp3.c:2929
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Le fichier reconnu a le format Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2948
+#: plugins/mp3.c:2967
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 " Vérification de l'intégrité du fichier : calcul du CRC (contrôle de "
 "redondance cyclique), veuillez attendre..."
 
-#: plugins/mp3.c:2967
+#: plugins/mp3.c:2986
 msgid " OK\n"
 msgstr " Succès\n"
 
-#: plugins/mp3.c:2986
+#: plugins/mp3.c:3005
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Le fichier reconnu a le format : AlbumWrap\n"
 
-#: plugins/mp3.c:3008
+#: plugins/mp3.c:3027
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Nombre de fichiers : %d\n"
 
-#: plugins/mp3.c:3426
+#: plugins/mp3.c:3445
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux mp3.\n"
 
-#: plugins/mp3.c:3453
+#: plugins/mp3.c:3472
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
 
-#: plugins/mp3.c:3636
+#: plugins/mp3.c:3655
 msgid " warning: overlapped chapters are not yet supported.\n"
 msgstr ""
 
