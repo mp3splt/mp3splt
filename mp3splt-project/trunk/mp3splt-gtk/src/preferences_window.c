@@ -488,7 +488,8 @@ static GtkWidget *create_split_options_box(ui_state *ui)
     gtk_check_button_new_with_mnemonic(_("_[Experimental] Bit reservoir handling for gapless playback (mp3 only)"));
   gtk_widget_set_tooltip_text(bit_reservoir_mode,
       _("Split files will play gapless only on players "
-        "supporting the LAME tag delay and padding values"));
+        "supporting the LAME tag delay and padding values\n"
+        "Gapless players examples: cmus, mpg123, foobar2000"));
   gui->bit_reservoir_mode = bit_reservoir_mode;
   gtk_box_pack_start(GTK_BOX(vbox), bit_reservoir_mode, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(bit_reservoir_mode), "toggled", G_CALLBACK(bit_reservoir_event), ui);
