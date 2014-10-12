@@ -54,3 +54,7 @@ unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3st
 unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state, 
     splt_state *state);
 
+void splt_mp3_get_overlapped_frames(long last_frame, splt_mp3_state *mp3state,
+    splt_state *state, splt_code *error);
+int splt_mp3_handle_bit_reservoir(splt_state *state);
+

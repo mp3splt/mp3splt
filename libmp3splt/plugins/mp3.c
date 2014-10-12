@@ -2270,6 +2270,9 @@ bloc_end:
 
       unsigned long fbegin, fend = 0, adjust = 0;
 
+      /*fprintf(stdout, "fbegin_sec = %f\n", fbegin_sec);
+      fflush(stdout);*/
+
       fbegin = splt_mp3_find_begin_frame(fbegin_sec, mp3state, state, error);
       if (*error < 0) { goto bloc_end2; }
 
@@ -2331,6 +2334,17 @@ bloc_end:
           begin = mp3state->end_non_zero;
         }
 
+        long bit_reservoir_last_frame = 
+          ((mp3state->begin_sample + mp3state->mp3file.lame_delay + SPLT_MP3_MIN_OVERLAP_SAMPLES_END)
+           / mp3state->mp3file.samples_per_frame);
+        //make sure to push forward begin frame when bit reservoir mode,
+        //because previous overlapped frames will be copied after
+        if (splt_mp3_handle_bit_reservoir(state) && fbegin > 0)
+        {
+          long diff = (bit_reservoir_last_frame - mp3state->first_frame_inclusive) + 1;
+          fbegin += diff + 1;
+        }
+
         // Finds begin by counting frames
         while (mp3state->frames < fbegin)
         {
@@ -2365,6 +2379,11 @@ bloc_end:
                 (double)fend,progress_adjust_val,
                 0,SPLT_DEFAULT_PROGRESS_RATE);
           }
+        }
+
+        if (splt_mp3_handle_bit_reservoir(state))
+        {
+          splt_mp3_get_overlapped_frames(bit_reservoir_last_frame, mp3state, state, error);
         }
       }
       else
