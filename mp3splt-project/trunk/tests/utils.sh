@@ -263,6 +263,18 @@ function check_current_file_size
   _check_equal_variables "$expected_file_size" "$actual_file_size"
 }
 
+function check_current_md5sum
+{
+  if [[ $MD5SUM_DISABLED == 1 ]];then return; fi
+
+  expected_md5sum=$1
+
+  _run_command "md5sum \"$current_file\"" "md5sum command"
+  actual_md5sum=$(echo $command_output | awk '{ print $1 }')
+
+  _check_equal_variables "$expected_md5sum" "$actual_md5sum"
+}
+
 function check_current_file_has_xing
 {
   _run_command "grep 'Xing' \"$current_file\"" "grep xing command" 0 1
