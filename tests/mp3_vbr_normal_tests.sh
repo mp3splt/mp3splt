@@ -45,16 +45,20 @@ function _test_normal_vbr
   if [[ $tags_version -eq -1 ]];then
     check_current_mp3_no_tags
     check_current_file_size "1366334"
+    check_current_md5sum "87d6b0d39028d774becd734968cfbb6e"
   else
     check_all_mp3_tags_with_version $version_of_tags "La Verue" "Riez Noir" "Today"\
     "2007" "Rock" "17" "1" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
       check_current_file_size "1412518"
+      check_current_md5sum "648d6987147771470b2780184269ebdd"
     elif [[ $tags_version -eq 22 ]];then
       check_current_file_size "1366550"
+      check_current_md5sum "cf0f394db314fdcb78076fec4008f142"
     else
       check_current_file_size "1366462"
+      check_current_md5sum "4833e153053bd37001da0b267a4c13a2"
     fi
   fi
 
@@ -65,16 +69,20 @@ function _test_normal_vbr
   if [[ $tags_version -eq -1 ]];then
     check_current_mp3_no_tags
     check_current_file_size "1521748"
+    check_current_md5sum "d9a5b28bf0f5f5abe356290f5903beed"
   else
     check_all_mp3_tags_with_version $version_of_tags "La Verue" "Riez Noir"\
     "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
       check_current_file_size "1567932"
+      check_current_md5sum "949ab2b9ba874ea036bce7d88240b655"
     elif [[ $tags_version -eq 22 ]];then
       check_current_file_size "1521964"
+      check_current_md5sum "6df5d42e1b25abb6474fe13a485e9363"
     else
       check_current_file_size "1521876"
+      check_current_md5sum "a529c53717c6856921bc5d38a478b2da"
     fi
   fi
 
@@ -85,16 +93,20 @@ function _test_normal_vbr
   if [[ $tags_version -eq -1 ]];then
     check_current_mp3_no_tags
     check_current_file_size "1399171"
+    check_current_md5sum "6a2c5397fd311685edc5f4d389aed918"
   else
     check_all_mp3_tags_with_version $version_of_tags "La Verue" "Riez Noir" "Today"\
       "2007" "Rock" "17" "3" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
       check_current_file_size "1445355"
+      check_current_md5sum "823569e0b0a009c66647aa757448e7e9"
     elif [[ $tags_version -eq 22 ]];then
       check_current_file_size "1399387"
+      check_current_md5sum "979faf56a9f9110fd04e2eed99201658"
     else
       check_current_file_size "1399299"
+      check_current_md5sum "5d70dfc063a1d54a9eaa092a1e68cc9c"
     fi
   fi
 
@@ -108,17 +120,23 @@ function test_normal_vbr_id3v2 { _test_normal_vbr 2 "La_Verue__Today"; }
 
 function test_normal_vbr_input_with_only_id3v1_and_output_no_tags
 {
+  MD5SUM_DISABLED=1;
   _test_normal_vbr -1 "La_Verue__Today_id3v1_only" "input with only id3v1 and output";
+  MD5SUM_DISABLED=0;
 }
 
 function test_normal_vbr_input_with_only_id3v1_and_output_id3v1
 {
+  MD5SUM_DISABLED=1;
   _test_normal_vbr 1 "La_Verue__Today_id3v1_only" "input with only id3v1 and output";
+  MD5SUM_DISABLED=0;
 }
 
 function test_normal_vbr_input_with_only_id3v1_and_output_id3v2
 {
+  MD5SUM_DISABLED=1;
   _test_normal_vbr 22 "La_Verue__Today_id3v1_only" "input with only id3v1 and output";
+  MD5SUM_DISABLED=0;
 }
 
 function test_normal_vbr_pretend

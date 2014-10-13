@@ -51,6 +51,7 @@ function test_normal_cbr
       check_current_file_size "1512014"
     else
       check_current_file_size "1511886"
+      check_current_md5sum "e4efe99b13b899caf6b7293b1dc8cff6"
     fi
   fi
 
@@ -69,6 +70,7 @@ function test_normal_cbr
       check_current_file_size "888837"
     else
       check_current_file_size "888709"
+      check_current_md5sum "464db5407d6c451e20ba7d02c9cd6616"
     fi
   fi
 
@@ -87,6 +89,7 @@ function test_normal_cbr
       check_current_file_size "700338"
     else
       check_current_file_size "700210"
+      check_current_md5sum "e9de7fb2531f1a37a8748480b50e3401"
     fi
   fi
 
