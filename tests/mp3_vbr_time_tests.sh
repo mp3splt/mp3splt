@@ -626,6 +626,8 @@ function test_time_vbr_no_xing
 {
   remove_output_dir
 
+  disable_check_mp3val
+
   test_name="vbr time no xing"
   M_FILE="La_Verue__Today"
 
@@ -646,6 +648,8 @@ function test_time_vbr_no_xing
   check_current_mp3_length "00.04"
   check_current_file_has_no_xing
   check_current_file_size "144328"
+
+  enable_back_mp3val
 
   print_ok
   echo
@@ -1002,6 +1006,8 @@ function test_time_vbr_with_sync_errors
 {
   remove_output_dir
 
+  disable_check_mp3val
+
   test_name="vbr time with sync errors"
   M_FILE="syncerror"
 
@@ -1035,6 +1041,8 @@ function test_time_vbr_with_sync_errors
   current_file="$OUTPUT_DIR/${M_FILE}_09m_00s__04m_05s_58h.mp3"
   check_current_mp3_length "02.55"
   check_current_file_size "2846510"
+
+  enable_back_mp3val
 
   print_ok
   echo

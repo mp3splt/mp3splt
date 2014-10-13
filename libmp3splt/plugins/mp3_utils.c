@@ -538,7 +538,7 @@ void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t
 
   if (end == -1) { end = mp3state->mp3file.len; }
 
-  unsigned long frames = (unsigned long) mp3state->frames - fbegin + 1;
+  unsigned long frames = (unsigned long) mp3state->frames - fbegin;
   unsigned long bytes = (unsigned long) (end - begin + reservoir_bytes + mp3state->overlapped_frames_bytes);
 
   if (!splt_mp3_handle_bit_reservoir(state))

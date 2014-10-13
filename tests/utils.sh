@@ -366,6 +366,17 @@ function check_files_content
   fi
 }
 
+function disable_check_mp3val
+{
+  OLD_CHECK_MP3VAL_ERRORS=$CHECK_MP3VAL_ERRORS
+  CHECK_MP3VAL_ERRORS=0
+}
+
+function enable_back_mp3val
+{
+  CHECK_MP3VAL_ERRORS=$OLD_CHECK_MP3VAL_ERRORS
+}
+
 function _check_equal_variables
 {
   expected_v=$1
@@ -543,6 +554,33 @@ function _run_check_output
 
   if [[ ! -z $expected ]];then
     check_files_content $EXPECTED_FILE $ACTUAL_FILE
+  fi
+
+  if [[ $CHECK_MP3VAL_ERRORS == 1 ]];then
+    if [[ $mp3splt_args == *.mp3* ]];then
+      output=$(find $OUTPUT_DIR -name "*.mp3" -exec mp3val -si '{}' \; | grep -v "Analyzing file" | grep -v "^Done!" | grep -v "No supported tags" | grep -E -v "^$")
+      output_lines=$(echo -n "$output" | wc -l)
+ 
+      if [[ $output_lines > 0 ]];then
+        if [[ $FAIL_FAST -eq 0 ]]; then
+          failed_tests=$(($failed_tests+1))
+  
+          echo
+          echo "$output"
+  
+          _fail 1
+          return
+        fi
+  
+        echo
+        echo "$output"
+  
+        p_red "FAILED"
+        echo
+
+        _fail 1
+      fi
+    fi
   fi
 }
 
