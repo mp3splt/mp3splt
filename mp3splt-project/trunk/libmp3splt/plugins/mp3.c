@@ -2426,6 +2426,7 @@ bloc_end:
         frames_counter++;
 
         mp3state->frames++;
+
         end = splt_mp3_findhead(mp3state, mp3state->h.ptr + mp3state->h.framesize);
         if (end == -1)
         {
