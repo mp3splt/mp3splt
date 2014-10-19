@@ -1927,6 +1927,57 @@ function test_normal_vbr_same_tag_bytes_in_output_file
   echo
 }
 
+function test_vbr_with_bit_reservoir_handling
+{
+  remove_output_dir
+
+  test_name="vbr & bit reservoir handling"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ warning: bit reservoir handling for gapless playback is still experimental
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-T 2 -f -b -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 3
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1412648"
+  check_current_md5sum "171fd72f8667a9b3b57e801b944ec4fa"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
+  check_current_mp3_length "01.04"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "1569184"
+  check_current_md5sum "e9de1b75940c38d4ee86a4741bdabad6"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "1446137"
+  check_current_md5sum "828225f2a769fad81b564a8ab1d544f3"
+
+  print_ok
+  echo
+}
+
 function run_normal_vbr_tests
 {
   p_blue " NORMAL VBR mp3 tests ..."

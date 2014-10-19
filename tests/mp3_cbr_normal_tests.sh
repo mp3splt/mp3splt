@@ -484,6 +484,60 @@ function test_normal_cbr_stdout_multiple_splitpoints
   echo
 }
 
+function test_normal_cbr_bit_reservoir
+{
+  remove_output_dir
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  test_name="cbr normal & bit reservoir"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ warning: bit reservoir handling for gapless playback is still experimental
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 3m.43s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_30s__02m_04s_50h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_04s_50h__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_43s_81h.mp3\" created
+ Processed 8569 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args=" -f -b -d $OUTPUT_DIR $CBR_MP3_FILE 0.30 2.04.50 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 3
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_30s__02m_04s_50h.mp3" 
+  check_current_mp3_length "01.34"
+  check_current_file_has_info
+
+  check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
+  "2009" "Rock" "17" "1" "http://www.jamendo.com"
+  check_current_file_size "1514366"
+  check_current_md5sum "48304668edf0a83f4caec3648ac78208"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_04s_50h__03m_00s.mp3" 
+  check_current_mp3_length "00.55"
+  check_current_file_has_info
+  check_current_md5sum "7b61d47fd3378a78f18496828e6d0546"
+
+  check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
+  "2009" "Rock" "17" "2" "http://www.jamendo.com"
+  check_current_file_size "889987"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_43s_81h.mp3"
+  check_current_mp3_length "00.43"
+  check_current_file_has_info
+  check_current_md5sum "30a39e9a958ac7a3c5a4ccca16b86708"
+
+  check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
+  "2009" "Rock" "17" "3" "http://www.jamendo.com"
+  check_current_file_size "702193"
+
+  print_ok
+  echo
+}
+
 function run_normal_cbr_tests
 {
   p_blue " NORMAL CBR mp3 tests ..."

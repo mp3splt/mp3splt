@@ -284,6 +284,16 @@ function check_current_file_has_xing
   fi
 }
 
+function check_current_file_has_info
+{
+  _run_command "grep 'Info' \"$current_file\"" "grep info command" 0 1
+
+  if [[ $? -ne 0 ]];then
+    _check_equal_variables "Expected Info" "No Info found for file $current_file"
+  fi
+}
+
+
 function check_current_file_has_no_xing
 {
   _run_command "grep 'Xing' '$current_file'" "grep xing command" 0 1
