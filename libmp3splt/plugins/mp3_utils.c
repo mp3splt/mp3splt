@@ -491,7 +491,7 @@ static void splt_mp3_update_delay_and_padding_on_lame_frame(splt_mp3_state *mp3s
 
   if (last_frame == -1 || last_frame > mp3state->frames)
   {
-    last_frame = mp3state->frames;
+    last_frame = mp3state->frames - 1;
   }
 
   if (last_frame != mp3state->first_frame_inclusive)
