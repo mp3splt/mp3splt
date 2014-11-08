@@ -191,7 +191,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="raring saucy trusty"
+    UBUNTU_FLAVORS="saucy trusty utopic"
 
     echo
     print_yellow "Creating ubuntu packages..."
