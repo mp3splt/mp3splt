@@ -4,6 +4,14 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.9.2
+
+- added bit reservoir handling for gapless playback option
+- added @d to output format which is equal to: last directory of the input filename or the filename itself if no directory
+- dropped out GTK 2.x support
+- removed gtk3 deprecated symbols and made it look more gtk3-alike
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.9.1b
 
 - bug fix: make sure to separate artist and performer in CUE files for use of @p and @a (libmp3splt)

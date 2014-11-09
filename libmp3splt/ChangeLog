@@ -2,6 +2,13 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.9.2
+-------------------------------------------------------------
+
+- added bit reservoir handling for gapless playback option
+- added @d to output format which is equal to: last directory of the input filename or the filename itself if no directory
+- fixed bug #170 - included stdlib.h in src/plugins.c for getenv() because otherwise segfault on RHEL 5.6 64bits
+
 libmp3splt version 0.9.1b
 -------------------------------------------------------------
 

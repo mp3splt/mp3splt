@@ -7,6 +7,11 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.6.2
+
+- added bit reservoir handling for gapless playback option using the -b parameter (see manual for details)
+- added @d to output format which is equal to: last directory of the input filename or the filename itself if no directory
+
 #mp3splt version 2.6.1b
 
 - bug fix: make sure to separate artist and performer in CUE files for use of @p and @a (libmp3splt)
