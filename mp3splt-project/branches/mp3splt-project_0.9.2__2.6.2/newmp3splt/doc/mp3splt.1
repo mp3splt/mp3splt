@@ -1,0 +1,805 @@
+.\" This -*- nroff -*- file has been generated from
+.\" DocBook SGML with docbook-to-man on Debian GNU/Linux.
+.\"
+.\"	transcript compatibility for postscript use.
+.\"
+.\"	synopsis:  .P! <file.ps>
+.\"
+.de P!
+\\&.
+.fl			\" force out current output buffer
+\\!%PB
+\\!/showpage{}def
+.\" the following is from Ken Flowers -- it prevents dictionary overflows
+\\!/tempdict 200 dict def tempdict begin
+.fl			\" prolog
+.sy cat \\$1\" bring in postscript file
+.\" the following line matches the tempdict above
+\\!end % tempdict %
+\\!PE
+\\!.
+.sp \\$2u	\" move below the image
+..
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+'\" t
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
+
+.TH "MP3SPLT" "1"
+.SH "NAME"
+
+mp3splt, oggsplt, flacsplt - utility for mp3, ogg vorbis and native flac splitting without decoding
+.SH "SYNOPSIS"
+.PP
+\fBmp3splt [OPTIONS] FILE_OR_DIR1 [FILE_OR_DIR2] ... [BEGIN_TIME] [TIME2] ... [END_TIME]\fP
+.PP
+\fBFILE_OR_DIR\fP: mp3, ogg vorbis, native flac file to be split or a directory.
+If you want to specify STDIN as input, you can use "m-" (or "-")
+when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be split
+with the same criterion. If a directory is specified, a recursive scan is performed in that
+directory to find out all the supported file formats.
+
+.PP
+\fBTIME FORMAT\fP:
+.PP
+\fBminutes.seconds[.hundredths]\fP or \fBEOF-minutes.seconds[.hundredths]\fP
+.IP
+\fBMinutes\fP (required): There is no limit to minutes. (You must use this format also for minutes over 59)
+.IP
+\fBSeconds\fP (required): Must be between 0 and 59.
+.IP
+\fBHundredths\fP  (optional): Must be between 0 and 99. Use them for higher precision.
+
+.PP
+Multiple split points can be specified. After the minimal 2, another indefinite number of split points can
+be specified. Each split point will be an end time for the previous, and a begin for the following.
+If you want to reach the end of file, you can use "EOF" as last splitpoint.
+EOF-minutes.seconds[.hundredths] only works when input is seekable.
+.SH "DESCRIPTION"
+.PP
+\fBmp3splt\fP is a free command-line utility that allows you to
+split mp3, ogg vorbis and native flac files from several splitpoints,
+without need of decoding and reencoding.
+It is useful to split large mp3, ogg vorbis and native flac to make smaller files or to split
+entire albums to obtain original tracks.
+
+If you are splitting an album you can get splitpoints and filenames
+automatically from servers on internet like freedb.org, tracktype.org
+or from a local .XMCD (.CDDB) or .CUE file (see \-c option), with the possibility to adjust them automatically with silence
+detection (see \-a option).
+
+You can also try to split files automatically with silence detection (see \-s option),
+trim files using silence detection (see \-r option), or by a fixed time length (see \-t option)
+
+Or if you have a file created either with Mp3Wrap or AlbumWrap, you can easily split it
+just with one command (see \-w option).
+.PP
+
+\fBIMPORTANT NOTE for FLAC:\fP FLAC support is still experimental. Please use with caution. Missing
+FLAC features are stdin (input not seekable) and stdout.
+
+\fBNOTE for MP3:\fP usually mp3splt understands if mp3 is VBR by checking the presence
+of a Xing or Info header and will consequently start in framemode, but if this is not present,
+mp3splt will start in standard mode.
+This means that splitting process will be quicker, but imprecise due to variable bitrate,
+you can split those VBR files only with framemode (see \-f option).
+
+\fBNOTE for OGG:\fP in some cases, mp3splt does not manage to split
+ogg vorbis streams correctly. Splitting the input file from 0.0 to EOF
+might fix the issues.
+
+\fBNOTES about TAGS:\fP by default, mp3splt will put the original tags in
+the split files with one exception: the track number starts at 1 and is incremented along
+split files. When copying the original file tags, only one artist, album, title are supported.
+Custom tags for the split files can be set with the \-g option.
+Setting exactly the same tags as the original file is possible with \-g %[@O] (mp3 only) or \-g %[@o].
+
+\fBNOTE about MP3 TAGS:\fP in order to extract the original tags from mp3 files,
+libmp3splt must be compiled with 'id3tag' support. By default, the output
+files will have the same ID3 tag version as the input file; this behaviour can be changed
+with the \-T option. If the input file has no tags and the \-g option is used, then both
+ID3v1 and ID3v2 are written. Total tracknumber is not yet supported.
+Only writing ID3v2.4 is supported for custom tags; note that some software only support ID3v2.3
+and will not be able to read them. However, it is possible to write the exact original tags using
+%[@O], keeping the same tags version as in the original file.
+
+\fBNOTE about the OUTPUT DIRECTORY:\fP by default, mp3splt will put the
+split files in the directory of the input file. In order to change the
+output directory, you can use one of the following options: \-d or \-o.
+Please note that directories from the \-o option will be created relative
+to the input file directory.
+
+.SH "OPTIONS"
+.IP "\fB-w\fP         " 10
+\fBWrap Mode\fP. Use to split file created with:
+
+\fBMp3Wrap http://mp3wrap.sourceforge.net\fP: This tool joins two or more mp3 files in one large playable file that usually contains
+the string MP3WRAP in filename and a special comment in ID3v2. If the file you are splitting is a Mp3Wrap file
+the splitting process will be very fast and you will obtain all files just with one command.
+If your filename contains MP3WRAP and you have errors or you don't want to use
+wrap mode, just remove it from the file.
+
+\fBAlbumWrap\fP: mp3splt is compatible also with albumwrap files, which usually
+contain the string ALBW in filename and ID3v2 contains AlbumWrap.
+But, as AlbumWrap extractor, mp3splt doesn't give any warranty.
+
+.IP "\fB-l\fP         " 10
+\fBList mode\fP (Only for Wrap mode).
+Lists all tracks wrapped in a Mp3Wrap or AlbumWrap archive without any extraction.
+Use this to view the content of the file or to test if file is a valid wrapped file.
+
+.IP "\fB-e\fP         " 10
+\fBError mode\fP (mp3 only).
+It is useful to split large file derivated from a concatenation of smaller files. It detects split points
+from the so called "sync errors" (data that break stream, such as ID3 or junk data).
+Examples of applicable files are wrapped file (both AlbumWrap and Mp3Wrap) or file created by
+appending many mp3 files together.
+So, when you have a file to split, you should always try to use this option.
+
+.IP "\fB-A AUDACITY_FILE \fP         " 10
+\fBAudacity labels mode\fP.
+Split with splitpoints from the audacity labels file. Example of audacity
+labels file (in seconds):
+   10.000000 67.000000 first_file
+   67.000000 127.000000 second_file
+   149.000000  206.000000 third_file
+
+.IP "\fB-t TIME[>MIN_TIME]\fP         " 10
+\fBTime mode\fP.
+This option will create an indefinite number of smaller files with a fixed time length specified by TIME (which has the same format
+described above). It is useful to split long files into smaller (for example with the time length of a CD). Adjust option (\-a)
+can be used to adjust splitpoints with silence detection. >MIN_TIME can be used to specify the
+theoretical minimum track length of the last segment; it allows avoiding to create very small files
+as the last segment. Make sure to quote the argument when using MIN_TIME - "TIME>MIN_TIME".
+
+.IP "\fB-S SPLIT_NUMBER\fP         " 10
+\fBEqual time tracks mode\fP.
+Split in SPLIT_NUMBER files.
+
+.IP "\fB-r\fP         " 10
+\fBTrim using silence detection\fP,
+to trim using silence detection. To trim using silence detection we need to decode
+files, so this option can be really slow if used with big files.
+It accepts some parameters with \-p option (see below for a detailed description):
+.I threshold
+level (th) which is the sound level to be considered silence,
+.I min
+(min) which is the minimum silence length to trigger a trimming; this amount of silence will be kept
+in the split file at the beginning and at the end.
+
+.IP "\fB-s\fP         " 10
+\fBSilence mode\fP,
+to split with silence detection. When you use \-s option, mp3splt attempts to detect
+silence points in all the file (or just in some parts, see \-a and \-c below for this). To detect silence we need to decode
+files, so this option can be really slow if used with big files.
+It accepts some parameters with \-p option (see below for a detailed description):
+.I threshold
+level (th) which is the sound level to be considered silence,
+.I number
+of tracks (nt) which is the desired number of tracks, cutpoint
+.I offset
+(off) which is the offset of cutpoint in silence,
+.I minimum_length
+(min) which is the minimum silence length in seconds,
+.I remove
+silence (rm) which allows you to remove the silence between split tracks. If you don't specify any parameter,
+mp3splt will use the default values. Of course if you specify the number of tracks to split,
+you will help mp3splt to understand what are the most probable split points,
+anyway once you scan a file with \-s option, mp3splt will write a file named "mp3splt.log" in which
+it saves all silence points found. If this file exists in the current working directory, mp3splt
+will read the splitpoints from this file and will not recompute the silence splitpoints.
+This allows you to run mp3splt with different parameters (except th and min)
+without decoding the file again. Finally, if the number of silence points is
+not correct, you have many chances to achieve right result. For example if a silence point
+was not detected because too short, you can manually split the long track in the two smaller ones.
+Or if file is an MP3 (not with ogg) and there are too many silence points that can't be discarded reducing
+track number (because are longer than right points) you can safely concatenate
+them with 'cat' programs or similar ('copy /b file1+file2' for dos) because split files are consecutive,
+no data is lost.
+This option is intended to split small/medium size (but even large if you can wait ;)  mp3 and ogg files
+where tracks are separated by a reasonable silence time. To try to split mixed albums or files
+with consecutive tracks (such as live performances) might be only a waste of time.
+
+\fBNote about "mp3splt.log":\fP 
+
+  The first line contains the name of the split file
+  The second line contains the threshold and the minimum silence length
+  The next lines contain each one three columns:
+      \(hythe first column is the start position of the found silence (in seconds.fractions)
+      \(hythe second column is the end position of the found silence (in seconds.fractions)
+      \(hythe third column is the order of magnitude of the silence length; it is useful to find out most probable silence points
+
+.IP "\fB-c SOURCE\fP         " 10
+\fBCDDB mode\fP. To get splitpoints and filenames automatically from SOURCE, that is the name
+of a ".CUE" file (note that it must end with ".cue", otherwise it will be wrongly
+interpreted as a cddb file) or a local .XMCD (.CDDB) file on your hard disk.
+
+Furthermore, if you want to split using internal sheets, SOURCE must be \fBinternal_sheet\fP.
+Currently two internal sheets are supported: internal CUE sheet of native FLAC files and ID3v2
+chapters for MP3 files (note that there is a limitation on ID3v2 chapters for overlapped chapters).
+
+If you want to get informations from Internet, SOURCE must have one of the
+following formats:
+
+    \fBquery\fP
+    \fBquery{album}\fP
+    \fBquery{album}(ALBUM_RESULT_NUMBER)\fP
+    \fBquery[search=protocol://SITE:PORT, get=protocol://SITE:PORT]\fP
+    \fBquery[search...]{album}\fP
+    \fBquery[search...]{album}(ALBUM_RESULT_NUMBER)\fP
+
+If a string is specified between '{' and '}', then the internet search is
+made on this string and the user will not be requested to
+interactively input a search string.
+The number between '(' and ')' is for auto-selecting the result number
+ALBUM_RESULT_NUMBER; thus, the user will not be requested to interactively
+input a result number.
+
+The other parameters between '[' and ']' are used to specify the protocols
+and the sites. If those parameters are not specified, default values will
+be chosen, which are good enough in most cases.
+Inside the square brackets, 'search' defines the CDDB search protocol and site (for
+searching the disc ID from the album and title); 'get' defines the CDDB download protocol
+and site (for downloading the CDDB file from the disc ID). Valid 'search' protocols are
+: 'cddb_cgi' and 'cddb_protocol'.  Valid 'get' protocols are: 'cddb_cgi'.
+
+Examples:
+
+  query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]
+.br
+  query[get=cddb_protocol://freedb.org:8880]
+.br
+  query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80]
+
+Mp3splt will connect to the server and start to find the requested
+informations. If the right album is found, then mp3splt will query the
+server to get the selected album and (if no problem occurs) will
+write a file named "query.cddb" from which will get splitpoints and
+filenames.
+
+\fBProxy support:\fP
+The first time that the user queries the internet (and if the quiet mode is not enabled), mp3splt asks
+for some information about proxy usage. Mp3splt has basic authentification support using base64 for HTTP
+proxies. A file named \'.mp3splt\' is created in the user home directory containing the informations
+provided by the user. Deleting this file will make mp3splt to query the user again. Please note that
+the authentification storage is not secure. The 'username:password' is stored as base64 and can be
+easily decoded.
+
+\fBIMPORTANT NOTE FOR CDDB\fP: File split with this option can be not very precise due to:
+
+1) Who extracts CD tracks may use "Remove silence" option. This means
+that the large file is shorter than CD Total time. Never use this option.
+.br
+2) Who burns CD may add extra pause seconds between tracks. Never do it.
+.br
+3) Encoders may add some padding frames so that file is longer than CD.
+.br
+4) There are several entries of the same cd on CDDB. In mp3splt they appears with "\\=>" symbol.
+Try some of them and find the best for yours; usually you can find the correct splitpoints, so good luck!
+
+\fBYOU CAN USE THE \-a OPTION TO ADJUST SPLITPOINTS!\fP
+
+.IP "\fB-a\fP         " 10
+\fBAuto-adjust mode\fP.
+This option uses silence detection to auto-adjust splitpoints. It can be used
+in standard mode, or with \-t and \-c option (of course if there is silence in the file ;).
+It accepts some parameters with \-p option (see below for a detailed description):
+.I threshold
+level (th) which is the sound level to be considered silence, cutpoint
+.I offset
+(off) which is the offset of cutpoint in silence,
+.I min
+(min) which is the minimum silence length in seconds,
+.I gap
+(gap) which is the gap value around splitpoint to search for silence.
+If you don't specify any parameter, mp3splt will use the default values.
+With \-a option splitting process is the same, but for each splitpoint mp3splt will decode
+some time (gap) before and some after to find silence and adjust splitpoints.
+
+.IP "\fB-p PARAMETERS\fP         " 10
+\fBParameters for \-a, \-s and \-r option\fP. When using \-a, \-s and \-r option some users parameters can be specified in
+the argument and must be in the form:
+
+\fB<name1=value,name2=value,..>\fP
+
+You can specify an indefinite number of them, with no spaces and separated by comma. Available parameters are:
+
+.IP "\fBFor -s, -a and -r\fP"
+
+.IP \fBth=FLOAT\fP
+Threshold level (dB) to be considered silence. It is a float number
+between \-96 and 0. Default is \-48 dB, which is a value found by tests and should be good in most
+cases.
+
+.IP \fBshots=INTEGER\fP
+Positive integer of  the minimum number of shots to be found as non silence
+after the silence. Default is 25. Decrease this value if you need to split files having
+closer silence points.
+
+.IP \fBmin=FLOAT\fP
+Positive float of the minimum number of seconds to be considered as valid silence. All silences shorter than min are discarded. Default is 0.
+For the trim silence split, it is the minimum silence length to trigger a trimming; this amount of
+silence will be kept in the split file at the beginning and at the end.
+
+.IP "\fBBoth -s and -a\fP"
+
+.IP \fBoff=FLOAT\fP
+Float number between \-2 and 2 and allows
+you to adjust the offset of cutpoint in silence time. 0 is the begin of silence, and 1 the end. Default is 0.8.
+In most cases, you will only need to use a value between 0 and 1.
+
+Offset visualization: 
+
+                               v off=0    v off=1
+ ++++ ... ++++++++++++++++++++++----------++++++++++  ... +++++
+                           ^off=-0.5          ^off=1.5
+                      ^off=-1                      ^off=2
+                 ^off=-1.5
+          ^off=-2
+
+Legend: pluses are 'audio', minuses 'silence', 'v' down-arrow, '^' up-arrow
+and '...' a segment of the audio file (silence or audio)
+
+.IP "\fBOnly \-s\fP"
+
+.IP \fBnt=INTEGER\fP
+Positive integer number of tracks to be split when using \-s option. By default all tracks are split.
+.IP \fBrm[=FLOAT_FLOAT]\fP
+It is used to remove silence when using the \-s option.
+Can be used without additional numbers - by default it will cut all the silence found.
+Users can keep some of the silence found by passing the number of seconds to be kept at the
+beginning of the output files and at the end of the output files. For example, 'rm=2_6' will keep 2
+seconds of silence at the beginning of the split files and 6 seconds at the end.
+If the silence length is less than the sum of the number of seconds passed to the rm parameter,
+the split will convert the values to a percentage of the silence length. Taking the previous example, if
+the silence length is less than 8 seconds, the split will be done at 75% of the silence segment starting from
+the beginning of the silence ( 75% = 6/(2+6) ).
+.IP \fBtrackmin=FLOAT\fP
+Positive float of the minimum number of seconds for a track to be written out.
+Tracks shorter than trackmin will be skipped during the output phase.
+The default value 0.0 means to not skip any tracks.
+.IP \fBtrackjoin=FLOAT\fP
+Positive float of the minimum number of seconds for a track to be written out.
+Tracks shorter than trackjoin will be joined with others. The main difference between this parameter
+and trackmin is that using this one, no part of the original file will be lost.
+The default value of 0.0 means to not join any tracks.
+If using both trackmin and trackjoin, tracks shorter than trackmin will be discarded, but after the
+join.
+
+.IP "\fBOnly \-a\fP"
+
+.IP \fBgap=INTEGER\fP
+Positive integer for the time to decode before and after splitpoint, increase if splitpoints
+are completely wrong, or decrease if wrong for only few seconds. Of course the smaller the gap, the faster the process.
+Default gap is 30 seconds (so for each song, total decode time is one minute).
+
+.IP \fBwarn_if_no_aa\fP
+Print a warning for each splitpoint if it has not been auto-adjusted.
+
+.IP \fBerror_if_no_aa\fP
+Stop the split process with error if one of the splitpoints has not been auto-adjusted.
+
+.IP "\fB\-f\fP         " 10
+\fBFrame mode (mp3 only)\fP. Process all frames, seeking split positions by counting frames and not
+with bitrate guessing. In this mode you have higher precision and you can
+split variable bitrate (VBR) mp3.
+(You can also split costant bitrate mp3, but it will take more time). Note also that "high" precision
+means that time seeking is reliable, but may not coincide for example with another player program
+that uses time seeking with bitrate guessing, so make your choice.
+Frame mode will print extra info on split process, such as sync errors.
+If you obtain some sync errors, try also to split with \-e option.
+
+.IP "\fB\-b\fP         " 10
+\fB[Experimental] Bit reservoir handling for gapless playback (mp3 only)\fP. Handles bit reservoir issues when
+splitting mp3 files. This option also allows playback at the exact sample specified by the input time, instead
+of the music data boundaries. \fBWarning: split files will play gapless only on players supporting mp3 gapless
+playback using the LAME tag delay and padding values\fP (example of gapless mp3 players: cmus, mpg123, foobar2000).
+The feature is heavily inspired by pcutmp3 developed by Sebastian Gesemann.
+Use with caution because it is still an experimental feature.
+
+.IP "\fB\-k\fP         " 10
+\fBInput not seekable\fP. Consider input not seekable (default when using STDIN as input).
+This allows you to split mp3 streams which can be read only one time and can't be
+seeked. Both framemode and standard mode are available, but framemode can be really slow if used with big
+files, because to seek splitpoints we need to process all bytes and all frames. \-k option
+(so STDIN as input too) can't be used together with \-s \-a \-w \-e, because input must be seekable for
+those options. Copying original tags is not yet supported for the non seekable option.
+
+.IP "\fB\-M\fP         " 10
+\fBWrite MD5 sum (FLAC only)\fP. Using this option, the frames are decoded just before being written in
+the output files and MD5 sum of the unencoded data is computed in order to complete the STREAMINFO 
+metadata block of the created files.
+This option is disabled by default because the decoding process makes the split to be
+much slower (it can be twice slower).
+However, even when using this option, the process remains faster compared to splitting by decoding
+and then re-encoding.
+
+.IP "\fB\-O TIME\fP         " 10
+\fBOverlap split files\fP. TIME will be added to each end splitpoint.
+Current implementation of this option makes the split slower.
+
+.IP "\fB\-o FORMAT\fP         " 10
+\fBOutput format\fP. FORMAT is a string that will be used as output
+directory and/or filename. If FORMAT contains the DIRCHAR character ('\\' on
+windows and '/' on other systems), directories will be created for each
+DIRCHAR if they don't exist and the output files will be created in the
+corresponding directory. If the \-d option is not specified, the output directory
+is the concatenation of the input file directory and the extracted path from
+FORMAT. If the \-d option is also specified, the output directory will be the
+concatenation between the \-d option value and the extracted path from the \-o
+FORMAT (characters up to the last DIRCHAR). Invalid filename characters from the
+tags are transformed to '_'.
+
+It can contain name variables, that must begin with @ char and that can be:
+
+@A: performer if found, otherwise artist
+.br
+@a: artist name
+.br
+@p: performer of each song (only with .cue)
+.br
+@b: album title
+.br
+@g: genre
+.br
+@t: song title*
+.br
+@n: track number identifier* (not the real ID3 track number)**
+.br
+@N: track tag number**
+.br
+@l: track number identifier as lowercase letter* (not the real ID3 track number)**
+.br
+@L: track tag number as lowercase letter**
+.br
+@u: track number identifier as uppercase letter* (not the real ID3 track number)**
+.br
+@U: track tag number as uppercase letter**
+.br
+@f: input filename (without extension)
+.br
+@d: last directory of the input filename or the filename itself if no directory
+.br
+@m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint**
+.br
+@M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint**
+
+(**) One digit may follow defining the number of digits to output.
+.br
+If the digit is 0, then a special rule is applied when the pattern value is equal to 0:
+.br
+- the pattern is discarded
+.br
+- all characters like : _ . and -. preceding it are discarded
+.br
+- all characters following it are discarded up to the next @ or a separator like : _ . and -
+.br
+This rule is useful for discarding the last part of the time when equal to 0.
+For example @m_@s_@h0hundreths__@M_@S will only output @m_@s__@M_@S if the hundreths of seconds are 0.
+
+When split files are more than one, at least one of @t, @n, @N, @l, @L, @u or
+@U (*) must be present to avoid ambiguous names.  You can put any prefix,
+separator, suffix in the string, for more elegance.  To make easy the use
+spaces in output filename without interfering with line parameters, you can use
+the char '+' that will be automatically replaced with a space.  Valid examples
+are:
+
+@n_@a_@b_@t
+.br
+@a+-+@n+-+@t (default if using \-c and \-o is not specified)
+.br
+@a/@b/@t_@n (will create the directories '<artist>' and '<artist>/<album>')
+.br
+@f_@n+@m:@s+@M:@S
+
+.IP "\fB\-d NAME\fP         " 10
+\fBOutput directory\fP.
+To put all output files in the directory named NAME. If directory does not exists,
+it will be created. The \-o option can also be used to output files into a
+directory.
+
+.IP "\fB\-n\fP         " 10
+\fBNo tags\fP. Does not write ID3 or Vorbis comment in output files. Use if you need clean files.
+See also the \-x option.
+
+.IP "\fB\-x\fP         " 10
+\fBNo Xing header\fP. Does not write the Xing header in output files. Use
+this option with \-n if you wish to concatenate the split files and obtain
+a similar file as the input file.
+
+.IP "\fB\-T TAGS_VERSION\fP         " 10
+\fBForce output tags version\fP. For mp3 files, force output ID3 tags as version
+ID3v1, ID3v2 or ID3v1 and ID3v2. TAGS_VERSION can be 1, 2 or 12. Default is to set the output
+tags version as the tags version of the input file.
+
+.IP "\fB\-C ID3V2_TEXT_ENCODING\fP         " 10
+\fBSet encoding of the ID3V2 tags\fP. For mp3 files, set the encoding of ID3V2 tags.
+ID3V2_TEXT_ENCODING can be 1 for latin1 (iso-8859-1), 8 for UTF-8 or 16 for UTF-16.
+Default is UTF-16.
+
+.IP "\fB\-I INPUT_TAGS_ENCODING_FOR_ID3V2\fP         " 10
+\fBSet encoding of the input tags for mp3 files\fP.
+INPUT_TAGS_ENCODING_FOR_ID3V2 can be 1 for latin1 (iso-8859-1), 8 for UTF-8 or 16 for UTF-16.
+Default is UTF-8.
+
+.IP "\fB\-N\fP         " 10
+\fBNo silence log file\fP. Don't create the 'mp3splt.log' log file when using
+silence detection. This option cannot be used without the '\-s' option.
+
+.IP "\fB\-K\fP         " 10
+\fBKeep original tags for CDDB or CUE\fP. When importing a CDDB or CUE file, set the original
+input file tags and then replace them with those read from the imported file.
+
+.IP "\fB\-g TAGS\fP         " 10
+\fBCustom tags\fP. Set custom tags to the split files.
+If you want to set spaces in tags, you might need to double quote the whole TAGS.
+TAGS should contain a list of square brackets pairs \fB[]\fP. The tags defined in the first
+pair of square brackets will be set on the first split file, those defined in the
+second pair of square brackets will be set on the second split file, ... Inside
+a pair of square brackets, each tag is defined as \fB@variable=value\fP and
+tags are \fBseparated by comma\fP. If a percent sign \fB%\fP is found before
+the open square bracket character, then the pair of square brackets following the % 
+character will define the default tags in the following files. Multiple '%'
+can be defined. An optional '\fBr\fP' character can be placed at the start, to
+replace tags in tags. The 'replace tags in tags' option is not recursive. The variables can be:
+
+@a: artist name
+.br
+@b: album title
+.br
+@t: audio title
+.br
+@y: year
+.br
+@c: comment
+.br
+@g: genre
+.br
+@n: track number (set to -2 for none)
+.br
+@o: set original tags
+.br
+@O: set exactly the same original tag bytes and discard other variables (mp3 only)
+.br
+@N: auto increment track number: 
+this variable has to be placed inside the %[] field in order to have the track
+number auto incremented for all the split files following it
+.br
+@m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint
+.br
+@M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint
+
+Using the 'replace tags in tags' option, you can also use the following variables,
+which are replaced by the data from the original tags: #a, #b, #t, #y, #c, #g.
+Note that this will only work if @o has been found before.
+
+Example of tags format:
+\fB%[@o,@N=1,@b=special_album][@a=foo,@b=bar][@t=footitle]\fP. In this
+example, the first split file will have the original tags with album
+tag replaced by 'special album'; the second split file will have the tags
+of the first split, with the artist tag replaced by 'foo' and the album tag
+replaced by 'bar'; the third split file will have the tags of the first
+split, with the title tag replaced by 'footitle'. The track number will
+start at 1 for the first split file and auto increment to the other files.
+
+Example of replacing tags in tags:
+\fBr%[@o,@N=1,@b=album,@a=artist_@b_@N]\fP. Having the 'r' option, the
+replace tags in tags mode is activated; thus, output artists are 'artist_album_1','artist_album_2', ...
+Without the 'r' option, output artists are 'artist_@b_@N'.
+
+Replacement is not recursive: \fBr%[@o,@N=1,@b=album_@N,@a=artist_@b]\fP
+will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'.
+
+Example of replacing tags in tags with # variables:
+\fBr%[@o,@N=1,@t=@N_#t]\fPThis will prepend the auto incremented track number to the
+original input file title; supposing that the input file title is 'one_title',
+this will set the titles as follows: '1_one_title', '2_one_title', ...
+
+.IP "\fB\-G regex=REGEX\fP         " 10
+\fBTags from filename regex\fP. Set tags from input filename regular expression.
+REGEX can contain those variables:
+   (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>), (?<genre>)
+
+Example: if the input filename is \fBartist1__album2__title3__comment4__2__2004__Samba.ogg\fP, 
+.br
+the following regular expression
+\fB(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*?)__(?<genre>.*)\fP extracts the tags:
+  (?<artist>): artist1
+  (?<album>): album2
+  (?<title>): title3
+  (?<genre>): Samba
+  (?<comment>): comment4
+  (?<tracknum>): 2
+  (?<year>): 2004
+
+.IP "\fB\-m M3U\fP         " 10
+\fBCreate .m3u file\fP. Creates a .m3u file containing the split
+files. The generated .m3u file only contains the split filenames without
+the path. If an output directory is specified with \-d or \-o, the file is
+created in this directory. The path of M3U is ignored. This option cannot be
+used with STDOUT output.
+
+.IP "\fB\-E CUE_FILE\fP         " 10
+\fBExport to .cue file\fP. Creates a .cue file containing the splitpoints.
+Use \-P to export the splitpoints without actually splitting.
+The cue file contains the tags of the splitpoints as comments (for example REM ALBUM, REM GENRE, REM
+DATE). There is however one limitation: REM TRACK is not written if the track was auto incremented
+without user defined tags.
+
+.IP "\fB\-F FULL_SILENCE_LOG_FILE\fP         " 10
+\fBExport the full log of silence detection\fP. The full log filename is useful to draw the
+amplitude wave of the input file (in dB) in order to choose a threshold.
+
+\fBNote about the file structure:\fP 
+     \(hythe first column is a dummy column which is always zero, for plotting on zero axis purposes
+     \(hythe second column is the time in seconds as double
+     \(hythe third column is the dB level
+     \(hythe fourth column is the silences shots counter
+     \(hythe five column is the number of splitpoints found
+     \(hythe sixth column is the start time of the silence spot found
+     \(hythe seventh column is the end time of the silence spot found
+
+Example of plotting the full log file with gnuplot: 
+
+gnuplot -e "file='silence_logs.txt'; set decimalsign locale; set xlabel 'Time in seconds';
+plot file using 2:3 title 'Threshold',
+file using 2:4 title 'Silence shots' with linespoints,
+file using 2:5 title 'Number of silence points found' with fsteps,
+file using 6:1 title 'Begin of silence',
+file using 7:1 title 'End of silence' with points;
+pause -1"
+
+.IP "\fB\-P\fP         " 10
+\fBPretend to split\fP. Simulation of the process without creating any
+files or directories.
+
+.IP "\fB\-q\fP         " 10
+\fBQuiet mode\fP. Stays quiet :) i.e. do not prompt the user for anything and print less messages.
+When you use quiet option, mp3splt will try to end program without asking anything to the user (useful for scripts).
+In Wrap mode it will also skip CRC check, use if you are in such a hurry.
+
+.IP "\fB\-Q\fP         " 10
+\fBVery quiet mode\fP. Enables the \-q option and does not print anything
+to STDOUT. This option cannot be used with STDOUT output.
+
+.IP "\fB\-D\fP         " 10
+\fBDebug mode\fP. Experimental debug support. Print extra informations
+about what is being done. Current print doesn't have a nice format.
+
+.IP "\fB\-v\fP         " 10
+\fBPrint version.\fP Print the version of mp3splt and libmp3splt and exit.
+
+.IP "\fB\-h\fP         " 10
+\fBPrint help.\fP Print a short usage of mp3splt and exit.
+
+.SH "EXAMPLES"
+.PP
+\fBmp3splt album.mp3 54.32.19 67.32 \-o out\fP
+.br
+\fBmp3splt album.ogg 54.32.19 67.32 \-o out\fP
+
+This is the standard use of mp3splt for constant bitrate mp3 or for any ogg.
+You specify a begin time (which in this case uses hundredths, 54.32.19), an end time and an output file.
+.PP
+\fBmp3splt \-f \-d newdir album.mp3 album2.mp3 145.59  234.2\fP
+
+This is frame mode for variable bitrate mp3 and multiple files.
+You can see that time format uses min.sec even if minutes are over 60.
+Output files in this case will be: album_145m_59s_0h__234m_2s_0h.mp3 and album2_145m_59s_0h__234m_2s_0h.mp3
+because user didn't specify it and they will be in the directory named newdir.
+.PP
+\fBmp3splt  \-nf album.mp3  0.12  21.34.7  25.3  30.40  38.58\fP
+
+This is the use of \-n option and multiple splitpoints. Four files will be created
+and will not contain ID3 informations.
+.PP
+\fBmp3splt  \-w  album_MP3WRAP.mp3\fP
+
+This is Wrap mode. You can use this when mp3 is a file wrapped with Mp3Wrap or AlbumWrap.
+You can specify an output directory with the \-d option.
+
+.PP
+\fBmp3splt  \-lq  album.mp3\fP
+
+This is List mode. You can use this when you want to list all tracks of a wrapped file without extracting them.
+With quiet option (\-q), program will not calculate CRC!
+
+.PP
+\fBmp3splt \-s f.mp3\fP or \fBmp3splt \-s \-p th=-50,nt=10 f.mp3\fP
+
+This is silence option. Mp3splt will try to automatically detect splitpoints with silence detection and in the first case
+will split all tracks found with default parameters, while in the second 10 tracks (or less if too much) with the most
+probable silence points at a threshold of \-50 dB.
+
+.PP
+\fBmp3splt  \-c  file.cddb  album.mp3\fP
+
+This is CDDB mode with a local file. Filenames and splitpoints will be taken from file.cddb.
+
+.PP
+\fBmp3splt  \-c  query  album.mp3\fP
+
+This is CDDB mode with internet query. Will ask you the keyword to search and you will select
+the wanted cd.
+.PP
+\fBmp3splt  \-a \-c  file.cddb album.mp3\fP
+
+This is CDDB mode with auto-adjust option (default parameters). Splitpoints will be
+adjusted with silence detection in a range of 30 seconds before and after cddb splitpoints.
+
+.PP
+\fBmp3splt  \-a \-p gap=15,th=-23,rm \-c  file.cddb album.mp3\fP
+
+This is CDDB mode with auto-adjust option. Splitpoints will be adjusted with silence
+detection in a range of 15 seconds before and after cddb splitpoints, with a threshold of \-23 dB,
+and silence will be removed.
+.PP
+\fBmp3splt  \-c  query  album.mp3 \-n \-o @n_@t\fP
+
+This is CDDB mode with internet query with Frame mode, NoID3 and Output format.
+Output filenames will be named like: 01_Title.mp3
+
+.PP
+\fBmp3splt  \-t  10.00  album.mp3\fP
+
+This is \-t option. It will split album.mp3 in many files of 10 minutes each.
+.SH "BUGS"
+.PP
+Report any bugs you find to authors (see below). Advices, support requests and
+contributions are welcome.
+.SH "SEE ALSO"
+.PP
+\fBmp3wrap\fP(1)
+.SH "AUTHORS"
+.PP
+Matteo Trotta <mtrotta@users.sourceforge.net>
+.br
+.PP
+Alexandru Ionut Munteanu <m@ioalex.net>
+.SH "DISTRIBUTION"
+.PP
+Visit
+.I http://mp3splt.sourceforge.net
+for latest release.
+.PP
+.I mp3splt-project is
+.PP
+(C) 2002-2005 by Matteo Trotta
+.br
+(C) 2005-2014 by Alexandru Ionut Munteanu
+.PP
+Permission is granted to copy, distribute and/or modify
+this document under the terms of the GNU General Public License.
+This can be found as COPYING in mp3splt packages.
+
+.\" created by instant / docbook-to-man, Sun 17 Feb 2002, 11:18
+.\" modified by Matteo and Alex

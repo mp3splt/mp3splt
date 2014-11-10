@@ -1,0 +1,23 @@
+[mp3splt-gtk.Onlinehelp]
+file_filter = mp3splt-gtk/help/<lang>/<lang>.po
+source_file = mp3splt-gtk/help/mp3splt-gtk.pot
+source_lang = en
+
+[mp3splt-gtk.libmp3splt]
+file_filter = libmp3splt/po/<lang>.po
+source_file = libmp3splt/po/libmp3splt0.pot
+source_lang = en
+
+[mp3splt-gtk.ButtonsAndMessages]
+file_filter = mp3splt-gtk/po/<lang>.po
+source_file = mp3splt-gtk/po/mp3splt-gtk.pot
+source_lang = en
+
+[main]
+host = http://www.transifex.net
+
+[mp3splt-gtk.mp3splt]
+file_filter = newmp3splt/po/<lang>.po
+source_file = newmp3splt/po/mp3splt.pot
+source_lang = en
+

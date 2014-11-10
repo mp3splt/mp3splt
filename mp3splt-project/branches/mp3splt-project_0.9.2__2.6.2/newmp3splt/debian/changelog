@@ -1,0 +1,91 @@
+mp3splt (2.6.2) utopic; urgency=low
+
+  * New Version
+
+ -- Alexandru Munteanu <m@ioalex.net>  Fri, 9 May 2014 00:00:00 +0100
+
+mp3splt (2.6.0) trusty; urgency=low
+
+  * Non-maintainer upload.
+  * New Upstream Version
+  * Updated the debian control file
+
+ -- Gunter Königsmann <gunter@peterpall.de>  Sat, 3 Mar 2011 23:04:40 +0100
+
+mp3splt (2.2.5) unstable; urgency=low
+
+  * New Upstream Version
+  * add DM-Upload-Allowed field
+  * remove quilt patching, patches are applied upstream
+  * pass --disable-mp3splttest, those tests look for ../libmp3splt
+  * pass --enable-oggsplt_symlink, previous versions of the package had
+    the oggsplt binary, but my last one didn't...oops
+  * add dependency on libmp3splt-mp3 | libmp3splt-plugin, since the
+    dependency was removed from the libmp3splt0 package due to a
+    circular dependency
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Thu, 21 May 2009 18:50:38 -0700
+
+mp3splt (2.2.3-1) unstable; urgency=low
+
+  * Adopt package (Closes: #488931)
+  * New upstream release (Closes: #459510, #403463, #316046)
+  * Document default min= value (Closes: #316050)
+  * Redo packaging from scratch
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Sun, 29 Mar 2009 02:12:55 -0700
+
+mp3splt (2.1c-5) unstable; urgency=low
+
+  * Orphan this package
+  * Bump Standards-Version up to 3.8.0 (no changes)
+
+ -- Francois Marier <francois@debian.org>  Mon, 15 Sep 2008 13:13:02 +1200
+
+mp3splt (2.1c-4) unstable; urgency=low
+
+  * Fix hyphens in manpage
+  * Bump debhelper compatibility to 6
+
+ -- Francois Marier <francois@debian.org>  Tue, 03 Jun 2008 14:55:19 +1200
+
+mp3splt (2.1c-3) unstable; urgency=low
+
+  * Build-depend on automake1.7 to fix powerpc build problems
+
+ -- Francois Marier <francois@debian.org>  Fri, 04 Jan 2008 01:17:28 -0500
+
+mp3splt (2.1c-2) unstable; urgency=low
+
+  * Add support for audacity labels (closes: #456771)
+    Thanks to Federico Grau for the patch!
+  * debian/copyright: it's actually released under the LGPL 2, not 2.1
+
+ -- Francois Marier <francois@debian.org>  Sun, 23 Dec 2007 20:18:56 -0500
+
+mp3splt (2.1c-1) unstable; urgency=low
+
+  * New upstream release
+  * Setting myself as maintainer (closes: #457132)
+  * Bump Standards-Version up to 3.7.3
+  * Bump debhelper version to 5
+  * Add homepage and Vcs-* fields in debian/control
+  * Rewrite debian/copyright page
+  * Add a watch file
+  * Removed AUTHORS from debian/docs
+  * Check for the existence of the Makefile before calling it (lintian warning)
+
+ -- Francois Marier <francois@debian.org>  Sun, 23 Dec 2007 11:11:17 -0500
+
+mp3splt (2.1-1.1) unstable; urgency=low
+
+  * NMU with the permission of the maintainer.
+  * Fix build failure.  Closes: #300270.
+
+ -- Joost Yervante Damad <joost@lumatec.be>  Thu, 13 Apr 2006 15:55:35 +0200
+
+mp3splt (2.1-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Paul Melnikow <pnm@zephyr.to>  Mon,  4 Oct 2004 16:30:24 -0400
