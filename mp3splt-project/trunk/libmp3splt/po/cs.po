@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2014-10-12 12:04+0200\n"
+"POT-Creation-Date: 2014-11-09 16:04+0100\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -682,38 +682,38 @@ msgstr " - %d kB/s"
 msgid " - Total time: %dm.%02ds"
 msgstr " - Celkový čas: %dm.%02ds"
 
-#: plugins/mp3.c:2929
+#: plugins/mp3.c:2930
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Zjištěný soubor vytvořen: Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2967
+#: plugins/mp3.c:2968
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Ověření celistvosti souboru: Počítá se CRC, prosím, počkejte …"
 
-#: plugins/mp3.c:2986
+#: plugins/mp3.c:2987
 msgid " OK\n"
 msgstr " OK\n"
 
-#: plugins/mp3.c:3005
+#: plugins/mp3.c:3006
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Zjištěný soubor vytvořen: AlbumWrap\n"
 
-#: plugins/mp3.c:3027
+#: plugins/mp3.c:3028
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Celkem souborů: %d\n"
 
-#: plugins/mp3.c:3445
+#: plugins/mp3.c:3446
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »-« je datový proud mp3.\n"
 
-#: plugins/mp3.c:3472
+#: plugins/mp3.c:3473
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " Byly zpracovány snímky %lu - Chyby při seřizování: %lu\n"
 
-#: plugins/mp3.c:3655
+#: plugins/mp3.c:3656
 msgid " warning: overlapped chapters are not yet supported.\n"
 msgstr ""
 
