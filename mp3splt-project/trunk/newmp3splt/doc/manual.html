@@ -1,4 +1,4 @@
-Content-type: text/html; charset=UTF-8
+
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML><HEAD><TITLE>Man page of MP3SPLT</TITLE>
@@ -393,6 +393,14 @@ that uses time seeking with bitrate guessing, so make your choice.
 Frame mode will print extra info on split process, such as sync errors.
 If you obtain some sync errors, try also to split with -e option.
 <P>
+<DT><B>-b</B>         <DD>
+<B>[Experimental] Bit reservoir handling for gapless playback (mp3 only)</B>. Handles bit reservoir issues when
+splitting mp3 files. This option also allows playback at the exact sample specified by the input time, instead
+of the music data boundaries. <B>Warning: split files will play gapless only on players supporting mp3 gapless
+playback using the LAME tag delay and padding values</B> (example of gapless mp3 players: cmus, mpg123, foobar2000).
+The feature is heavily inspired by pcutmp3 developed by Sebastian Gesemann.
+Use with caution because it is still an experimental feature.
+<P>
 <DT><B>-k</B>         <DD>
 <B>Input not seekable</B>. Consider input not seekable (default when using STDIN as input).
 This allows you to split mp3 streams which can be read only one time and can't be
@@ -467,6 +475,9 @@ It can contain name variables, that must begin with @ char and that can be:
 @f: input filename (without extension)
 <BR>
 
+@d: last directory of the input filename or the filename itself if no directory
+<BR>
+
 @m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint**
 <BR>
 
@@ -488,7 +499,7 @@ If the digit is 0, then a special rule is applied when the pattern value is equa
 <BR>
 
 This rule is useful for discarding the last part of the time when equal to 0.
-For example @m_@<A HREF="mailto:s_@h0hundreths__">s_@h0hundreths__</A>@M_@S will only output @m_@s__@M_@S if the hundreths of seconds are 0.
+For example @m_@s_@h0hundreths__@M_@S will only output @m_@s__@M_@S if the hundreths of seconds are 0.
 <P>
 When split files are more than one, at least one of @t, @n, @N, @l, @L, @u or
 @U (*) must be present to avoid ambiguous names.  You can put any prefix,
@@ -808,7 +819,9 @@ contributions are welcome.
 Matteo Trotta &lt;<A HREF="mailto:mtrotta@users.sourceforge.net">mtrotta@users.sourceforge.net</A>&gt;
 <BR>
 
-Alexandru Ionut Munteanu &lt;m@ioalex.net&gt;
+<P>
+
+Alexandru Ionut Munteanu &lt;<A HREF="mailto:m@ioalex.net">m@ioalex.net</A>&gt;
 <A NAME="lbAJ">&nbsp;</A>
 <H2>DISTRIBUTION</H2>
 
@@ -855,6 +868,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 21:57:17 GMT, May 02, 2014
+Time: 21:49:32 GMT, November 10, 2014
 </BODY>
 </HTML>
