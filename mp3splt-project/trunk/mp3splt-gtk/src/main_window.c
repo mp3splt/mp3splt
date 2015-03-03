@@ -1123,7 +1123,7 @@ static void parse_command_line_options(gint argc, gchar * argv[], ui_state *ui)
 
 #ifndef __WIN32__
   char *input_filename = realpath(argv[optind], NULL);
-  import_file(input_filename, ui, FALSE);
+  import_file(input_filename, ui, FALSE, TRUE);
   free(input_filename);
 #else
   import_file(argv[optind], ui, FALSE);
@@ -1348,7 +1348,6 @@ void print_status_bar_confirmation(gint error, ui_state *ui)
 
   put_status_message(error_from_library, ui);
   free(error_from_library);
-  error_from_library = NULL;
 }
 
 static gboolean put_status_message_idle(ui_with_fname *ui_fname)

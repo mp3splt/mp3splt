@@ -527,6 +527,7 @@ typedef struct {
 typedef struct {
   gint err;
   ui_state *ui;
+  gboolean show_errors;
 } ui_with_err;
 
 typedef struct {
@@ -542,6 +543,7 @@ typedef struct {
   char *fname;
   gboolean is_checked_output_radio_box;
   gchar *output_format;
+  gboolean show_errors;
 } ui_with_fname;
 
 typedef struct {
