@@ -31,6 +31,8 @@
 
 #ifndef MP3SPLT_SPLT_H
 
+#define MP3SPLT_SPLT_H
+
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -778,8 +780,6 @@ void splt_s_wrap_split(splt_state *state, int *error);
 #define SPLT_NDIRCHAR '\\'
 #endif
 #endif
-
-#define MP3SPLT_SPLT_H
 
 #endif
 

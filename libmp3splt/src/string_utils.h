@@ -31,6 +31,10 @@
 
 #ifndef SPLT_STRING_UTILS_H
 
+#define SPLT_STRING_UTILS_H
+
+#include "splt.h"
+
 #include <stdarg.h>
 
 void splt_su_replace_all_char(char *str, char to_replace, char replacement);
@@ -68,8 +72,6 @@ int splt_su_str_ends_with(const char *str1, const char *str2);
 char *splt_su_get_formatted_message(splt_state *state, const char *message, ...);
 int splt_su_str_line_has_digit(const char *str);
 char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap);
-
-#define SPLT_STRING_UTILS_H
 
 #endif
 
