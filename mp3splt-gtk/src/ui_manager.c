@@ -175,15 +175,10 @@ void ui_fail(ui_state *ui, const gchar *message, ...)
 {
   if (message != NULL)
   {
-    gchar formatted_message[1024] = { '\0' };
-
     va_list ap;
     va_start(ap, message);
-    g_vsnprintf(formatted_message, 1024, message, ap);
+    vfprintf(stderr, message, ap);
     va_end(ap);
-
-    fprintf(stderr, formatted_message);
-    fflush(stderr);
   }
 
   ui->return_code = EXIT_FAILURE;
