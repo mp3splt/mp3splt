@@ -140,7 +140,7 @@ static void dnd_data_received(GtkWidget *window, GdkDragContext *drag_context,
       }
       else if (!discard_data_files)
       {
-        import_file(filename, ui, FALSE);
+        import_file(filename, ui, FALSE, TRUE);
       }
       g_string_free(ext_str, FALSE);
     }
@@ -180,7 +180,7 @@ static void dnd_data_received(GtkWidget *window, GdkDragContext *drag_context,
   if (single_file_mode)
   {
     GSList *last_filename = g_slist_last(filenames);
-    import_file(last_filename->data, ui, FALSE);
+    import_file(last_filename->data, ui, FALSE, TRUE);
 
     g_slist_foreach(filenames, (GFunc)g_free, NULL);
     g_slist_free(filenames);

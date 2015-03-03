@@ -38,6 +38,7 @@
  *********************************************************/
 
 #include "import.h"
+#include "ui_types.h"
 
 static void set_import_filters(GtkFileChooser *chooser);
 static void build_import_filter(GtkFileChooser *chooser,
@@ -69,7 +70,7 @@ void import_event(GtkWidget *widget, ui_state *ui)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
  
-    import_file(filename, ui, TRUE);
+    import_file(filename, ui, TRUE, TRUE);
 
     g_free(filename);
     filename = NULL;
@@ -80,12 +81,14 @@ void import_event(GtkWidget *widget, ui_state *ui)
   gtk_widget_destroy(file_chooser);
 }
 
-static ui_with_fname *create_ui_with_fname(ui_state *ui, const gchar *filename)
+static ui_with_fname *create_ui_with_fname(ui_state *ui, const gchar *filename, gboolean show_errors)
 {
   ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
   ui_fname->ui = ui;
   ui_fname->fname = strdup(filename);
   ui_fname->is_checked_output_radio_box = get_checked_output_radio_box(ui);
+  ui_fname->show_errors = show_errors;
+
   const gchar *output_format = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
   if (output_format != NULL)
   {
@@ -99,7 +102,7 @@ static ui_with_fname *create_ui_with_fname(ui_state *ui, const gchar *filename)
  
   The file type is determined by the extension of the file.
  */
-void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
+void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue, gboolean show_errors)
 {
   if (filename == NULL)
   {
@@ -121,25 +124,25 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
   }
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {
-    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename);
+    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename, show_errors);
     create_thread_and_unref((GThreadFunc)add_cue_splitpoints,
         (gpointer) ui_fname, ui, "import_cue");
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
   {
-    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename);
+    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename, show_errors);
     create_thread_and_unref((GThreadFunc)add_cddb_splitpoints,
         (gpointer) ui_fname, ui, "import_cddb");
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
-    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename);
+    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename, show_errors);
     create_thread_and_unref((GThreadFunc)add_audacity_labels_splitpoints,
         (gpointer) ui_fname, ui, "import_audacity");
   }
   else
   {
-    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename);
+    ui_with_fname *ui_fname = create_ui_with_fname(ui, filename, show_errors);
     create_thread_and_unref((GThreadFunc)add_plugin_internal_cue_splitpoints,
         (gpointer) ui_fname, ui, "import_internal");
   }
@@ -165,7 +168,7 @@ void import_cue_file_from_the_configuration_directory(ui_state *ui)
 
     mp3splt_set_int_option(ui->mp3splt_state,
         SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE); 
-    import_file(splitpoints_cue_filename, ui, FALSE);
+    import_file(splitpoints_cue_filename, ui, FALSE, FALSE);
   }
 
   g_free(configuration_directory);
@@ -485,7 +488,13 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
   {
     update_splitpoints_from_mp3splt_state(ui);
   }
-  print_status_bar_confirmation(ui_err->err, ui);
+
+  if (ui_err->show_errors) {
+    print_status_bar_confirmation(ui_err->err, ui);
+  }
+  else {
+    put_status_message("", ui);
+  }
 
   mp3splt_set_int_option(ui->mp3splt_state,
       SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_FALSE);
@@ -528,6 +537,7 @@ static gpointer add_cue_splitpoints(ui_with_fname *ui_fname)
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
   ui_err->ui = ui;
   ui_err->err = err;
+  ui_err->show_errors = ui_fname->show_errors;
 
   add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_cue_splitpoints_end,
       ui_err, NULL);
