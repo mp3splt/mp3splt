@@ -46,6 +46,7 @@ should therefore not be too hard a task...
 #include <string.h>
 
 #include <ltdl.h>
+#include <error.h>
 
 #include "splt.h"
 

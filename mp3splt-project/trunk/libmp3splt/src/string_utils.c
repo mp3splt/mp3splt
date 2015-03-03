@@ -42,7 +42,7 @@ String utilities
 
 #include <ctype.h>
 
-#include "splt.h"
+#include "string_utils.h"
 
 void splt_su_replace_all_char(char *str, char to_replace, char replacement)
 {
