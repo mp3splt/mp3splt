@@ -38,6 +38,7 @@
  **********************************************************/
 
 #include "splitpoints_window.h"
+#include "ui_types.h"
 
 //! checks if splitpoints exists in the table and is different from current_split
 static gboolean check_if_splitpoint_does_not_exists(gint minutes, gint seconds, gint hundr_secs, 
@@ -376,7 +377,7 @@ static void order_all_splitpoints_from_table(const char *current_description_bas
     return;
   }
 
-  int description_base_length = strlen(current_description_base);
+  size_t description_base_length = strlen(current_description_base);
 
   gint i = 0;
   gint description_counter = 0;
@@ -387,7 +388,7 @@ static void order_all_splitpoints_from_table(const char *current_description_bas
         COL_DESCRIPTION, &description,
         -1);
 
-    int length = strlen(description);
+    size_t length = strlen(description);
     if (length >= description_base_length)
     {
       if (strncmp(description, current_description_base, description_base_length) == 0)
@@ -420,7 +421,7 @@ static void order_all_splitpoints_from_table(const char *current_description_bas
 */
 void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
 {
-  g_array_remove_index(ui->splitpoints, index);
+  g_array_remove_index(ui->splitpoints, (guint) index);
 
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   GtkTreePath *path = gtk_tree_path_new_from_indices (index ,-1);
@@ -530,7 +531,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
       }
 
       gtk_list_store_insert(GTK_LIST_STORE(model), &iter,k--);
-      g_array_insert_val(ui->splitpoints, k+1, my_split_point);     
+      g_array_insert_val(ui->splitpoints, (guint) k + 1, my_split_point);
     }
     else
     {
@@ -996,6 +997,7 @@ static gpointer detect_silence_and_set_splitpoints(ui_for_split *ui_fs)
   set_is_splitting_safe(TRUE, ui);
 
   mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->single_silence_threshold);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_SHOTS, ui_fs->single_silence_shots);
   mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, ui_fs->single_silence_offset);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, ui_fs->single_silence_number);
   mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, 
@@ -1005,7 +1007,7 @@ static gpointer detect_silence_and_set_splitpoints(ui_for_split *ui_fs)
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
       ui_fs->single_silence_remove);
 
-  gint err = SPLT_OK;
+  splt_code err = SPLT_OK;
   if (ui_fs->is_checked_output_radio_box == 0)
   {
     err = mp3splt_set_oformat(ui->mp3splt_state, ui_fs->output_format);
@@ -1080,11 +1082,16 @@ static void update_silence_parameters(GtkWidget *widget, ui_state *ui)
   ui_infos *infos = ui->infos;
   gui_state *gui = ui->gui;
 
-  infos->silence_threshold_value = 
+  infos->silence_threshold_value = (gfloat)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_threshold));
+  if (gui->spinner_silence_shots != NULL)
+  {
+    infos->silence_shots_value =
+            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_silence_shots));
+  }
   if (gui->spinner_silence_offset != NULL)
   {
-    infos->silence_offset_value =
+    infos->silence_offset_value = (gfloat)
       gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_offset));
   }
   if (gui->spinner_silence_number_tracks != NULL)
@@ -1094,12 +1101,12 @@ static void update_silence_parameters(GtkWidget *widget, ui_state *ui)
   }
   if (gui->spinner_silence_minimum != NULL)
   {
-    infos->silence_minimum_length = 
+    infos->silence_minimum_length = (gfloat)
       gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_minimum));
   }
   if (gui->spinner_silence_minimum_track != NULL)
   {
-    infos->silence_minimum_track_length = 
+    infos->silence_minimum_track_length = (gfloat)
       gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_minimum_track));
   }
   if (gui->silence_remove_silence != NULL)
@@ -1147,7 +1154,7 @@ void create_trim_silence_window(GtkWidget *button, ui_state *ui)
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
   //adjustement for the threshold spinner
-  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  GtkAdjustment *adj = gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
   GtkWidget *spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
   ui->gui->spinner_silence_threshold = spinner_silence_threshold;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_threshold, FALSE, FALSE, 6);
@@ -1201,22 +1208,32 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
   //adjustement for the threshold spinner
-  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  GtkAdjustment *adj = gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
   GtkWidget *spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
   gui->spinner_silence_threshold = spinner_silence_threshold;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_threshold, FALSE, FALSE, 6);
 
+  //horizontal box fake for the shots
+  horiz_fake = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+  //shots
+  label = gtk_label_new(_("Shots as non silence after silence:"));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+  //adjustement for the threshold spinner
+  adj = gtk_adjustment_new(25.0, 0.0, 500.0, 1.0, 10.0, 0.0);
+  GtkWidget *spinner_silence_shots = gtk_spin_button_new(adj, 1.0, 0);
+  gui->spinner_silence_shots = spinner_silence_shots;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_shots, FALSE, FALSE, 6);
+
   //horizontal box fake for the offset level
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
-
   //offset level
   label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence,"
         "and 1 the end):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-
   //adjustement for the offset spinner
-  adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
   GtkWidget *spinner_silence_offset = gtk_spin_button_new(adj, 0.05, 2);
   gui->spinner_silence_offset = spinner_silence_offset;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_offset, FALSE, FALSE, 6);
@@ -1228,7 +1245,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   label = gtk_label_new(_("Number of tracks (0 means all tracks):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
   GtkWidget *spinner_silence_number_tracks = gtk_spin_button_new(adj, 1, 0);
   gui->spinner_silence_number_tracks = spinner_silence_number_tracks;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_number_tracks, FALSE, FALSE, 6);
@@ -1240,7 +1257,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   label = gtk_label_new(_("Minimum silence length (seconds):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
   GtkWidget *spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
   gui->spinner_silence_minimum = spinner_silence_minimum;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum, FALSE, FALSE, 6);
@@ -1252,7 +1269,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   label = gtk_label_new(_("Minimum track length (seconds):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
   GtkWidget *spinner_silence_minimum_track = gtk_spin_button_new(adj, 1, 2);
   gui->spinner_silence_minimum_track = spinner_silence_minimum_track;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum_track, FALSE, FALSE, 6);
@@ -1264,8 +1281,10 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   gtk_box_pack_start(GTK_BOX(param_vbox), silence_remove_silence, FALSE, FALSE, 0);
 
   //we set the default parameters for the silence split
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_threshold), 
-      infos->silence_threshold_value);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_threshold),
+          infos->silence_threshold_value);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_shots),
+          infos->silence_shots_value);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_offset), 
       infos->silence_offset_value);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_number_tracks), 
@@ -1279,6 +1298,8 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
 
   //add actions when changing the values
   g_signal_connect(G_OBJECT(spinner_silence_threshold), "value_changed",
+      G_CALLBACK(update_silence_parameters), ui);
+  g_signal_connect(G_OBJECT(spinner_silence_shots), "value_changed",
       G_CALLBACK(update_silence_parameters), ui);
   g_signal_connect(G_OBJECT(spinner_silence_offset), "value_changed",
       G_CALLBACK(update_silence_parameters), ui);
@@ -1340,7 +1361,7 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
     GtkTreeIter iter;
     gtk_tree_model_get_iter_first(model, &iter);
     gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-    g_array_remove_index(ui->splitpoints, (ui->infos->splitnumber-1));
+    g_array_remove_index(ui->splitpoints, ((guint) ui->infos->splitnumber - 1));
     ui->infos->splitnumber--;
   }
   
@@ -1364,7 +1385,7 @@ static GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, gint min, gint max
   GtkWidget *label = gtk_label_new(label_text);
   gtk_box_pack_start(GTK_BOX(spinner_box), label, TRUE, FALSE, 0);
 
-  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, min, max, 1.0, 10.0, 0.0);
+  GtkAdjustment *adj = gtk_adjustment_new(0.0, min, max, 1.0, 10.0, 0.0);
   GtkWidget *spinner = gtk_spin_button_new(adj, 0, 0);
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(spinner), TRUE);
 
@@ -2028,6 +2049,8 @@ static void create_columns(ui_state *ui)
         g_snprintf(column_name, 255, _("Track"));
         minimum_width = 20;
         break;
+      default:
+        break;
     }
 
     GtkTreeViewColumn *tag_column = gtk_tree_view_column_new_with_attributes
@@ -2139,7 +2162,7 @@ points_and_tags *get_splitpoints_and_tags_for_mp3splt_state(ui_state *ui)
 
     //get the 'checked' value from the current splitpoint
     Split_point point = g_array_index(ui->splitpoints, Split_point, i);
-    gint splitpoint_type = SPLT_SPLITPOINT;
+    splt_type_of_splitpoint splitpoint_type = SPLT_SPLITPOINT;
 
     if (point.checked == FALSE)
     {

@@ -38,6 +38,7 @@
  *..*******************************************************/
 
 #include "split_mode_window.h"
+#include "ui_types.h"
 
 //! Get the split mode
 static gint get_selected_split_mode_(GtkToggleButton *radio_b)
@@ -93,8 +94,10 @@ static void deactivate_silence_parameters(gui_state *gui)
   gtk_widget_set_sensitive(gui->all_spinner_track_minimum, FALSE);
   gtk_widget_set_sensitive(gui->all_spinner_silence_offset, FALSE);
   gtk_widget_set_sensitive(gui->all_spinner_silence_threshold, FALSE);
+  gtk_widget_set_sensitive(gui->all_spinner_silence_shots, FALSE);
   gtk_widget_set_sensitive(gui->all_silence_remove_silence, FALSE);
   gtk_widget_set_sensitive(gui->all_threshold_label, FALSE);
+  gtk_widget_set_sensitive(gui->all_shots_label, FALSE);
   gtk_widget_set_sensitive(gui->all_offset_label, FALSE);
   gtk_widget_set_sensitive(gui->all_number_of_tracks_label, FALSE);
   gtk_widget_set_sensitive(gui->all_min_silence_label, FALSE);
@@ -108,8 +111,10 @@ static void activate_silence_parameters(gui_state *gui)
   gtk_widget_set_sensitive(gui->all_spinner_track_minimum, TRUE);
   gtk_widget_set_sensitive(gui->all_spinner_silence_offset, TRUE);
   gtk_widget_set_sensitive(gui->all_spinner_silence_threshold, TRUE);
+  gtk_widget_set_sensitive(gui->all_spinner_silence_shots, TRUE);
   gtk_widget_set_sensitive(gui->all_silence_remove_silence, TRUE);
   gtk_widget_set_sensitive(gui->all_threshold_label, TRUE);
+  gtk_widget_set_sensitive(gui->all_shots_label, TRUE);
   gtk_widget_set_sensitive(gui->all_offset_label, TRUE);
   gtk_widget_set_sensitive(gui->all_number_of_tracks_label, TRUE);
   gtk_widget_set_sensitive(gui->all_min_silence_label, TRUE);
@@ -326,12 +331,26 @@ static GtkWidget *create_split_mode(ui_state *ui)
   GtkWidget *all_threshold_label = gtk_label_new(_("Threshold level (dB) : "));
   ui->gui->all_threshold_label = all_threshold_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_threshold_label, FALSE, FALSE, 0);
- 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+
+  adj = gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
   GtkWidget *all_spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
   ui->gui->all_spinner_silence_threshold = all_spinner_silence_threshold;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_threshold, FALSE, FALSE, 0);
- 
+
+  //shots
+  horiz_fake = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+
+  GtkWidget *all_shots_label = gtk_label_new(_("Shots as non silence after silence: "));
+  ui->gui->all_shots_label = all_shots_label;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_shots_label, FALSE, FALSE, 0);
+
+  adj = gtk_adjustment_new(25.0, 0.0, 500.0, 1.0, 10.0, 0.0);
+  GtkWidget *all_spinner_silence_shots = gtk_spin_button_new(adj, 1.0, 0);
+  ui->gui->all_spinner_silence_shots = all_spinner_silence_shots;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_shots, FALSE, FALSE, 0);
+
+  //cutpoint offset
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
