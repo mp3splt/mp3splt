@@ -154,6 +154,7 @@ typedef struct {
   gint debug_is_active;
 
   gfloat silence_threshold_value;
+  gint silence_shots_value;
   gfloat silence_offset_value;
   gint silence_number_of_tracks;
   gfloat silence_minimum_length;
@@ -332,8 +333,10 @@ typedef struct {
   GtkWidget *all_spinner_trim_silence_threshold;
   GtkWidget *all_spinner_silence_threshold;
   GtkWidget *all_silence_remove_silence;
+  GtkWidget *all_spinner_silence_shots;
 
   GtkWidget *all_threshold_label;
+  GtkWidget *all_shots_label;
   GtkWidget *all_trim_threshold_label;
   GtkWidget *all_offset_label;
   GtkWidget *all_number_of_tracks_label;
@@ -382,6 +385,7 @@ typedef struct {
   GtkWidget *spinner_silence_minimum_track;
   GtkWidget *spinner_silence_offset;
   GtkWidget *spinner_silence_threshold;
+  GtkWidget *spinner_silence_shots;
   GtkWidget *silence_remove_silence;
 
   GtkWidget *queue_files_button;
@@ -593,11 +597,13 @@ typedef struct {
   float silence_minimum_length; 
   float silence_minimum_track_length; 
   int silence_remove;
+  int silence_shots;
 
   float trim_silence_threshold;
 
   //single split by silence options
   float single_silence_threshold;
+  int single_silence_shots;
   float single_silence_offset;
   int single_silence_number;
   float single_silence_minimum_length; 

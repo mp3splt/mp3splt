@@ -29,6 +29,7 @@
  *********************************************************/
 
 #include "ui_manager.h"
+#include "ui_types.h"
 
 static void ui_main_window_new(ui_infos *infos);
 static void ui_infos_new(ui_state *ui);
@@ -273,7 +274,8 @@ static void ui_infos_new(ui_state *ui)
 
   infos->debug_is_active = FALSE;
 
-  infos->silence_threshold_value = SPLT_DEFAULT_PARAM_THRESHOLD; 
+  infos->silence_threshold_value = (gfloat) SPLT_DEFAULT_PARAM_THRESHOLD;
+  infos->silence_shots_value = SPLT_DEFAULT_PARAM_SHOTS;
   infos->silence_offset_value = SPLT_DEFAULT_PARAM_OFFSET;
   infos->silence_number_of_tracks = SPLT_DEFAULT_PARAM_TRACKS;
   infos->silence_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;

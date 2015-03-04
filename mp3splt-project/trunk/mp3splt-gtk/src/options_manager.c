@@ -39,6 +39,7 @@
  ********************************************************/
 
 #include "options_manager.h"
+#include "ui_types.h"
 
 /*! Update the output options
 
@@ -73,11 +74,11 @@ ui_for_split *build_ui_for_split(ui_state *ui)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->bit_reservoir_mode));
 
   ui_fs->adjust_mode = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->adjust_mode));
-  ui_fs->adjust_offset = gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_offset));
+  ui_fs->adjust_offset = (float) gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_offset));
   ui_fs->adjust_gap = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_adjust_gap));
-  ui_fs->adjust_threshold =
+  ui_fs->adjust_threshold = (float)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_threshold));
-  ui_fs->adjust_min = gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_min));
+  ui_fs->adjust_min = (float) gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_min));
 
   ui_fs->split_file_mode = get_split_file_mode(ui);
 
@@ -87,23 +88,26 @@ ui_for_split *build_ui_for_split(ui_state *ui)
   ui_fs->equal_tracks_value = 
     gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_equal_tracks));
 
-  ui_fs->silence_threshold =
+  ui_fs->silence_threshold = (float)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_threshold));
-  ui_fs->silence_offset =
+  ui_fs->silence_shots =
+    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->all_spinner_silence_shots));
+  ui_fs->silence_offset = (float)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_offset));
   ui_fs->silence_number =
     gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->all_spinner_silence_number_tracks));
-  ui_fs->silence_minimum_length =
+  ui_fs->silence_minimum_length = (float)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_minimum));
-  ui_fs->silence_minimum_track_length =
+  ui_fs->silence_minimum_track_length = (float)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_track_minimum));
   ui_fs->silence_remove =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->all_silence_remove_silence));
 
-  ui_fs->trim_silence_threshold =
+  ui_fs->trim_silence_threshold = (float)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_trim_silence_threshold));
 
   ui_fs->single_silence_threshold = ui->infos->silence_threshold_value;
+  ui_fs->single_silence_shots = ui->infos->silence_shots_value;
   ui_fs->single_silence_offset = ui->infos->silence_offset_value;
   ui_fs->single_silence_number = ui->infos->silence_number_of_tracks;
   ui_fs->single_silence_minimum_length = ui->infos->silence_minimum_length;
@@ -242,8 +246,9 @@ void put_options_from_preferences(ui_for_split *ui_fs)
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
         mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
             ui_fs->silence_threshold);
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_SHOTS, ui_fs->silence_shots);
         mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, ui_fs->silence_offset);
-        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, 
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS,
             ui_fs->silence_number);
         mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH,
             ui_fs->silence_minimum_length);
