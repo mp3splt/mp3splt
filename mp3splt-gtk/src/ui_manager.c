@@ -255,7 +255,7 @@ static void ui_infos_new(ui_state *ui)
   infos->filtered_points_presence = NULL;
   infos->silence_wave_number_of_points_threshold = DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD;
 
-  infos->selected_player = PLAYER_GSTREAMER;
+  infos->selected_player = DEFAULT_PLAYER;
 
   infos->douglas_peucker_thresholds_defaults[0] = 2.0;
   infos->douglas_peucker_thresholds_defaults[1] = 5.0;

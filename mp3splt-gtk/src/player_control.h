@@ -50,6 +50,16 @@
 #define PLAYER_SNACKAMP 2
 #define PLAYER_GSTREAMER 3
 
+#ifdef NO_GSTREAMER
+  #ifdef NO_AUDACIOUS
+    #define DEFAULT_PLAYER PLAYER_SNACKAMP
+  #else
+    #define DEFAULT_PLAYER PLAYER_AUDACIOUS
+  #endif
+#else
+  #define DEFAULT_PLAYER PLAYER_GSTREAMER
+#endif
+
 gint player_get_elapsed_time(ui_state *ui);
 gint player_get_total_time(ui_state *ui);
 gint player_is_running(ui_state *ui);
