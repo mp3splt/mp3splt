@@ -770,28 +770,27 @@ static void write_default_preferences_file(ui_state *ui)
   //default player
   if (!g_key_file_has_key(my_key_file, "player", "default_player",NULL))
   {
-    g_key_file_set_integer(my_key_file, "player", "default_player",
-        PLAYER_GSTREAMER);
+    g_key_file_set_integer(my_key_file, "player", "default_player", DEFAULT_PLAYER);
     g_key_file_set_comment (my_key_file, "player", "default_player",
-        "\n 1 = PLAYER_AUDACIOUS, 2 = PLAYER_SNACKAMP, 3 = PLAYER_GSTREAMER",
-        NULL);
+        "\n 1 = PLAYER_AUDACIOUS, 2 = PLAYER_SNACKAMP, 3 = PLAYER_GSTREAMER", NULL);
   }
   else
   {
     //check if we support selected player
-    gint the_player = 
-      g_key_file_get_integer(my_key_file, "player", "default_player", NULL);
-    if (the_player == PLAYER_AUDACIOUS)
-    {
+    gint the_player = g_key_file_get_integer(my_key_file, "player", "default_player", NULL);
+    if (the_player == PLAYER_AUDACIOUS) {
 #ifdef NO_AUDACIOUS
-      g_key_file_set_integer(my_key_file, "player", "default_player", PLAYER_SNACKAMP);
+      g_key_file_set_integer(my_key_file, "player", "default_player", DEFAULT_PLAYER);
 #endif
     }
-    //if the value do not make sense
-    else if ((the_player > PLAYER_GSTREAMER) || (the_player < 0))
-    {
-      g_key_file_set_integer(my_key_file, "player", "default_player",
-          PLAYER_GSTREAMER);
+    else if (the_player == PLAYER_GSTREAMER) {
+#ifdef NO_GSTREAMER
+      g_key_file_set_integer(my_key_file, "player", "default_player", DEFAULT_PLAYER);
+#endif
+    }
+      //if the value does not make sense
+    else if ((the_player > PLAYER_GSTREAMER) || (the_player < 0)) {
+      g_key_file_set_integer(my_key_file, "player", "default_player", DEFAULT_PLAYER);
     }
   }
 
