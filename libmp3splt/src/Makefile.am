@@ -3,7 +3,7 @@ includedir = $(prefix)/include/libmp3splt/
 include_HEADERS = $(top_srcdir)/include/libmp3splt/mp3splt.h \
 $(top_srcdir)/include/libmp3splt/version.h
 
-INCLUDES=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt$(SONAME)\" -DLIBMP3SPLT_VERSION=\"$(VERSION)\" @INCLTDL@
+AM_CFLAGS=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt$(SONAME)\" -DLIBMP3SPLT_VERSION=\"$(VERSION)\" -I$(top_srcdir)/src @INCLTDL@
 
 lib_LTLIBRARIES = libmp3splt.la
 
@@ -13,9 +13,9 @@ libmp3splt_la_LIBADD = @LIBINTL@ -lm
 
 if PCRE
 libmp3splt_la_LIBADD += @PCRE_LIBS@ 
-INCLUDES += @PCRE_CFLAGS@
+AM_CFLAGS += @PCRE_CFLAGS@
 else
-INCLUDES += -DNO_PCRE
+AM_CFLAGS += -DNO_PCRE
 endif
 
 if WIN32

@@ -1,7 +1,7 @@
 
 EXTRA_DIST = run-tests.sh
 
-INCLUDES = $(CUTTER_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src $(top_srcdir)/include/libmp3splt
+AM_CFLAGS = $(CUTTER_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/include/libmp3splt
 LIBS = $(CUTTER_LIBS) $(top_builddir)/src/libmp3splt.la
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -no-undefined
 

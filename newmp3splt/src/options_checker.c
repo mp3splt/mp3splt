@@ -276,9 +276,9 @@ void check_args(int argc, main_data *data)
 
   if (opt->F_option)
   {
-    if (!opt->s_option)
+    if (!opt->s_option && !opt->r_option)
     {
-      print_error_exit(_("the -F option cannot be used without -s"), data);
+      print_error_exit(_("the -F option cannot be used without -s or -r"), data);
     }
   }
 
