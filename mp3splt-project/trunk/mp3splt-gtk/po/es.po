@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2014-11-09 17:50+0100\n"
+"POT-Creation-Date: 2015-03-05 22:56+0100\n"
 "PO-Revision-Date: 2013-04-29 08:45+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,8 +48,8 @@ msgid "Cue filename to export"
 msgstr ""
 
 #: src/export.c:157 src/multiple_files_window.c:83
-#: src/splitpoints_window.c:1126 src/splitpoints_window.c:1183
-#: src/main_window.c:1166 src/import.c:59
+#: src/splitpoints_window.c:1133 src/splitpoints_window.c:1190
+#: src/main_window.c:1166 src/import.c:60
 msgid "_Cancel"
 msgstr ""
 
@@ -103,8 +103,8 @@ msgstr ""
 msgid "Cannot connect to player"
 msgstr ""
 
-#: src/player_window.c:604 src/splitpoints_window.c:1124
-#: src/splitpoints_window.c:1181
+#: src/player_window.c:604 src/splitpoints_window.c:1131
+#: src/splitpoints_window.c:1188
 msgid "_OK"
 msgstr ""
 
@@ -128,7 +128,7 @@ msgstr "Detener"
 msgid "Next track"
 msgstr ""
 
-#: src/player_window.c:976 src/splitpoints_window.c:1407
+#: src/player_window.c:976 src/splitpoints_window.c:1428
 msgid "_Add"
 msgstr "_añada"
 
@@ -136,13 +136,13 @@ msgstr "_añada"
 msgid "Add splitpoint at the current player position"
 msgstr ""
 
-#: src/player_window.c:992 src/splitpoints_window.c:1121
-#: src/splitpoints_window.c:1450
+#: src/player_window.c:992 src/splitpoints_window.c:1128
+#: src/splitpoints_window.c:1471
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/player_window.c:1003 src/splitpoints_window.c:1178
-#: src/splitpoints_window.c:1460
+#: src/player_window.c:1003 src/splitpoints_window.c:1185
+#: src/splitpoints_window.c:1481
 msgid "Set splitpoints from silence detection"
 msgstr "Establecer splitpoints de detección de silencio"
 
@@ -294,7 +294,7 @@ msgstr ""
 msgid "_Remove selected"
 msgstr ""
 
-#: src/multiple_files_window.c:277 src/splitpoints_window.c:1427
+#: src/multiple_files_window.c:277 src/splitpoints_window.c:1448
 msgid "R_emove all"
 msgstr "R_emove todos"
 
@@ -318,7 +318,7 @@ msgstr ""
 msgid "Messages history"
 msgstr "Mensajes de la historia"
 
-#: src/split_files_window.c:69 src/splitpoints_window.c:1911
+#: src/split_files_window.c:69 src/splitpoints_window.c:1932
 msgid "Filename"
 msgstr "Nombre de archivo"
 
@@ -347,9 +347,9 @@ msgstr "Título del álbum"
 msgid "please wait... contacting tracktype.org"
 msgstr "por favor espere ... ponerse en contacto con tracktype.org"
 
-#: src/freedb_window.c:435 src/freedb_window.c:456 src/ui_manager.c:372
-#: src/splitpoints_window.c:671 src/splitpoints_window.c:792
-#: src/splitpoints_window.c:842
+#: src/freedb_window.c:435 src/freedb_window.c:456 src/ui_manager.c:369
+#: src/splitpoints_window.c:672 src/splitpoints_window.c:793
+#: src/splitpoints_window.c:843
 msgid "description here"
 msgstr "descripción aquí"
 
@@ -369,187 +369,191 @@ msgstr ""
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Establecer splitpoints a la mesa de splitpoints"
 
-#: src/splitpoints_window.c:321
+#: src/splitpoints_window.c:322
 msgid "_part"
 msgstr ""
 
-#: src/splitpoints_window.c:332
+#: src/splitpoints_window.c:333
 #, c-format
 msgid "%s_part%d"
 msgstr ""
 
-#: src/splitpoints_window.c:647 src/splitpoints_window.c:759
+#: src/splitpoints_window.c:648 src/splitpoints_window.c:760
 msgid " error: you already have the splitpoint in table"
 msgstr ""
 
-#: src/splitpoints_window.c:1146 src/splitpoints_window.c:1200
+#: src/splitpoints_window.c:1153 src/splitpoints_window.c:1207
 #: src/preferences_window.c:519
 msgid "Threshold level (dB):"
 msgstr "Nivel umbral (dB):"
 
-#: src/splitpoints_window.c:1214
+#: src/splitpoints_window.c:1220
+msgid "Shots as non silence after silence:"
+msgstr ""
+
+#: src/splitpoints_window.c:1232
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 "Punto de corte de desplazamiento (0 es el inicio de silencio, y 1 al final):"
 
-#: src/splitpoints_window.c:1228
+#: src/splitpoints_window.c:1245
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Número de pistas (0 significa que todas las pistas):"
 
-#: src/splitpoints_window.c:1240 src/preferences_window.c:535
+#: src/splitpoints_window.c:1257 src/preferences_window.c:535
 msgid "Minimum silence length (seconds):"
 msgstr "Duración mínima de silencio (segundos):"
 
-#: src/splitpoints_window.c:1252
+#: src/splitpoints_window.c:1269
 msgid "Minimum track length (seconds):"
 msgstr ""
 
-#: src/splitpoints_window.c:1262
+#: src/splitpoints_window.c:1279
 msgid "_Remove silence between tracks"
 msgstr "_Remove Silencio entre pistas"
 
-#: src/splitpoints_window.c:1400
+#: src/splitpoints_window.c:1421
 msgid "Minutes:"
 msgstr "Minutos:"
 
-#: src/splitpoints_window.c:1402
+#: src/splitpoints_window.c:1423
 msgid "Seconds:"
 msgstr "Segundos:"
 
-#: src/splitpoints_window.c:1404
+#: src/splitpoints_window.c:1425
 msgid "Hundredths:"
 msgstr "Centésimas:"
 
-#: src/splitpoints_window.c:1414
+#: src/splitpoints_window.c:1435
 msgid "Add splitpoint"
 msgstr "Añadir splitpoint"
 
-#: src/splitpoints_window.c:1417
+#: src/splitpoints_window.c:1438
 msgid "_Remove"
 msgstr "_Remove"
 
-#: src/splitpoints_window.c:1424
+#: src/splitpoints_window.c:1445
 #, fuzzy
 msgid "Remove selected splitpoints"
 msgstr "Quitar silencio entre las pistas"
 
-#: src/splitpoints_window.c:1434
+#: src/splitpoints_window.c:1455
 #, fuzzy
 msgid "Remove all splitpoints"
 msgstr "Añadir splitpoint"
 
-#: src/splitpoints_window.c:1444
+#: src/splitpoints_window.c:1465
 msgid "_Trim splitpoints"
 msgstr ""
 
-#: src/splitpoints_window.c:1454
+#: src/splitpoints_window.c:1475
 msgid "_Silence detection"
 msgstr "_Silence Detección"
 
-#: src/splitpoints_window.c:1534 src/mp3splt-gtk.c:129
+#: src/splitpoints_window.c:1555 src/mp3splt-gtk.c:129
 msgid " finished"
 msgstr "terminado"
 
-#: src/splitpoints_window.c:1608
+#: src/splitpoints_window.c:1629
 msgid " cannot preview, not connected to player"
 msgstr "no puede ver, no está conectado al reproductor"
 
-#: src/splitpoints_window.c:1626
+#: src/splitpoints_window.c:1647
 msgid " cannot split preview last splitpoint"
 msgstr "No se puede dividir splitpoint última vista previa"
 
-#: src/splitpoints_window.c:1797
+#: src/splitpoints_window.c:1818
 msgid "Clone all tags"
 msgstr ""
 
-#: src/splitpoints_window.c:1803
+#: src/splitpoints_window.c:1824
 #, fuzzy
 msgid "Clone title"
 msgstr "Título del álbum"
 
-#: src/splitpoints_window.c:1807
+#: src/splitpoints_window.c:1828
 msgid "Clone artist"
 msgstr ""
 
-#: src/splitpoints_window.c:1811
+#: src/splitpoints_window.c:1832
 msgid "Clone album"
 msgstr ""
 
-#: src/splitpoints_window.c:1815
+#: src/splitpoints_window.c:1836
 msgid "Clone genre"
 msgstr ""
 
-#: src/splitpoints_window.c:1819
+#: src/splitpoints_window.c:1840
 msgid "Clone year"
 msgstr ""
 
-#: src/splitpoints_window.c:1823
+#: src/splitpoints_window.c:1844
 msgid "Clone track"
 msgstr ""
 
-#: src/splitpoints_window.c:1827
+#: src/splitpoints_window.c:1848
 msgid "Clone comment"
 msgstr ""
 
-#: src/splitpoints_window.c:1833
+#: src/splitpoints_window.c:1854
 msgid "Auto-increment track"
 msgstr ""
 
-#: src/splitpoints_window.c:1903
+#: src/splitpoints_window.c:1924
 msgid "Keep"
 msgstr "Mantenga"
 
-#: src/splitpoints_window.c:1919
+#: src/splitpoints_window.c:1940
 msgid "Secs"
 msgstr "Segundos"
 
-#: src/splitpoints_window.c:1927
+#: src/splitpoints_window.c:1948
 msgid "Mins"
 msgstr "Minutos"
 
-#: src/splitpoints_window.c:1935
+#: src/splitpoints_window.c:1956
 msgid "Hundr"
 msgstr "Hundr"
 
-#: src/splitpoints_window.c:1943
+#: src/splitpoints_window.c:1964
 msgid "Length"
 msgstr "Longitud"
 
-#: src/splitpoints_window.c:1950
+#: src/splitpoints_window.c:1971
 msgid "LiveP"
 msgstr "LiveP"
 
-#: src/splitpoints_window.c:1958
+#: src/splitpoints_window.c:1979
 msgid "SplitP"
 msgstr "SplitP"
 
-#: src/splitpoints_window.c:2008
+#: src/splitpoints_window.c:2029
 msgid "Title"
 msgstr ""
 
-#: src/splitpoints_window.c:2011
+#: src/splitpoints_window.c:2032
 msgid "Artist"
 msgstr ""
 
-#: src/splitpoints_window.c:2014
+#: src/splitpoints_window.c:2035
 #, fuzzy
 msgid "Album"
 msgstr "Título del álbum"
 
-#: src/splitpoints_window.c:2017
+#: src/splitpoints_window.c:2038
 msgid "Genre"
 msgstr ""
 
-#: src/splitpoints_window.c:2021
+#: src/splitpoints_window.c:2042
 #, fuzzy
 msgid "Comment"
 msgstr "Comentario de etiquetas:"
 
-#: src/splitpoints_window.c:2024
+#: src/splitpoints_window.c:2045
 msgid "Year"
 msgstr ""
 
-#: src/splitpoints_window.c:2028
+#: src/splitpoints_window.c:2049
 msgid "Track"
 msgstr ""
 
@@ -957,126 +961,130 @@ msgstr "De formato"
 msgid "Language"
 msgstr ""
 
-#: src/split_mode_window.c:188
+#: src/split_mode_window.c:193
 msgid "Use manual single file splitpoints"
 msgstr ""
 
-#: src/split_mode_window.c:190
+#: src/split_mode_window.c:195
 msgid "Split files using the manually defined splitpoints"
 msgstr ""
 
-#: src/split_mode_window.c:200
+#: src/split_mode_window.c:205
 msgid "Time"
 msgstr "Tiempo"
 
-#: src/split_mode_window.c:202
+#: src/split_mode_window.c:207
 msgid "Split every fixed time length; last track will most likely be smaller"
 msgstr ""
 
-#: src/split_mode_window.c:219
+#: src/split_mode_window.c:224
 msgid "Split every"
 msgstr ""
 
-#: src/split_mode_window.c:232
+#: src/split_mode_window.c:237
 msgid "seconds."
 msgstr ""
 
-#: src/split_mode_window.c:239
+#: src/split_mode_window.c:244
 msgid "Equal time tracks"
 msgstr "tiempo de Igualdad de pistas"
 
-#: src/split_mode_window.c:241
+#: src/split_mode_window.c:246
 msgid "Create smaller tracks having exactly the same time length"
 msgstr ""
 
-#: src/split_mode_window.c:256
+#: src/split_mode_window.c:261
 msgid "Split in"
 msgstr ""
 
-#: src/split_mode_window.c:270
+#: src/split_mode_window.c:275
 msgid "equal tracks."
 msgstr ""
 
-#: src/split_mode_window.c:277
+#: src/split_mode_window.c:282
 msgid "Trim using silence detection"
 msgstr ""
 
-#: src/split_mode_window.c:279
+#: src/split_mode_window.c:284
 msgid ""
 "Split by discarding silence from the begin and from the end\n"
 "If no silence is found, the output file is still created"
 msgstr ""
 
-#: src/split_mode_window.c:297 src/split_mode_window.c:326
+#: src/split_mode_window.c:302 src/split_mode_window.c:331
 msgid "Threshold level (dB) : "
 msgstr ""
 
-#: src/split_mode_window.c:308
+#: src/split_mode_window.c:313
 msgid "Silence - split with silence detection"
 msgstr "El silencio - se separó de la detección de silencio"
 
-#: src/split_mode_window.c:309
+#: src/split_mode_window.c:314
 #, fuzzy
 msgid "Split where silence is found"
 msgstr "El silencio - se separó de la detección de silencio"
 
-#: src/split_mode_window.c:338
+#: src/split_mode_window.c:344
+msgid "Shots as non silence after silence: "
+msgstr ""
+
+#: src/split_mode_window.c:357
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
 msgstr ""
 
-#: src/split_mode_window.c:350
+#: src/split_mode_window.c:369
 msgid "Number of tracks (0 means all tracks) : "
 msgstr ""
 
-#: src/split_mode_window.c:362
+#: src/split_mode_window.c:381
 msgid "Minimum silence length (seconds) : "
 msgstr ""
 
-#: src/split_mode_window.c:374
+#: src/split_mode_window.c:393
 msgid "Minimum track length (seconds) : "
 msgstr ""
 
-#: src/split_mode_window.c:384
+#: src/split_mode_window.c:403
 msgid "Remove silence between tracks"
 msgstr "Quitar silencio entre las pistas"
 
-#: src/split_mode_window.c:405
+#: src/split_mode_window.c:424
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
 msgstr "Envuelva - dividir archivos creados con mp3wrap o albumwrap (sólo MP3)"
 
-#: src/split_mode_window.c:415
+#: src/split_mode_window.c:434
 msgid "Synchronisation error mode (mp3 only)"
 msgstr ""
 
-#: src/split_mode_window.c:417
+#: src/split_mode_window.c:436
 msgid ""
 "Split where synchronisation errors are found\n"
 "Useful for splitting concatenated files"
 msgstr ""
 
-#: src/split_mode_window.c:428
+#: src/split_mode_window.c:447
 msgid "Internal sheet mode (CUE sheet for FLAC and ID3v2 chapters for MP3)"
 msgstr ""
 
-#: src/split_mode_window.c:429
+#: src/split_mode_window.c:448
 msgid "Split using internal sheet"
 msgstr ""
 
-#: src/split_mode_window.c:439
+#: src/split_mode_window.c:458
 msgid "Use CUE file with similar name as the input file"
 msgstr ""
 
-#: src/split_mode_window.c:441
+#: src/split_mode_window.c:460
 msgid ""
 "Split using CUE file having similar name as the input file\n"
 "Example: test.cue will be looked for when splitting test.mp3"
 msgstr ""
 
-#: src/split_mode_window.c:452
+#: src/split_mode_window.c:471
 msgid "Use CDDB file with similar name as the input file"
 msgstr ""
 
-#: src/split_mode_window.c:454
+#: src/split_mode_window.c:473
 msgid ""
 "Split using CDDB file having similar name as the input file\n"
 "Example: test.cddb will be looked for when splitting test.mp3"
@@ -1163,7 +1171,7 @@ msgstr ""
 msgid "Choose File"
 msgstr "Elija Archivo"
 
-#: src/main_window.c:1168 src/import.c:61
+#: src/main_window.c:1168 src/import.c:62
 #, fuzzy
 msgid "_Open"
 msgstr "Abierto"
@@ -1212,42 +1220,42 @@ msgstr ""
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr ""
 
-#: src/import.c:56
+#: src/import.c:57
 msgid "Choose file to import"
 msgstr ""
 
-#: src/import.c:271
+#: src/import.c:274
 msgid ""
 "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt), internal sheet (*."
 "flac), chapters (*.mp3)"
 msgstr ""
 
-#: src/import.c:275
+#: src/import.c:278
 msgid "CDDB files (*.cddb)"
 msgstr ""
 
-#: src/import.c:277
+#: src/import.c:280
 msgid "CUE files (*.cue)"
 msgstr ""
 
-#: src/import.c:279
+#: src/import.c:282
 msgid "Audacity labels files (*.txt)"
 msgstr ""
 
-#: src/import.c:281
+#: src/import.c:284
 msgid "FLAC internal sheet (*.flac)"
 msgstr ""
 
-#: src/import.c:283
+#: src/import.c:286
 #, fuzzy
 msgid "ID3v2 chapters (*.mp3)"
 msgstr "archivos MP3 (*. mp3)"
 
-#: src/import.c:285
+#: src/import.c:288
 msgid "All files"
 msgstr "Todos los archivos"
 
-#: src/import.c:476
+#: src/import.c:479
 msgid "--- last cue splitpoint ---"
 msgstr ""
 

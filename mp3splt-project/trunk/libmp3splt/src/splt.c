@@ -657,7 +657,12 @@ int splt_s_set_trim_silence_splitpoints(splt_state *state, int *error)
   {
     state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
   }
+
+  int err = splt_s_open_full_log_filename(state);
+  if (err < 0) { *error = err; goto end; }
+
   found = splt_p_scan_trim_silence(state, error);
+  splt_s_close_full_log_filename(state);
   if (*error < 0) { goto end; }
 
   if (splt_t_split_is_canceled(state))

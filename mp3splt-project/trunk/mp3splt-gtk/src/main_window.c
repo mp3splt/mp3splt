@@ -1126,7 +1126,7 @@ static void parse_command_line_options(gint argc, gchar * argv[], ui_state *ui)
   import_file(input_filename, ui, FALSE, TRUE);
   free(input_filename);
 #else
-  import_file(argv[optind], ui, FALSE);
+  import_file(argv[optind], ui, FALSE, TRUE);
 #endif
 }
 

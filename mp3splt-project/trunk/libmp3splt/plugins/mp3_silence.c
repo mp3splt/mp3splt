@@ -121,7 +121,7 @@ static void splt_mp3_scan_silence_and_process(splt_state *state, off_t begin_off
 
         int silence_was_found =
           splt_mp3_silence(mp3state, MAD_NCHANNELS(&mp3state->frame.header), threshold);
- 
+
         float level = splt_co_convert_to_db(mad_f_todouble(mp3state->temp_level));
         if (level < -96.0) { level = -96.0; }
         if (level > 0) { level = 0; }

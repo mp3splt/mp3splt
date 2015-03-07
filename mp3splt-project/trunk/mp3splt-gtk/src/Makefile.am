@@ -50,7 +50,7 @@ mp3splt_gtk_SOURCES = \
   drag_and_drop.c drag_and_drop.h \
   mutex.c mutex.h
 
-INCLUDES = @GTK_CFLAGS@ @LIBMP3SPLT_CFLAGS@
+AM_CFLAGS = @GTK_CFLAGS@ @LIBMP3SPLT_CFLAGS@
 
 mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @LIBMP3SPLT_LIBS@ -lm
 
@@ -63,7 +63,7 @@ DEFS += -DNO_GNOME
 endif
 
 if WIN32
-INCLUDES += -mms-bitfields -enable-stdcall-fixup
+AM_CFLAGS += -mms-bitfields -enable-stdcall-fixup
 mp3splt_gtk_LDFLAGS = -mwindows
 mp3splt_gtk_LDADD += -lwsock32 -lshlwapi
 else
@@ -72,14 +72,14 @@ endif
 
 if AUDACIOUS
 mp3splt_gtk_LDADD += @AUDACIOUS_LIBS@ @DBUS_GLIB_LIBS@
-INCLUDES += @AUDACIOUS_CFLAGS@ @DBUS_GLIB_CFLAGS@
+AM_CFLAGS += @AUDACIOUS_CFLAGS@ @DBUS_GLIB_CFLAGS@
 else
 DEFS += -DNO_AUDACIOUS
 endif
 
 if GSTREAMER
 mp3splt_gtk_LDADD += @GST_LIBS@
-INCLUDES += @GST_CFLAGS@
+AM_CFLAGS += @GST_CFLAGS@
 else
 DEFS += -DNO_GSTREAMER
 endif

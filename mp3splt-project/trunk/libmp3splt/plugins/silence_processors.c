@@ -204,6 +204,8 @@ static short splt_detect_where_begin_silence_ends(double time, float level, int 
     ssd->silence_end = time;
   }
 
+  double silence_for_log = -1;
+
   if (ssd->shot <= 0)
   {
     double silence_end = ssd->silence_end;
@@ -225,9 +227,12 @@ static short splt_detect_where_begin_silence_ends(double time, float level, int 
       splt_c_put_info_message_to_client(ssd->state,
           _(" info: trim begin split at %ldm_%.2lds_%.2ldh\n"), mins, secs, hundr);
     }
+
+    silence_for_log = silence_end;
  
     if (splt_siu_ssplit_new(&ssd->state->silence_list, silence_end, silence_end, 0, error) == -1)
     {
+      write_to_full_log(ssd->state, time, level, ssd->shot, ssd->found, silence_for_log, silence_for_log); 
       return SPLT_TRUE;
     }
 
@@ -241,12 +246,15 @@ static short splt_detect_where_begin_silence_ends(double time, float level, int 
     ssd->shot--;
   }
 
+  write_to_full_log(ssd->state, time, level, ssd->shot, ssd->found, silence_for_log, silence_for_log); 
   return SPLT_FALSE;
 }
 
 static short splt_detect_where_end_silence_begins(double time, float level, int silence_was_found, 
     short must_flush, splt_scan_silence_data *ssd, int *found_silence_points, int *error)
 {
+  double silence_for_log = -1;
+
   if (time < 0)
   {
     double silence_begin = ssd->silence_begin;
@@ -269,13 +277,17 @@ static short splt_detect_where_end_silence_begins(double time, float level, int 
           _(" info: trim end split at %ldm_%.2lds_%.2ldh\n"), mins, secs, hundr);
     }
 
+    silence_for_log = silence_begin;
+
     if (splt_siu_ssplit_new(&ssd->state->silence_list, silence_begin, silence_begin, 0, error) == -1)
     {
+      write_to_full_log(ssd->state, time, level, ssd->shot, ssd->found, silence_for_log, silence_for_log); 
       return SPLT_TRUE;
     }
 
     ssd->found++;
 
+    write_to_full_log(ssd->state, time, level, ssd->shot, ssd->found, silence_for_log, silence_for_log); 
     return SPLT_TRUE;
   }
 
@@ -299,6 +311,7 @@ static short splt_detect_where_end_silence_begins(double time, float level, int 
       ssd->shot += 2;
     }
 
+    write_to_full_log(ssd->state, time, level, ssd->shot, ssd->found, silence_for_log, silence_for_log); 
     return SPLT_FALSE;
   }
   else if (ssd->continue_after_silence)
@@ -330,6 +343,7 @@ static short splt_detect_where_end_silence_begins(double time, float level, int 
     ssd->shot--;
   }
 
+  write_to_full_log(ssd->state, time, level, ssd->shot, ssd->found, silence_for_log, silence_for_log); 
   return SPLT_FALSE;
 }
 
