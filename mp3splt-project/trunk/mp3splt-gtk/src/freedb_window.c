@@ -347,13 +347,22 @@ static void update_tags_from_mp3splt_state(gint number_of_rows, ui_state *ui)
       if (must_be_freed) { free(utf8_str); }
     }
 
-    char *artist = mp3splt_tags_get(tags, SPLT_TAGS_ARTIST);
-    if (artist != NULL)
-    {
+    char *performer = mp3splt_tags_get(tags, SPLT_TAGS_PERFORMER);
+    if (performer != NULL) {
       gint must_be_freed = SPLT_FALSE;
-      utf8_str = transform_to_utf8(artist, TRUE, &must_be_freed);
+      utf8_str = transform_to_utf8(performer, TRUE, &must_be_freed);
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ARTIST, utf8_str, -1);
-      if (must_be_freed) { free(utf8_str); }
+      if (must_be_freed) {free(utf8_str);}
+    }
+    else {
+      char *artist = mp3splt_tags_get(tags, SPLT_TAGS_ARTIST);
+      if (artist != NULL)
+      {
+        gint must_be_freed = SPLT_FALSE;
+        utf8_str = transform_to_utf8(artist, TRUE, &must_be_freed);
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ARTIST, utf8_str, -1);
+        if (must_be_freed) { free(utf8_str); }
+      }
     }
 
     char *album = mp3splt_tags_get(tags, SPLT_TAGS_ALBUM);
