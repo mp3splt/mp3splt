@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2015-03-05 22:55+0100\n"
+"POT-Creation-Date: 2015-03-10 21:49+0100\n"
 "PO-Revision-Date: 2013-04-29 18:38+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -532,7 +532,7 @@ msgstr "l'option -O ne peut être utilisée avec -w, -e, -l ou -i"
 
 #: src/options_checker.c:281
 #, fuzzy
-msgid "the -F option cannot be used without -s"
+msgid "the -F option cannot be used without -s or -r"
 msgstr "l'option -o ne peut être utilisée sans -i"
 
 #: src/options_checker.c:289

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2015-03-05 22:55+0100\n"
+"POT-Creation-Date: 2015-03-10 21:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -389,7 +389,7 @@ msgid "the -O option cannot be used with -w, -e, -l or -i"
 msgstr ""
 
 #: src/options_checker.c:281
-msgid "the -F option cannot be used without -s"
+msgid "the -F option cannot be used without -s or -r"
 msgstr ""
 
 #: src/options_checker.c:289
