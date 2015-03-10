@@ -45,7 +45,7 @@ static gint get_selected_split_mode_(GtkToggleButton *radio_b)
 {
   GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
 
-  gint i = 0;
+  guint i = 0;
   for(i = 0; i < NUMBER_OF_SPLIT_MODES;i++)
   {
     GtkToggleButton *test = (GtkToggleButton *) g_slist_nth_data(radio_button_list,i);
@@ -64,7 +64,7 @@ void select_split_mode(int split_mode, ui_state *ui)
   GSList *split_mode_radio_button_list =
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->split_mode_radio_button));
 
-  gint i = 0;
+  guint i = 0;
   for(i = 0; i < NUMBER_OF_SPLIT_MODES;i++)
   {
     GtkToggleButton *test = (GtkToggleButton *) g_slist_nth_data(split_mode_radio_button_list, i);
@@ -225,7 +225,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   ui->gui->time_label = time_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), time_label, FALSE, FALSE, 0);
   
-  GtkAdjustment *adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 1, 2000, 1.0, 10.0, 0.0);
+  GtkAdjustment *adj = gtk_adjustment_new(0.0, 1, INT_MAX/6000, 1.0, 10.0, 0.0);
   GtkWidget *spinner_time = gtk_spin_button_new(adj, 1, 0);
   ui->gui->spinner_time = spinner_time;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_time, FALSE, FALSE, 6);
@@ -262,7 +262,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   ui->gui->equal_tracks_label = equal_tracks_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), equal_tracks_label, FALSE, FALSE, 0);
   
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 1, 2000, 1.0, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 1, INT_MAX/6000, 1.0, 10.0, 0.0);
   GtkWidget *spinner_equal_tracks = gtk_spin_button_new(adj, 1, 0);
   ui->gui->spinner_equal_tracks = spinner_equal_tracks;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_equal_tracks, FALSE, FALSE, 6);
@@ -303,7 +303,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   ui->gui->all_trim_threshold_label = all_trim_threshold_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_trim_threshold_label, FALSE, FALSE, 0);
  
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
   GtkWidget *all_spinner_trim_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
   ui->gui->all_spinner_trim_silence_threshold = all_spinner_trim_silence_threshold;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_trim_silence_threshold, FALSE, FALSE, 0);
@@ -358,7 +358,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   ui->gui->all_offset_label = all_offset_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_offset_label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
   GtkWidget *all_spinner_silence_offset = gtk_spin_button_new(adj, 0.05, 2);
   ui->gui->all_spinner_silence_offset = all_spinner_silence_offset;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_offset, FALSE, FALSE, 0);
@@ -370,7 +370,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   ui->gui->all_number_of_tracks_label = all_number_of_tracks_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_number_of_tracks_label, FALSE, FALSE, 0);
   
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, INT_MAX/6000, 1, 10.0, 0.0);
   GtkWidget *all_spinner_silence_number_tracks = gtk_spin_button_new(adj, 1, 0);
   ui->gui->all_spinner_silence_number_tracks = all_spinner_silence_number_tracks;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_number_tracks, FALSE, FALSE, 0);
@@ -382,7 +382,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   ui->gui->all_min_silence_label = all_min_silence_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_min_silence_label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, INT_MAX/6000, 0.5, 10.0, 0.0);
   GtkWidget *all_spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
   ui->gui->all_spinner_silence_minimum = all_spinner_silence_minimum;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_minimum, FALSE, FALSE, 0);
@@ -394,7 +394,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   ui->gui->all_min_track_label = all_min_track_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_min_track_label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, INT_MAX/6000, 0.5, 10.0, 0.0);
   GtkWidget *all_spinner_track_minimum = gtk_spin_button_new(adj, 1, 2);
   ui->gui->all_spinner_track_minimum = all_spinner_track_minimum;
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_track_minimum, FALSE, FALSE, 0);
@@ -458,7 +458,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Use CUE file with similar name as the input file"));
   gtk_widget_set_tooltip_text(split_mode_radio_button,
       _("Split using CUE file having similar name as the input file\n"
-        "Example: test.cue will be looked for when splitting test.mp3"));
+        "Example: test.cue will be considered when splitting test.mp3"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
@@ -471,7 +471,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Use CDDB file with similar name as the input file"));
   gtk_widget_set_tooltip_text(split_mode_radio_button,
       _("Split using CDDB file having similar name as the input file\n"
-        "Example: test.cddb will be looked for when splitting test.mp3"));
+        "Example: test.cddb will be considered when splitting test.mp3"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
