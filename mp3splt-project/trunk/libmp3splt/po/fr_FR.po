@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2015-03-05 22:16+0100\n"
+"POT-Creation-Date: 2015-03-10 21:34+0100\n"
 "PO-Revision-Date: 2013-04-29 16:15+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -557,26 +557,26 @@ msgstr " info : début du découpage en morceaux egaux\n"
 msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
 msgstr "Découpage aux silences - Seuil : %.1f dB\n"
 
-#: src/splt.c:786
+#: src/splt.c:791
 msgid "YES"
 msgstr "OUI"
 
-#: src/splt.c:792
+#: src/splt.c:797
 #, c-format
 msgid "NO"
 msgstr "NON"
 
-#: src/splt.c:798
+#: src/splt.c:803
 #, c-format
 msgid "User"
 msgstr "Utilisateur"
 
-#: src/splt.c:802
+#: src/splt.c:807
 #, c-format
 msgid "Auto"
 msgstr "Automatique"
 
-#: src/splt.c:822
+#: src/splt.c:827
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
@@ -585,7 +585,7 @@ msgstr ""
 " Type de découpage aux silences : mode %s (Seuil : %.1f dB, Décalage : %.2f, "
 "Min : %.2f, Suppression : %s, Piste min : %.2f, Trouvés : %d%s)\n"
 
-#: src/splt.c:848
+#: src/splt.c:853
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -594,30 +594,30 @@ msgstr ""
 "Fichier journal silence trouvé '%s' ! Lecture des points silence points pour "
 "gagner du temps ;)\n"
 
-#: src/splt.c:883
+#: src/splt.c:888
 #, c-format
 msgid " Total silence points found: %d."
 msgstr "Total des points silence trouvés  : %d."
 
-#: src/splt.c:895
+#: src/splt.c:900
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d pistes sélectionnées)\n"
 
-#: src/splt.c:1014
+#: src/splt.c:1019
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr " Ecriture du fichier de log avec les points de silence '%s' ...\n"
 
-#: src/splt.c:1068
+#: src/splt.c:1073
 msgid " info: starting silence mode split\n"
 msgstr " info : début du découpage avec recherche de silences\n"
 
-#: src/splt.c:1116
+#: src/splt.c:1121
 msgid " info: starting trim using silence mode split\n"
 msgstr " info : démarrage du découpage en mode Silence\n"
 
-#: src/splt.c:1193
+#: src/splt.c:1198
 msgid " info: starting wrap mode split\n"
 msgstr " info : début du découpage en mode 'wrap'\n"
 
@@ -732,12 +732,12 @@ msgid ""
 "to fix.\n"
 msgstr ""
 
-#: plugins/silence_processors.c:226
+#: plugins/silence_processors.c:228
 #, fuzzy, c-format
 msgid " info: trim begin split at %ldm_%.2lds_%.2ldh\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 
-#: plugins/silence_processors.c:269
+#: plugins/silence_processors.c:277
 #, fuzzy, c-format
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"

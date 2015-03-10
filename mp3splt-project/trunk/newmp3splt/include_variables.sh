@@ -7,8 +7,8 @@
 
 #build architecture
 ARCH=${ARCH:=`uname -m`}
-MP3SPLT_VERSION=2.6.3.1513
-LIBMP3SPLT_VERSION=0.9.3.1513
+MP3SPLT_VERSION=2.6.3.1515
+LIBMP3SPLT_VERSION=0.9.3.1515
 MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 
 #we put i386 if i686 except for archlinux, where we set i686 inside
