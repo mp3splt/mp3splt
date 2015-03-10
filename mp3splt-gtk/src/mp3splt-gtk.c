@@ -38,6 +38,7 @@
  *********************************************************/
 
 #include "mp3splt-gtk.h"
+#include "ui_types.h"
 
 #ifndef __WIN32__
   #include <langinfo.h>
@@ -214,7 +215,7 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
 
     mp3splt_set_filename_to_split(ui->mp3splt_state, filename);
 
-    gint err = SPLT_OK;
+    gint err;
 
     if (!is_single_file_mode)
     {
@@ -234,10 +235,14 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
         GString *cue_or_cddb_file = g_string_new(cue_or_cddb);
         g_free(cue_or_cddb);
 
-        if (selected_split_mode == SELECTED_SPLIT_CUE_FILE)
-        {
+        if (selected_split_mode == SELECTED_SPLIT_CUE_FILE) {
           g_string_append(cue_or_cddb_file, ".cue");
           err = mp3splt_import(ui->mp3splt_state, CUE_IMPORT, cue_or_cddb_file->str);
+
+          if (err >= 0) {
+            splt_point *splitpoint = mp3splt_point_new(LONG_MAX, NULL);
+            err = mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
+          }
         }
         else
         {

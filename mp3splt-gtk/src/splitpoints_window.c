@@ -1245,7 +1245,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   label = gtk_label_new(_("Number of tracks (0 means all tracks):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  adj = gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, INT_MAX/6000, 1, 10.0, 0.0);
   GtkWidget *spinner_silence_number_tracks = gtk_spin_button_new(adj, 1, 0);
   gui->spinner_silence_number_tracks = spinner_silence_number_tracks;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_number_tracks, FALSE, FALSE, 6);
@@ -1257,7 +1257,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   label = gtk_label_new(_("Minimum silence length (seconds):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  adj = gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, INT_MAX/6000, 0.5, 10.0, 0.0);
   GtkWidget *spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
   gui->spinner_silence_minimum = spinner_silence_minimum;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum, FALSE, FALSE, 6);
@@ -1269,7 +1269,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
   label = gtk_label_new(_("Minimum track length (seconds):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  adj = gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, INT_MAX/6000, 0.5, 10.0, 0.0);
   GtkWidget *spinner_silence_minimum_track = gtk_spin_button_new(adj, 1, 2);
   gui->spinner_silence_minimum_track = spinner_silence_minimum_track;
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum_track, FALSE, FALSE, 6);

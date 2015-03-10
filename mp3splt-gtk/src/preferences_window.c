@@ -22,8 +22,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * along with this program; if not, write to the Free Software
  * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
  * USA.
  *
@@ -73,7 +73,7 @@ gboolean get_checked_output_radio_box(ui_state *ui)
   GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_output));
   //O = default output mode
   //1 = custom output mode
-  gint i;
+  guint i;
   for(i = 0; i<2;i++)
   {
     GtkToggleButton *test = (GtkToggleButton *)g_slist_nth_data(radio_button_list,i);
@@ -519,8 +519,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   GtkWidget *threshold_label = gtk_label_new(_("Threshold level (dB):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), threshold_label, FALSE, FALSE, 0);
 
-  GtkAdjustment *adj =
-    (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  GtkAdjustment *adj = gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
   GtkWidget *spinner_adjust_threshold = gtk_spin_button_new (adj, 0.5, 2);
   gui->spinner_adjust_threshold = spinner_adjust_threshold;
   g_signal_connect(G_OBJECT(spinner_adjust_threshold), "value_changed",
@@ -535,7 +534,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   GtkWidget *min_label = gtk_label_new(_("Minimum silence length (seconds):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), min_label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, INT_MAX/6000, 0.5, 10.0, 0.0);
   GtkWidget *spinner_adjust_min = gtk_spin_button_new(adj, 1, 2);
   gui->spinner_adjust_min = spinner_adjust_min;
   g_signal_connect(G_OBJECT(spinner_adjust_min), "value_changed",
@@ -552,7 +551,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(horiz_fake), offset_label, FALSE, FALSE, 0);
 
   //adjustement for the offset spinner
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
   GtkWidget *spinner_adjust_offset = gtk_spin_button_new (adj, 0.05, 2);
   gui->spinner_adjust_offset = spinner_adjust_offset;
   g_signal_connect(G_OBJECT(spinner_adjust_offset), "value_changed",
@@ -567,7 +566,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
     gtk_label_new(_("Gap level (seconds around splitpoint to search for silence):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), gap_label, FALSE, FALSE, 0);
 
-  adj = (GtkAdjustment *) gtk_adjustment_new(0.0, 0, 2000, 1.0, 10.0, 0.0);
+  adj = gtk_adjustment_new(0.0, 0, 2000, 1.0, 10.0, 0.0);
   GtkWidget *spinner_adjust_gap = gtk_spin_button_new (adj, 1, 0);
   gui->spinner_adjust_gap = spinner_adjust_gap;
   g_signal_connect(G_OBJECT(spinner_adjust_gap), "value_changed",
@@ -829,7 +828,7 @@ static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_
   dh_set_white_color(cairo_surface);
 
   dh_draw_rectangle(cairo_surface, TRUE, 0, 0, width, 70); 
-  gfloat current_time = ui->infos->total_time / 2.0;
+  gfloat current_time = (gfloat) ui->infos->total_time / 2.0f;
 
   gfloat drawing_time = 0;
   gfloat zoom_coeff = 0.2;
@@ -946,7 +945,7 @@ static GtkWidget *create_wave_options_box(ui_state *ui)
 
   gtk_range_set_increments(GTK_RANGE(wave_quality_hscale), 1.0, 1.0);
 
-  ui_register_range_preference("player", "wave_quality", 0.0,
+  ui_register_range_preference("player", "wave_quality", 0,
       wave_quality_hscale, (void (*)(GtkAdjustment *,gpointer))wave_quality_changed_event, ui, ui);
 
   GtkAdjustment *wave_quality_adjustment = gtk_range_get_adjustment(GTK_RANGE(wave_quality_hscale));
@@ -1273,7 +1272,7 @@ static gpointer test_regex_thread(ui_for_split *ui_fs)
 
   mp3splt_set_filename_to_split(ui->mp3splt_state, ui_fs->test_regex_filename);
 
-  gint error = SPLT_OK;
+  splt_code error = SPLT_OK;
   splt_tags *tags = mp3splt_parse_filename_regex(ui->mp3splt_state, &error);
   print_status_bar_confirmation_in_idle(error, ui);
 

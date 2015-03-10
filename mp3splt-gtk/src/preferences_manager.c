@@ -143,16 +143,12 @@ gchar *get_configuration_directory()
   }
 #endif
 
-  gint malloc_number = strlen(home_dir) + strlen(mp3splt_dir) + 2;
+  size_t malloc_number = strlen(home_dir) + strlen(mp3splt_dir) + 2;
   gchar *mp3splt_dir_with_path = malloc(malloc_number * sizeof(gchar));
   g_snprintf(mp3splt_dir_with_path, malloc_number,
       "%s%s%s", home_dir, G_DIR_SEPARATOR_S, mp3splt_dir);
 
-  if (home_dir)
-  {
-    g_free(home_dir);
-    home_dir = NULL;
-  }
+  if (home_dir) { g_free(home_dir); }
 
   struct stat buffer;
   gint status = g_stat(mp3splt_dir_with_path, &buffer);
@@ -160,9 +156,9 @@ gchar *get_configuration_directory()
   {
     if ((status == 0) && (S_ISREG(buffer.st_mode) != 0))
     {
-      gint malloc_number = strlen(mp3splt_dir_with_path) + 5;
-      gchar *backup_file = malloc(malloc_number * sizeof(gchar));
-      snprintf(backup_file, malloc_number, "%s%s", mp3splt_dir_with_path,".bak");
+      size_t malloc_number2 = strlen(mp3splt_dir_with_path) + 5;
+      gchar *backup_file = malloc(malloc_number2 * sizeof(gchar));
+      snprintf(backup_file, malloc_number2, "%s%s", mp3splt_dir_with_path,".bak");
       g_rename(mp3splt_dir_with_path, backup_file);
       g_free(backup_file);
     }
@@ -191,17 +187,12 @@ gchar *get_preferences_filename()
 {
   gchar *mp3splt_dir_with_path = get_configuration_directory();
 
-  gint fname_malloc_number = strlen(mp3splt_dir_with_path) + 30;
+  size_t fname_malloc_number = strlen(mp3splt_dir_with_path) + 30;
   gchar *filename = malloc(fname_malloc_number * sizeof(gchar));
 
   g_snprintf(filename, fname_malloc_number, "%s%smp3splt-gtk_prefs",
       mp3splt_dir_with_path, G_DIR_SEPARATOR_S);
-
-  if (mp3splt_dir_with_path)
-  {
-    g_free(mp3splt_dir_with_path);
-    mp3splt_dir_with_path = NULL;
-  }
+  if (mp3splt_dir_with_path) { g_free(mp3splt_dir_with_path); }
 
   return filename;
 }
@@ -258,7 +249,6 @@ void load_preferences(ui_state *ui)
       set_output_directory_and_update_ui(save_path, ui);
     }
     g_free(save_path);
-    save_path = NULL;
   }
 
   //player
@@ -294,7 +284,7 @@ void load_preferences(ui_state *ui)
   }
 
   //adjust threshold
-  gfloat item2;
+  gdouble item2;
   item = g_key_file_get_integer(key_file, "split", "adjust_threshold", NULL);  
   item2 = item/100 + (item%100)/100.;
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_threshold), item2);
@@ -365,7 +355,6 @@ void load_preferences(ui_state *ui)
   {
     ch_set_active_str_value(ui->gui->genre_combo, default_genre);
     g_free(default_genre);
-    default_genre = NULL;
   }
   else
   {
@@ -378,7 +367,6 @@ void load_preferences(ui_state *ui)
   {
     gtk_entry_set_text(GTK_ENTRY(ui->gui->comment_tag_entry), default_comment_tag);
     g_free(default_comment_tag);
-    default_comment_tag = NULL;
   }
 
   //regexp to parse filename into tags
@@ -388,7 +376,6 @@ void load_preferences(ui_state *ui)
   {
     gtk_entry_set_text(GTK_ENTRY(ui->gui->regex_entry), tags_from_fname_regex);
     g_free(tags_from_fname_regex);
-    tags_from_fname_regex = NULL;
   }
 
   gchar *test_regex_fname = 
@@ -397,7 +384,6 @@ void load_preferences(ui_state *ui)
   {
     gtk_entry_set_text(GTK_ENTRY(ui->gui->test_regex_fname_entry), test_regex_fname);
     g_free(test_regex_fname);
-    test_regex_fname = NULL;
   }
 
   //tags version
@@ -406,7 +392,7 @@ void load_preferences(ui_state *ui)
   GSList *tags_version_radio_button_list = 
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->tags_version_radio));
   GtkWidget *the_selection =
-    GTK_WIDGET(g_slist_nth_data(tags_version_radio_button_list, tag_pref_file));
+    GTK_WIDGET(g_slist_nth_data(tags_version_radio_button_list, (guint) tag_pref_file));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(the_selection), TRUE);
 
   //default output format or not
@@ -415,7 +401,7 @@ void load_preferences(ui_state *ui)
   GSList *output_radio_button_list = 
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_output));
   GtkWidget *our_selection =
-    GTK_WIDGET(g_slist_nth_data(output_radio_button_list, default_output_format));
+    GTK_WIDGET(g_slist_nth_data(output_radio_button_list, (guint) default_output_format));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_selection), TRUE);
   if (default_output_format)
   {
@@ -433,7 +419,6 @@ void load_preferences(ui_state *ui)
   {
     gtk_entry_set_text(GTK_ENTRY(ui->gui->output_entry), output_format);
     g_free(output_format);
-    output_format = NULL;
   }
 
   //create directories if needed
@@ -475,7 +460,6 @@ void load_preferences(ui_state *ui)
   }
 
   g_key_file_free(key_file);
-  key_file = NULL;
 }
 
 void save_preferences(ui_state *ui)
@@ -516,16 +500,16 @@ void save_preferences(ui_state *ui)
 
   //adjust threshold
   g_key_file_set_integer(my_key_file, "split", "adjust_threshold",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_threshold)) * 100);
+          (gint) gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_threshold)) * 100);
   //adjust offset
   g_key_file_set_integer(my_key_file, "split", "adjust_offset",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset)) * 100);
+          (gint) gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset)) * 100);
   //adjust gap
   g_key_file_set_integer(my_key_file, "split", "adjust_gap",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap)));
+          (gint) gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap)));
   //adjust min
   g_key_file_set_integer(my_key_file, "split", "adjust_min",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_min)));
+          (gint) gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_min)));
 
   g_key_file_set_boolean(my_key_file, "output", "splitpoint_names_from_filename",
       gtk_toggle_button_get_active(ui->gui->names_from_filename));
@@ -613,21 +597,14 @@ void save_preferences(ui_state *ui)
   gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);
 
   //we write to the preference file
-  FILE *preferences_file;
-  preferences_file = (FILE *)g_fopen(filename,"w");
+  FILE *preferences_file = (FILE *)g_fopen(filename,"w");
   g_fprintf(preferences_file,"%s", key_data);
   fclose(preferences_file);
-  preferences_file = NULL;
 
-  //we free memory
   g_free(key_data);
   g_key_file_free(my_key_file);
 
-  if (filename)
-  {
-    g_free(filename);
-    filename = NULL;
-  }
+  if (filename) { g_free(filename); }
 }
 
 /* \brief writes a default configuration file
@@ -692,7 +669,7 @@ static void write_default_preferences_file(ui_state *ui)
   }
 
   gint item;
-  gfloat item2;
+  gdouble item2;
   //adjust threshold
   if (!g_key_file_has_key(my_key_file, "split", "adjust_threshold",NULL))
   {
@@ -879,7 +856,7 @@ static void write_default_preferences_file(ui_state *ui)
 
   gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);
 
-  FILE *preferences_file = (FILE *)fopen(filename,"w");
+  FILE *preferences_file = fopen(filename,"w");
   g_fprintf(preferences_file,"%s", key_data);
   fclose(preferences_file);
 
@@ -906,19 +883,14 @@ static void check_pref_file_and_write_default(ui_state *ui)
       (S_ISREG(buffer.st_mode) == 0) && 
       (S_ISDIR(buffer.st_mode) != 0))
   {
-    gint malloc_number = strlen(pref_file)+5;
-    gchar *backup_dir = malloc(malloc_number * sizeof(gchar *));
-    snprintf(backup_dir,malloc_number, "%s%s", pref_file, ".bak");
+    size_t malloc_number = strlen(pref_file) + 5;
+    gchar *backup_dir = malloc(malloc_number * sizeof(gchar));
+    snprintf(backup_dir, malloc_number, "%s%s", pref_file, ".bak");
     g_rename(pref_file, backup_dir);
     g_free(backup_dir);
-    backup_dir = NULL;
   }
 
-  if (pref_file)
-  {
-    g_free(pref_file);
-    pref_file = NULL;
-  }
+  if (pref_file) { g_free(pref_file); }
 
   write_default_preferences_file(ui);
 }
