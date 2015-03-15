@@ -64,7 +64,7 @@ AC_PROG_LN_S
 
 AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.13.1])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 #################################################################
 # Checks for typedefs, structures, and compiler characteristics

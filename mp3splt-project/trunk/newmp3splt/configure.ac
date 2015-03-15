@@ -52,7 +52,7 @@ AC_PROG_LN_S
 
 AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.13.1])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 AC_DEFINE_UNQUOTED([LIBMP3SPLT_WITH_SONAME], "libmp3splt0", [libmp3splt library with soname])
 

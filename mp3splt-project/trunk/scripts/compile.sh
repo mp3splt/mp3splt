@@ -18,7 +18,7 @@ BUILD_BINARY_PACKAGES=1
 
 BUILD_UBUNTU_PACKAGES=$BUILD_BINARY_PACKAGES
 BUILD_DEBIAN_PACKAGES=$BUILD_BINARY_PACKAGES
-BUILD_WINDOWS_PACKAGES=$BUILD_BINARY_PACKAGES
+BUILD_WINDOWS_PACKAGES=0
 
 CHROOT_FLAGS=-d
 
@@ -174,7 +174,7 @@ function make_debian_flavor()
 
 function debian_packages()
 {
-    DEBIAN_FLAVORS="wheezy jessie unstable"
+    DEBIAN_FLAVORS="wheezy jessie"
 
     echo
     print_yellow "Creating debian packages..."
@@ -191,7 +191,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="saucy trusty utopic"
+    UBUNTU_FLAVORS="precise trusty vivid"
 
     echo
     print_yellow "Creating ubuntu packages..."
