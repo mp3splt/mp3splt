@@ -13,7 +13,7 @@
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-oggsplt_symlink --enable-flacsplt_symlink
 
 %:
-	dh $@ 
+	LDFLAGS="$(LDFLAGS) -L/tmp/temp/usr/lib" CFLAGS="$(CFLAGS) -I/tmp/temp/usr/include" LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../libmp3splt/src/.libs dh $@ 
 
 override_dh_auto_configure:
 	dh_auto_configure -- ${DEB_CONFIGURE_EXTRA_FLAGS} PKG_CONFIG_PATH=/tmp/temp/usr/lib/pkgconfig

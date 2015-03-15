@@ -10,7 +10,7 @@
 #export DH_VERBOSE=1
 
 %:
-	dh $@ 
+	LDFLAGS="$(LDFLAGS) -L/tmp/temp/usr/lib" CFLAGS="$(CFLAGS) -I/tmp/temp/usr/include" LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../libmp3splt/src/.libs dh $@ 
 
 override_dh_auto_configure:
 	dh_auto_configure -- PKG_CONFIG_PATH=/tmp/temp/usr/lib/pkgconfig

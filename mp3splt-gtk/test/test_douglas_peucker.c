@@ -128,7 +128,8 @@ void test_douglas_peucker()
   //0.4 - filter just one point
   //4.1 - filter three points
 
-  GPtrArray *points_presence_by_threshold = splt_douglas_peucker(points, NULL, NULL, 6.4, 0.4, 4.1, -1);
+  GPtrArray *points_presence_by_threshold = splt_douglas_peucker(points,
+      NULL, NULL, (gdouble) 6.4, (gdouble) 0.4, (gdouble) 4.1, (gdouble) -1);
   cut_assert_equal_int(3, points_presence_by_threshold->len);
 
   //filter all points except first segment and second segment
