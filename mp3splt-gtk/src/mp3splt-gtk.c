@@ -193,8 +193,6 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
     print_status_bar_confirmation_in_idle(err, ui);
   }
 
-  gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
-
   gint selected_split_mode = ui_fs->selected_split_mode;
   gboolean is_single_file_mode = FALSE;
   if (ui_fs->split_file_mode == FILE_MODE_SINGLE)
@@ -209,13 +207,13 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
   gint i = 0;
   for (i = 0;i < length;i++)
   {
+    gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
+
     gchar *filename = g_ptr_array_index(files_to_split, i);
 
     print_processing_file(filename, ui);
 
     mp3splt_set_filename_to_split(ui->mp3splt_state, filename);
-
-    gint err;
 
     if (!is_single_file_mode)
     {
@@ -253,6 +251,9 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
         print_status_bar_confirmation_in_idle(err, ui);
         g_string_free(cue_or_cddb_file, SPLT_TRUE);
         if (err < 0) { continue; }
+
+        //set to custom because when importing the .cue & .cddb, output filenames are already set
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
       }
     }
 
@@ -265,14 +266,14 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
     err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
     print_status_bar_confirmation_in_idle(err, ui);
 
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
+
     if (get_stop_split_safe(ui))
     {
       set_stop_split_safe(FALSE, ui);
       break;
     }
   }
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
 
   free_ui_for_split(ui_fs);
 
