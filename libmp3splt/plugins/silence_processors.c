@@ -325,7 +325,13 @@ static short splt_detect_where_end_silence_begins(double time, float level, int 
     ssd->silence_begin = time;
   }
 
-  if (ssd->len > SPLT_DEFAULTSILLEN)
+  int minimum_silences = SPLT_DEFAULTSILLEN;
+  if (ssd->number_of_shots < 10)
+  {
+    minimum_silences = ssd->number_of_shots;
+  }
+
+  if (ssd->len > minimum_silences)
   {
     if (ssd->shot <= 0)
     {
