@@ -109,7 +109,13 @@ short splt_scan_silence_processor(double time, float level, int silence_was_foun
   double begin_position = -1;
   double end_position = -1;
 
-  if (ssd->len > SPLT_DEFAULTSILLEN)
+  int minimum_silences = SPLT_DEFAULTSILLEN;
+  if (ssd->number_of_shots < 10)
+  {
+    minimum_silences = ssd->number_of_shots;
+  }
+
+  if (ssd->len > minimum_silences)
   {
     if (ssd->flush || (ssd->shot <= 0))
     {
