@@ -59,7 +59,7 @@ enum {
   COL_TRACK = 13,
   COL_COMMENT = 14,
   NUM_COLUMNS = 15
-} tree_columns;
+};
 
 gchar *get_splitpoint_name(gint index, ui_state *ui);
 gint get_first_splitpoint_selected(gui_state *gui);
