@@ -8,5 +8,5 @@ Description: library for splitting audio files without decoding
 Requires:
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -lmp3splt
-Cflags: -I${includedir}/libmp3splt
+Cflags: -I${includedir}
 
