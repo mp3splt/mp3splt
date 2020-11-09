@@ -23,6 +23,7 @@ make install
 Once `libmp3splt` is compiled, go inside the `newmp3splt` directory and type the following commands:
 ```bash
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:`pwd`/../libmp3splt/target/lib/pkgconfig/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/../libmp3splt/target/lib/ # needed for running the final executable
 ./autogen.sh
 ./configure
 make
@@ -41,6 +42,8 @@ sudo apt-get install audacious-dev libgstreamer1.0-dev libgtk-3-dev libaudclient
 Make sure to compile `libmp3splt` before this step.
 Once `libmp3splt` has been compiled, go inside the `mp3splt-gtk` directory and type the following commands:
 ```bash
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:`pwd`/../libmp3splt/target/lib/pkgconfig/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/../libmp3splt/target/lib/ # needed for running the final executable
 ./autogen.sh
 ./configure
 make
