@@ -64,13 +64,9 @@ echo -n "1/6 Running autopoint... " \
 } && echo "done" \
 && echo -n "5/6 Running autoconf... " \
 && autoconf && echo "done" \
+&& touch libltdl/config/config.rpath \
 && echo -n "6/6 Running automake... " \
 && automake -a -c && echo "done"
-
-if ! test -z $win ;then
-  touch libltdl/config/config.rpath
-  automake -a -c
-fi
 
 if test "x$HAS_MSGFMT" = xyes;then
 

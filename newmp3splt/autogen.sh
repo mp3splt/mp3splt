@@ -48,6 +48,7 @@ echo -n "1/5 Running autopoint... " \
 && autoheader && echo "done" \
 && echo -n "4/5 Running autoconf... " \
 && autoconf && echo "done" \
+&& touch config.rpath \
 && echo -n "5/5 Running automake... " \
 && automake -a -c && echo "done"
 

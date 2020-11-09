@@ -83,13 +83,9 @@ echo -n "Running autoconf... " \
     echo "doc-dist-hook:" > build-aux/gnome-doc-utils.make;
   fi
 }; else rm -f build-aux/gnome-doc-utils.make && touch build-aux/gnome-doc-utils.make; fi \
+&& touch build-aux/config.rpath \
 && echo -n "Running automake... " \
 && automake -a -c && echo "done"
-
-if ! test -z $win ;then
-  touch build-aux/config.rpath
-  automake -a -c
-fi
 
 echo -n "Formatting language files with msgfmt... " && \
 {
