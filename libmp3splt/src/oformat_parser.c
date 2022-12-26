@@ -86,6 +86,7 @@ static short splt_of_output_variable_is_valid(char v, int *amb)
     case 'd':
     case 'g':
     case 'p':
+    case 'y':
       break;
     case 't':
     case 'l':
@@ -377,6 +378,7 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
   const char *genre = NULL;
   const char *performer = NULL;
   const char *artist_or_performer = NULL;
+  const char *year = NULL;
   char *original_filename = NULL;
 
   int split_file_number = splt_t_get_current_split_file_number(state);
@@ -949,6 +951,49 @@ put_value:
               free(last_dir);
               last_dir = NULL;
             }
+          }
+          break;
+        case 'y':
+          if (splt_tu_tags_exists(state, tags_index))
+          {
+            year = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_YEAR);
+          }
+          else
+          {
+            year = NULL;
+          }
+
+          //
+          if (year != NULL)
+          {
+            snprintf(temp+2,temp_len, "%s", state->oformat.format[i]+2);
+
+            int year_length = strlen(year);
+            fm_length = strlen(temp) + year_length + 1;
+          }
+          else
+          {
+            snprintf(temp,temp_len, "%s", state->oformat.format[i]+2);
+            fm_length = strlen(temp) + 1;
+          }
+
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          //
+          if (year != NULL)
+          {
+            char *dup = duplicate_and_clean(state, year, &error);
+            if (!dup) { goto end; }
+            snprintf(fm, fm_length, temp, dup);
+            free(dup);
+          }
+          else
+          {
+            snprintf(fm, fm_length, "%s", temp);
           }
           break;
       }

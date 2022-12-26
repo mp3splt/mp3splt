@@ -316,7 +316,7 @@ void show_small_help_exit(main_data *data)
         "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
         "      @t: title tag, @n: track number identifier, @N: track tag number\n"
         "      (a digit may follow the 'n' or 'N' for the number of digits to output),\n"
-        "      @f: original filename, @g: genre"));
+        "      @f: original filename, @g: genre, @y: year"));
   print_message(_(" -g + TAGS: custom tags for the split files.\n"
         "      TAGS can contain those variables: \n"
         "         @a, @b, @t, @y, @c, @n, @g, @o (set original tags),\n"
