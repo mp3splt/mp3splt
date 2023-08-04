@@ -534,7 +534,7 @@ put_value:
               int max_number_of_digits = splt_u_get_requested_num_of_digits(state,
                   state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
 
-              snprintf(temp + offset, temp_len, "%s", format);
+              snprintf(temp + offset, temp_len - offset, "%s", format);
 
               fm_length = strlen(temp) + 1 + max_number_of_digits;
               if ((fm = malloc(fm_length * sizeof(char))) == NULL)
@@ -564,7 +564,7 @@ put_value:
           //
           if (artist_or_performer != NULL)
           {
-            snprintf(temp+2,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp+2,temp_len-2, "%s", state->oformat.format[i]+2);
 
             int artist_length = 0;
             artist_length = strlen(artist_or_performer);
@@ -609,7 +609,7 @@ put_value:
           //
           if (artist != NULL)
           {
-            snprintf(temp+2,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp+2,temp_len-2, "%s", state->oformat.format[i]+2);
 
             int artist_length = 0;
             artist_length = strlen(artist);
@@ -655,7 +655,7 @@ put_value:
           {
             int album_length = 0;
             album_length = strlen(album);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp+2, temp_len-2, "%s", state->oformat.format[i]+2);
 
             fm_length = strlen(temp) + album_length + 1;
           }
@@ -699,7 +699,7 @@ put_value:
           {
             int genre_length = 0;
             genre_length = strlen(genre);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp+2, temp_len-2, "%s", state->oformat.format[i]+2);
 
             fm_length = strlen(temp) + genre_length + 1;
           }
@@ -743,7 +743,7 @@ put_value:
           {
             int title_length = 0;
             title_length = strlen(title);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp+2, temp_len-2, "%s", state->oformat.format[i]+2);
 
             fm_length = strlen(temp) + title_length + 1;
           }
@@ -787,7 +787,7 @@ put_value:
           {
             int performer_length = 0;
             performer_length = strlen(performer);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp+2, temp_len-2, "%s", state->oformat.format[i]+2);
 
             fm_length = strlen(temp) + performer_length + 1;
           }
@@ -862,7 +862,7 @@ put_value:
             const char *format =
               splt_u_get_format_ptr(state->oformat.format[i], temp, NULL);
 
-            snprintf(temp + 4, temp_len, "%s", format + 2);
+            snprintf(temp + 4, temp_len-4, "%s", format + 2);
             fm_length = strlen(temp) + 1 + max_num_of_digits;
           }
           else
@@ -903,7 +903,7 @@ put_value:
             original_filename = strdup(splt_su_get_fname_without_path(splt_t_get_filename_to_split(state)));
             if (original_filename)
             {
-              snprintf(temp+2,temp_len, "%s", state->oformat.format[i]+2);
+              snprintf(temp+2,temp_len-2 , "%s", state->oformat.format[i]+2);
 
               splt_su_cut_extension(original_filename);
 
@@ -934,7 +934,7 @@ put_value:
 
             if (last_dir)
             {
-              snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+              snprintf(temp+2, temp_len-2, "%s", state->oformat.format[i]+2);
 
               int last_dir_length = strlen(last_dir);
 
