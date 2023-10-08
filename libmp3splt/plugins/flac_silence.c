@@ -251,6 +251,11 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
     }
   }
 
+  int junk;
+  int err = SPLT_OK;
+  process_silence(-1, -96, SPLT_FALSE, SPLT_FALSE, ssd, &junk, &err);
+  if (err < 0) { *error = err; }
+    
   if (silence_data->error < 0)
   {
     *error = silence_data->error;
