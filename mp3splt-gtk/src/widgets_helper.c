@@ -37,7 +37,7 @@
 
 #include "widgets_helper.h"
 
-static guint _wh_add_row_to_table();
+static guint _wh_add_row_to_table(GtkWidget *table);
 static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
     guint start_column, guint end_column, guint row, int expand);
 static void _wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,

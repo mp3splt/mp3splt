@@ -45,7 +45,7 @@ void wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, Gtk
 
 void wh_add_box_to_scrolled_window(GtkWidget *box, GtkWidget *scrolled_window);
 
-GtkWidget *wh_new_table();
+GtkWidget *wh_new_table(void);
 void wh_add_in_table(GtkWidget *table, GtkWidget *widget);
 void wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
     GtkWidget *widget);
@@ -78,13 +78,13 @@ GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gcha
     ui_state *ui,
     GtkWidget *box, gint top_width);
 
-GtkWidget *wh_hbox_new();
-GtkWidget *wh_vbox_new();
+GtkWidget *wh_hbox_new(void);
+GtkWidget *wh_vbox_new(void);
 GtkWidget *wh_hscale_new(GtkAdjustment *adjustment);
 GtkWidget *wh_hscale_new_with_range(gdouble min, gdouble max, gdouble step);
 void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *state);
 
-GtkWidget *wh_create_scrolled_window();
+GtkWidget *wh_create_scrolled_window(void);
 
 gboolean wh_container_has_child(GtkContainer *cont, GtkWidget *my_child);
 

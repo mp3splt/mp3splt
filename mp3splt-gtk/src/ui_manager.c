@@ -33,9 +33,9 @@
 
 static void ui_main_window_new(ui_infos *infos);
 static void ui_infos_new(ui_state *ui);
-static gui_status *ui_status_new();
-static gui_state *ui_gui_new();
-static player_infos *ui_player_infos_new();
+static gui_status *ui_status_new(void);
+static gui_state *ui_gui_new(void);
+static player_infos *ui_player_infos_new(void);
 
 static void ui_main_window_free(ui_main_window **main_win);
 static void ui_infos_free(ui_infos **infos);
@@ -91,7 +91,7 @@ const ui_main_window *ui_get_main_window_infos(ui_state *ui)
   return ui->infos->main_win;
 }
 
-ui_state *ui_state_new()
+ui_state *ui_state_new(void)
 {
   ui_state *ui = g_malloc0(sizeof(ui_state));
 
@@ -325,7 +325,7 @@ static void ui_infos_new(ui_state *ui)
   ui->infos = infos;
 }
 
-static gui_status *ui_status_new(ui_state *ui)
+static gui_status *ui_status_new(void)
 {
   gui_status *status = g_malloc0(sizeof(gui_status));
 
@@ -397,7 +397,7 @@ static gui_status *ui_status_new(ui_state *ui)
   return status;
 }
 
-static player_infos *ui_player_infos_new()
+static player_infos *ui_player_infos_new(void)
 {
   player_infos *pi = g_malloc0(sizeof(player_infos));
 
@@ -423,7 +423,7 @@ static player_infos *ui_player_infos_new()
   return pi;
 }
 
-static gui_state *ui_gui_new()
+static gui_state *ui_gui_new(void)
 {
   gui_state *gui = g_malloc0(sizeof(gui_state));
 

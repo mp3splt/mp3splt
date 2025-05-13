@@ -40,7 +40,7 @@
 #define UI_DEFAULT_WIDTH 650
 #define UI_DEFAULT_HEIGHT 420
 
-ui_state *ui_state_new();
+ui_state *ui_state_new(void);
 void ui_state_free(ui_state *ui);
 
 void ui_set_browser_directory(ui_state *ui, const gchar *directory);

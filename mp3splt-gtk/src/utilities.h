@@ -49,8 +49,8 @@ gboolean double_equals(gdouble double_to_compare, gdouble compared_value);
 
 //points and tags utilities
 
-points_and_tags *new_points_and_tags();
-void free_points_and_tags();
+points_and_tags *new_points_and_tags(void);
+void free_points_and_tags(points_and_tags **pat);
 void append_point_to_pat(splt_point *point, points_and_tags *pat);
 void append_tags_to_pat(splt_tags *tags, points_and_tags *pat);
 
