@@ -30,10 +30,10 @@
  *********************************************************/
 
 /*!********************************************************
- * \file 
+ * \file
  * The main file,
  *
- * this file contains the main() function as well as some 
+ * this file contains the main() function as well as some
  * globally used functions.
  *********************************************************/
 
@@ -41,7 +41,7 @@
 #include "ui_types.h"
 
 #ifndef __WIN32__
-  #include <langinfo.h>
+#include <langinfo.h>
 #endif
 
 ui_state *ui;
@@ -64,8 +64,7 @@ void split_action(ui_state *ui)
   ui_for_split *ui_fs = build_ui_for_split(ui);
   ui_fs->pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
 
-  create_thread_and_unref((GThreadFunc)split_collected_files,
-      (gpointer) ui_fs, ui, "split");
+  create_thread_and_unref((GThreadFunc)split_collected_files, (gpointer)ui_fs, ui, "split");
 }
 
 static gboolean collect_files_to_split(ui_state *ui)
@@ -76,10 +75,7 @@ static gboolean collect_files_to_split(ui_state *ui)
   {
     gint length = files_to_split->len;
     gint i = 0;
-    for (i = 0;i < length;i++)
-    {
-      g_free(g_ptr_array_index(files_to_split, i));
-    }
+    for (i = 0; i < length; i++) { g_free(g_ptr_array_index(files_to_split, i)); }
     g_ptr_array_free(ui->files_to_split, TRUE);
   }
   ui->files_to_split = g_ptr_array_new();
@@ -95,7 +91,7 @@ static gboolean collect_files_to_split(ui_state *ui)
     gint row_number = 0;
     while (row_number < ui->infos->multiple_files_tree_number)
     {
-      GtkTreePath *path = gtk_tree_path_new_from_indices(row_number ,-1);
+      GtkTreePath *path = gtk_tree_path_new_from_indices(row_number, -1);
 
       GtkTreeIter iter;
       gtk_tree_model_get_iter(model, &iter, path);
@@ -172,7 +168,8 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
 
   err = mp3splt_set_oformat(ui->mp3splt_state, ui_fs->output_format);
 
-  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) == SPLT_OPTION_NORMAL_MODE &&
+  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) ==
+        SPLT_OPTION_NORMAL_MODE &&
       ui_fs->split_file_mode == FILE_MODE_SINGLE)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
@@ -181,7 +178,7 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
   if (split_mode == SPLT_OPTION_NORMAL_MODE)
   {
     gint i = 0;
-    for (i = 0;i < ui_fs->pat->splitpoints->len; i++)
+    for (i = 0; i < ui_fs->pat->splitpoints->len; i++)
     {
       splt_point *point = g_ptr_array_index(ui_fs->pat->splitpoints, i);
       mp3splt_append_splitpoint(ui->mp3splt_state, point);
@@ -195,19 +192,17 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
 
   gint selected_split_mode = ui_fs->selected_split_mode;
   gboolean is_single_file_mode = FALSE;
-  if (ui_fs->split_file_mode == FILE_MODE_SINGLE)
-  {
-    is_single_file_mode = TRUE;
-  }
+  if (ui_fs->split_file_mode == FILE_MODE_SINGLE) { is_single_file_mode = TRUE; }
 
   //files_to_split will not have a read/write issue because the 'splitting' boolean, which does not
   //allow us to modify it while we read it here - no mutex needed
   GPtrArray *files_to_split = ui->files_to_split;
   gint length = files_to_split->len;
   gint i = 0;
-  for (i = 0;i < length;i++)
+  for (i = 0; i < length; i++)
   {
-    gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
+    gint output_filenames =
+      mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
 
     gchar *filename = g_ptr_array_index(files_to_split, i);
 
@@ -224,7 +219,7 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
         if (err < 0) { continue; }
       }
       else if ((selected_split_mode == SELECTED_SPLIT_CUE_FILE) ||
-          (selected_split_mode == SELECTED_SPLIT_CDDB_FILE))
+               (selected_split_mode == SELECTED_SPLIT_CDDB_FILE))
       {
         gchar *cue_or_cddb = g_strdup(filename);
         gchar *last_ext = g_strrstr(cue_or_cddb, ".");
@@ -233,11 +228,13 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
         GString *cue_or_cddb_file = g_string_new(cue_or_cddb);
         g_free(cue_or_cddb);
 
-        if (selected_split_mode == SELECTED_SPLIT_CUE_FILE) {
+        if (selected_split_mode == SELECTED_SPLIT_CUE_FILE)
+        {
           g_string_append(cue_or_cddb_file, ".cue");
           err = mp3splt_import(ui->mp3splt_state, CUE_IMPORT, cue_or_cddb_file->str);
 
-          if (err >= 0) {
+          if (err >= 0)
+          {
             splt_point *splitpoint = mp3splt_point_new(LONG_MAX, NULL);
             err = mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
           }
@@ -288,7 +285,7 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
 
 static gpointer thread_wrapper_function(gpointer data)
 {
-  ui_with_data *ui_wd = (ui_with_data *) data;
+  ui_with_data *ui_wd = (ui_with_data *)data;
   ui_state *ui = ui_wd->ui;
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
@@ -327,10 +324,7 @@ GThread *create_thread(GThreadFunc func, gpointer data, ui_state *ui, const char
   ui_wd->thread = func;
   ui_wd->is_checked_output_radio_box = get_checked_output_radio_box(ui);
   gchar *input_filename = get_input_filename(ui->gui);
-  if (input_filename != NULL)
-  {
-    ui_wd->filename_to_split = g_strdup(input_filename);
-  }
+  if (input_filename != NULL) { ui_wd->filename_to_split = g_strdup(input_filename); }
   return g_thread_new(name, thread_wrapper_function, ui_wd);
 }
 
@@ -344,7 +338,7 @@ void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify
   gdk_threads_add_idle_full(priority, function, data, notify);
 }
 
-gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data)
+gboolean exit_application(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
   ui_state *ui = (ui_state *)data;
 
@@ -356,10 +350,7 @@ gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data)
     put_status_message(_(" info: stopping the split process before exiting"), ui);
   }
 
-  if (player_is_running(ui))
-  {
-    player_quit(ui);
-  }
+  if (player_is_running(ui)) { player_quit(ui); }
 
   g_application_quit(G_APPLICATION(ui->gui->application));
 
@@ -379,8 +370,7 @@ static void sigint_handler(gint sig)
 #ifndef __WIN32__
 static void sigpipe_handler(gint sig)
 {
-  if (player_is_running(ui) &&
-      ui->infos->selected_player == PLAYER_SNACKAMP)
+  if (player_is_running(ui) && ui->infos->selected_player == PLAYER_SNACKAMP)
   {
     disconnect_snackamp(ui);
   }
@@ -404,11 +394,11 @@ static void init_i18n_and_plugin_paths(gchar *argv[], ui_state *ui)
   char mp3splt_uninstall_file[2048] = { '\0' };
   DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
   SHGetValue(HKEY_LOCAL_MACHINE,
-      TEXT("SOFTWARE\\mp3splt-gtk"),
-      TEXT("UninstallString"),
-      &dwType,
-      mp3splt_uninstall_file,
-      &dwSize);
+    TEXT("SOFTWARE\\mp3splt-gtk"),
+    TEXT("UninstallString"),
+    &dwType,
+    mp3splt_uninstall_file,
+    &dwSize);
 
   gchar *end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
   if (end) { *end = '\0'; }
@@ -424,10 +414,7 @@ static void init_i18n_and_plugin_paths(gchar *argv[], ui_state *ui)
   }
   else
   {
-    if (mp3splt_uninstall_file[0] != '\0')
-    {
-      executable_dir = mp3splt_uninstall_file;
-    }
+    if (mp3splt_uninstall_file[0] != '\0') { executable_dir = mp3splt_uninstall_file; }
   }
 
   bindtextdomain(LIBMP3SPLT_WITH_SONAME, "translations");
@@ -465,9 +452,9 @@ static void set_language_env_variable_from_preferences()
     g_free(filename);
     filename = NULL;
   }
-  
+
   gchar *lang = g_key_file_get_string(key_file, "general", "language", NULL);
- 
+
   gchar lang_env[32] = { '\0' };
   g_snprintf(lang_env, 32, "LANG=%s", lang);
   putenv(lang_env);
@@ -479,25 +466,25 @@ static void set_language_env_variable_from_preferences()
 
 /*! The traditional C main function
 
-\todo 
- - Handle the case that more than one input file is specified at the 
-   command line. Until now we just open the first one of the specified 
+\todo
+ - Handle the case that more than one input file is specified at the
+   command line. Until now we just open the first one of the specified
    files which on windows is basically what notepad does.\n
-   And decide what to do in this case: 
+   And decide what to do in this case:
    - Going into the multiple files mode will mean that our functionality
      is enabled if several files are opened at once in Windows
    - And opening a separate instance of our program would mean that
      windows and nautilus behaviour are consistent (nautilus seems to
      open every file separately) but - does this really make sense?
  - Handle the case that the specified inputfile is a playlist file
- - Set the full path to the file to make sure that the player will find 
+ - Set the full path to the file to make sure that the player will find
    it even if we are called in a different directory than the file is in
    and stuff.
- - Gstreamer needs a fully qualified path to the audio file in order to 
+ - Gstreamer needs a fully qualified path to the audio file in order to
    be able to play it back. Don't know why. But what I know is that on
    solaris realpath() may return a relative filename. And there might
    be an old system around that does not malloc() memory for a pathname
-   if the pathname we give to it is 0 => find a solution that works 
+   if the pathname we give to it is 0 => find a solution that works
    everywhere.
  */
 gint main(gint argc, gchar **argv, gchar **envp)
@@ -519,17 +506,12 @@ gint main(gint argc, gchar **argv, gchar **envp)
 #endif
 
   create_application(ui);
-  int application_code =
-    g_application_run(G_APPLICATION(ui->gui->application), argc, argv);
+  int application_code = g_application_run(G_APPLICATION(ui->gui->application), argc, argv);
 
   gint return_code = ui->return_code;
   ui_state_free(ui);
 
-  if (application_code != 0)
-  {
-    return application_code;
-  }
+  if (application_code != 0) { return application_code; }
 
   return return_code;
 }
-

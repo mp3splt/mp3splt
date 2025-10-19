@@ -42,8 +42,8 @@
 
 #include "external_includes.h"
 
-#include "snackamp_control.h"    
-#include "audacious_control.h"   
+#include "snackamp_control.h"
+#include "audacious_control.h"
 #include "gstreamer_control.h"
 
 #define PLAYER_AUDACIOUS 1
@@ -51,13 +51,13 @@
 #define PLAYER_GSTREAMER 3
 
 #ifdef NO_GSTREAMER
-  #ifdef NO_AUDACIOUS
-    #define DEFAULT_PLAYER PLAYER_SNACKAMP
-  #else
-    #define DEFAULT_PLAYER PLAYER_AUDACIOUS
-  #endif
+#ifdef NO_AUDACIOUS
+#define DEFAULT_PLAYER PLAYER_SNACKAMP
 #else
-  #define DEFAULT_PLAYER PLAYER_GSTREAMER
+#define DEFAULT_PLAYER PLAYER_AUDACIOUS
+#endif
+#else
+#define DEFAULT_PLAYER PLAYER_GSTREAMER
 #endif
 
 gint player_get_elapsed_time(ui_state *ui);
@@ -86,4 +86,3 @@ gint player_get_playlist_number(ui_state *ui);
 gint player_quit(ui_state *ui);
 
 #endif
-

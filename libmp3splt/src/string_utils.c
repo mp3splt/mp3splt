@@ -46,28 +46,18 @@ String utilities
 
 void splt_su_replace_all_char(char *str, char to_replace, char replacement)
 {
-  if (str == NULL)
-  {
-    return;
-  }
+  if (str == NULL) { return; }
 
   int i = 0;
-  for (i = 0;i < strlen(str);i++)
+  for (i = 0; i < strlen(str); i++)
   {
-    if (str[i] == to_replace)
-    {
-      str[i] = replacement;
-    }
+    if (str[i] == to_replace) { str[i] = replacement; }
   }
 }
 
-char *splt_su_replace_all(const char *str, char *to_replace,
-    char *replacement, int *error)
+char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error)
 {
-  if (str == NULL)
-  {
-    return NULL;
-  }
+  if (str == NULL) { return NULL; }
 
   char *new_str = NULL;
   int err = SPLT_OK;
@@ -83,8 +73,8 @@ char *splt_su_replace_all(const char *str, char *to_replace,
   const char *prev_ptr = ptr;
   while ((ptr = strstr(ptr, to_replace)) != NULL)
   {
-    err = splt_su_append(&new_str, prev_ptr, ptr - prev_ptr,
-        replacement, strlen(replacement), NULL);
+    err =
+      splt_su_append(&new_str, prev_ptr, ptr - prev_ptr, replacement, strlen(replacement), NULL);
     if (err != SPLT_OK) { goto error; }
     ptr += strlen(to_replace);
     prev_ptr = ptr;
@@ -95,14 +85,11 @@ char *splt_su_replace_all(const char *str, char *to_replace,
     err = splt_su_append(&new_str, prev_ptr, (str + strlen(str)) - prev_ptr, NULL);
     if (err != SPLT_OK) { goto error; }
   }
- 
+
   return new_str;
 
 error:
-  if (new_str)
-  {
-    free(new_str);
-  }
+  if (new_str) { free(new_str); }
   *error = err;
 
   return NULL;
@@ -141,10 +128,7 @@ static int splt_su_append_one(char **str, const char *to_append, size_t to_appen
   {
     new_size = to_append_size + 1;
     *str = malloc(new_size);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
+    if (*str == NULL) { return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
 
     *str[0] = '\0';
   }
@@ -152,10 +136,7 @@ static int splt_su_append_one(char **str, const char *to_append, size_t to_appen
   {
     new_size = to_append_size + strlen(*str) + 1;
     *str = realloc(*str, new_size);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
+    if (*str == NULL) { return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
   }
 
   strncat(*str, to_append, to_append_size);
@@ -185,10 +166,7 @@ int splt_su_append(char **str, const char *to_append, ...)
 
 int splt_su_set(char **str, const char *to_append, ...)
 {
-  if (!str)
-  {
-    return SPLT_OK;
-  }
+  if (!str) { return SPLT_OK; }
 
   if (*str)
   {
@@ -216,25 +194,16 @@ int splt_su_set(char **str, const char *to_append, ...)
 
 void splt_su_free_replace(char **str, char *replacement)
 {
-  if (!str)
-  {
-    return;
-  }
+  if (!str) { return; }
 
-  if (*str)
-  {
-    free(*str);
-  }
+  if (*str) { free(*str); }
 
   *str = replacement;
 }
 
 int splt_su_copy(const char *src, char **dest)
 {
-  if (!dest)
-  {
-    return SPLT_OK;
-  }
+  if (!dest) { return SPLT_OK; }
 
   if (*dest)
   {
@@ -249,10 +218,7 @@ int splt_su_copy(const char *src, char **dest)
   }
 
   int length = strlen(src) + 1;
-  if ((*dest = malloc(sizeof(char) * length)) == NULL)
-  {
-    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
+  if ((*dest = malloc(sizeof(char) * length)) == NULL) { return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
 
   snprintf(*dest, length, "%s", src);
 
@@ -261,16 +227,12 @@ int splt_su_copy(const char *src, char **dest)
 
 static int splt_su_is_illegal_char(char c, int ignore_dirchar)
 {
-  if ((ignore_dirchar) && (c == SPLT_DIRCHAR))
-  {
-    return SPLT_FALSE;
-  }
+  if ((ignore_dirchar) && (c == SPLT_DIRCHAR)) { return SPLT_FALSE; }
 
   //for the sake of filename portability, we take the the windows illegal
   //characters (will be changed upon feature request)
-  if ((c == '\\') || (c == '/') || (c == ':') || (c == '*') ||
-      (c == '?') || (c == '"') || (c == '<') ||
-      (c == '>') || (c == '|') || (c == '\r'))
+  if ((c == '\\') || (c == '/') || (c == ':') || (c == '*') || (c == '?') || (c == '"') ||
+      (c == '<') || (c == '>') || (c == '|') || (c == '\r'))
   {
     return SPLT_TRUE;
   }
@@ -280,44 +242,29 @@ static int splt_su_is_illegal_char(char c, int ignore_dirchar)
 
 static void splt_su_clean_string_(splt_state *state, char *s, int *error, int ignore_dirchar)
 {
-  int i = 0, j=0;
+  int i = 0, j = 0;
   char *copy = NULL;
   if (s)
   {
     copy = strdup(s);
     if (copy)
     {
-      for (i=0; i<=strlen(copy); i++)
+      for (i = 0; i <= strlen(copy); i++)
       {
-        if (! splt_su_is_illegal_char(copy[i], ignore_dirchar))
-        {
-          s[j++] = copy[i];
-        }
-        else
-        {
-          s[j++] = '_';
-        }
+        if (!splt_su_is_illegal_char(copy[i], ignore_dirchar)) { s[j++] = copy[i]; }
+        else { s[j++] = '_'; }
       }
       free(copy);
       copy = NULL;
 
       // Trim string. I will never stop to be surprised about cddb strings dirtiness! ;-)
-      for (i=strlen(s)-1; i >= 0; i--) 
+      for (i = strlen(s) - 1; i >= 0; i--)
       {
-        if (s[i]==' ')
-        {
-          s[i] = '\0';
-        }
-        else 
-        {
-          break;
-        }
+        if (s[i] == ' ') { s[i] = '\0'; }
+        else { break; }
       }
     }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
+    else { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
   }
 }
 
@@ -328,36 +275,24 @@ void splt_su_clean_string(splt_state *state, char *s, int *error)
 
 char *splt_su_cut_spaces(char *c)
 {
-  while (isspace(*c))
-  {
-    c++;
-  }
+  while (isspace(*c)) { c++; }
 
   return c;
 }
 
 const char *splt_su_skip_spaces(const char *c)
 {
-  while (*c == ' ' || *c == '\t')
-  {
-    c++;
-  }
+  while (*c == ' ' || *c == '\t') { c++; }
 
   return c;
 }
 
 void splt_su_cut_spaces_from_end(char *c)
 {
-  if (c == NULL || *c == '\0')
-  {
-    return;
-  }
+  if (c == NULL || *c == '\0') { return; }
 
   char *end = strchr(c, '\0');
-  if (!end)
-  {
-    return;
-  }
+  if (!end) { return; }
 
   end--;
 
@@ -376,19 +311,13 @@ char *splt_su_trim_spaces(char *c)
 
 int splt_su_is_empty_line(const char *line)
 {
-  if (!line)
-  {
-    return SPLT_TRUE;
-  }
+  if (!line) { return SPLT_TRUE; }
 
   size_t size = strlen(line);
   int i = 0;
-  for (i = 0;i < size;i++)
+  for (i = 0; i < size; i++)
   {
-    if (!isspace(line[i]))
-    {
-      return SPLT_FALSE;
-    }
+    if (!isspace(line[i])) { return SPLT_FALSE; }
   }
 
   return SPLT_TRUE;
@@ -399,10 +328,10 @@ void splt_su_line_to_unix(char *line)
   size_t line_size = strlen(line);
   if (line_size > 1)
   {
-    if (line[line_size-2] == '\r')
+    if (line[line_size - 2] == '\r')
     {
-      line[line_size-2] = '\n';
-      line[line_size-1] = '\0';
+      line[line_size - 2] = '\n';
+      line[line_size - 1] = '\0';
     }
   }
 }
@@ -410,33 +339,21 @@ void splt_su_line_to_unix(char *line)
 void splt_su_keep_path_and_remove_filename(char *path)
 {
   char *last_dirchar = strrchr(path, SPLT_DIRCHAR);
-  if (last_dirchar == NULL)
-  {
-    return;
-  }
+  if (last_dirchar == NULL) { return; }
 
-  *(last_dirchar+1) = '\0';
+  *(last_dirchar + 1) = '\0';
 
 #ifdef __WIN32__
-  if (!splt_w32_str_is_drive_root_directory(path))
-  {
-    *last_dirchar = '\0';
-  }
+  if (!splt_w32_str_is_drive_root_directory(path)) { *last_dirchar = '\0'; }
 #else
-  if (last_dirchar != path)
-  {
-    *last_dirchar = '\0';
-  }
+  if (last_dirchar != path) { *last_dirchar = '\0'; }
 #endif
 }
 
 const char *splt_su_get_fname_without_path(const char *filename)
 {
   char *c = NULL;
-  while ((c = strchr(filename, SPLT_DIRCHAR)) != NULL)
-  {
-    filename = c + 1;
-  }
+  while ((c = strchr(filename, SPLT_DIRCHAR)) != NULL) { filename = c + 1; }
 
   return filename;
 }
@@ -447,7 +364,8 @@ char *splt_su_get_fname_without_path_and_extension(const char *filename, int *er
 
   char *fname_without_path_and_extension = NULL;
   int err = splt_su_copy(fname_without_path, &fname_without_path_and_extension);
-  if (err < 0) {
+  if (err < 0)
+  {
     *error = err;
     return NULL;
   }
@@ -462,7 +380,11 @@ char *splt_su_get_last_dir_of_fname(const char *filename_with_path, int *error)
   if (!filename_with_path) { return NULL; }
 
   char *full_fname = strdup(filename_with_path);
-  if (!full_fname) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return NULL; }
+  if (!full_fname)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
 
   splt_su_keep_path_and_remove_filename(full_fname);
 
@@ -508,21 +430,20 @@ char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error)
   const char *new_filename_path = splt_t_get_new_filename_path(state);
   if (new_filename_path[0] == '\0')
   {
-    err = splt_su_append_str(&output_fname_with_path, output_fname,
-        extension, NULL);
+    err = splt_su_append_str(&output_fname_with_path, output_fname, extension, NULL);
     if (err < 0) { goto error; }
   }
   else
   {
-    if (new_filename_path[strlen(new_filename_path)-1] == SPLT_DIRCHAR)
+    if (new_filename_path[strlen(new_filename_path) - 1] == SPLT_DIRCHAR)
     {
-      err = splt_su_append_str(&output_fname_with_path, new_filename_path,
-          output_fname, extension, NULL);
+      err = splt_su_append_str(
+        &output_fname_with_path, new_filename_path, output_fname, extension, NULL);
     }
     else
     {
-      err = splt_su_append_str(&output_fname_with_path, new_filename_path,
-          SPLT_DIRSTR, output_fname, extension, NULL);
+      err = splt_su_append_str(
+        &output_fname_with_path, new_filename_path, SPLT_DIRSTR, output_fname, extension, NULL);
     }
     if (err < 0) { goto error; }
   }
@@ -532,7 +453,7 @@ char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error)
   {
     if (splt_check_is_the_same_file(state, filename, output_fname_with_path, &err))
     {
-      splt_e_set_error_data(state,filename);
+      splt_e_set_error_data(state, filename);
       err = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
       goto error;
     }
@@ -556,34 +477,22 @@ error:
 
 void splt_su_cut_extension(char *str)
 {
-  char *point = strrchr(str , '.');
-  if (point)
-  {
-    *point = '\0';
-  }
+  char *point = strrchr(str, '.');
+  if (point) { *point = '\0'; }
 }
 
 void splt_su_str_cut_last_char(char *str)
 {
-  if (!str)
-  {
-    return;
-  }
+  if (!str) { return; }
 
-  str[strlen(str)-1] = '\0';
+  str[strlen(str) - 1] = '\0';
 }
 
 double splt_su_str_line_to_double(const char *str)
 {
-  if (!str)
-  {
-    return 0.0;
-  }
+  if (!str) { return 0.0; }
 
-  while ((*str != '\0') && (isdigit(*str) == 0))
-  {
-    str++;
-  }
+  while ((*str != '\0') && (isdigit(*str) == 0)) { str++; }
 
   return atof(str);
 }
@@ -593,10 +502,7 @@ char *splt_su_get_file_with_output_path(splt_state *state, char *filename, int *
   int err = SPLT_OK;
   char *new_fname = NULL;
 
-  if (filename == NULL)
-  {
-    return NULL;
-  }
+  if (filename == NULL) { return NULL; }
 
   splt_su_clean_string(state, filename, error);
   if (error < 0) { return NULL; }
@@ -623,20 +529,14 @@ char *splt_su_get_file_with_output_path(splt_state *state, char *filename, int *
 
 int splt_su_str_ends_with(const char *str1, const char *str2)
 {
-  if (!str1 || !str2)
-  {
-    return SPLT_FALSE;
-  }
+  if (!str1 || !str2) { return SPLT_FALSE; }
 
   int str1_end_index = strlen(str1) - 1;
   int str2_end_index = strlen(str2) - 1;
 
   while (str1_end_index >= 0 && str2_end_index >= 0)
   {
-    if (str1[str1_end_index] != str2[str2_end_index])
-    {
-      return SPLT_FALSE;
-    }
+    if (str1[str1_end_index] != str2[str2_end_index]) { return SPLT_FALSE; }
 
     str1_end_index--;
     str2_end_index--;
@@ -647,11 +547,9 @@ int splt_su_str_ends_with(const char *str1, const char *str2)
 
 char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap)
 {
-  int counter = 0;
-
   int written_chars = 0;
 
-  int size = 255;
+  int size = 256;
   char *mess = malloc(sizeof(char) * size);
   if (mess == NULL)
   {
@@ -660,18 +558,12 @@ char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap
     return NULL;
   }
 
-  while (counter < LONG_MAX)
+  while (size < 32768)
   {
-    written_chars = vsnprintf(mess, size, message, ap);
+    written_chars = vsnprintf(mess, size - 1, message, ap);
 
-    if ((written_chars > -1) &&
-        (written_chars+1 < size))
-    {
-      break;
-    }
-    else {
-      size += 255;
-    }
+    if ((written_chars > -1) && (written_chars + 1 < size)) { break; }
+    else { size += 256; }
 
     if ((mess = realloc(mess, size)) == NULL)
     {
@@ -680,8 +572,6 @@ char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap
       splt_e_error(SPLT_IERROR_CHAR, __func__, 0, _("not enough memory"));
       return NULL;
     }
-
-    counter++;
   }
 
   return mess;
@@ -703,10 +593,7 @@ int splt_su_str_line_has_digit(const char *str)
 {
   while (*str != '\0')
   {
-    if (isdigit(*str))
-    {
-      return SPLT_TRUE;
-    }
+    if (isdigit(*str)) { return SPLT_TRUE; }
 
     str++;
   }
@@ -718,10 +605,7 @@ static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int), i
 {
   int err = SPLT_OK;
 
-  if (!str)
-  {
-    return NULL;
-  }
+  if (!str) { return NULL; }
 
   char *result = NULL;
   err = splt_su_copy(str, &result);
@@ -732,10 +616,7 @@ static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int), i
   }
 
   int i = 0;
-  for (i = 0;i < strlen(str);i++)
-  {
-    result[i] = conversion_func(str[i]);
-  }
+  for (i = 0; i < strlen(str); i++) { result[i] = conversion_func(str[i]); }
 
   return result;
 }
@@ -743,10 +624,7 @@ static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int), i
 
 char *splt_su_convert(const char *str, splt_str_format format, int *error)
 {
-  if (str == NULL)
-  {
-    return NULL;
-  }
+  if (str == NULL) { return NULL; }
 
   char *new_str = NULL;
 
@@ -781,19 +659,10 @@ char *splt_su_convert(const char *str, splt_str_format format, int *error)
     case SPLT_TO_WORD_FIRST_UPPERCASE:
       for (i = 0; i < strlen(new_str); i++)
       {
-        if (lastspace && new_str[i] != ' ')
-        {
-          new_str[i] = toupper(new_str[i]);
-        }
+        if (lastspace && new_str[i] != ' ') { new_str[i] = toupper(new_str[i]); }
 
-        if (new_str[i] == ' ')
-        {
-          lastspace = 1;
-        }
-        else
-        {
-          lastspace = 0;
-        }
+        if (new_str[i] == ' ') { lastspace = 1; }
+        else { lastspace = 0; }
       }
       return new_str;
       break;
@@ -803,4 +672,3 @@ char *splt_su_convert(const char *str, splt_str_format format, int *error)
 
   return NULL;
 }
-

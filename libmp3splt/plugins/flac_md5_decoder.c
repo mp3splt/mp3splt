@@ -27,14 +27,13 @@
 #include "flac_md5_decoder.h"
 
 static FLAC__StreamDecoderReadStatus splt_flac_md5_decoder_read(
-    const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data)
+  const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data)
 {
-  splt_flac_md5_decoder *flac_md5_d = (splt_flac_md5_decoder *) client_data;
+  splt_flac_md5_decoder *flac_md5_d = (splt_flac_md5_decoder *)client_data;
 
   if (*bytes <= 0) { return FLAC__STREAM_DECODER_READ_STATUS_ABORT; }
 
-  unsigned char *start = 
-    flac_md5_d->frame + (flac_md5_d->frame_size - flac_md5_d->remaining_size);
+  unsigned char *start = flac_md5_d->frame + (flac_md5_d->frame_size - flac_md5_d->remaining_size);
 
   size_t to_read = *bytes;
   if (to_read >= flac_md5_d->remaining_size)
@@ -54,17 +53,18 @@ static FLAC__StreamDecoderReadStatus splt_flac_md5_decoder_read(
   return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 }
 
-static FLAC__StreamDecoderWriteStatus splt_flac_md5_decoder_write(const FLAC__StreamDecoder *decoder, 
-    const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data)
+static FLAC__StreamDecoderWriteStatus splt_flac_md5_decoder_write(
+  const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 *const buffer[],
+  void *client_data)
 {
-  splt_flac_md5_decoder *flac_md5_d = (splt_flac_md5_decoder *) client_data;
+  splt_flac_md5_decoder *flac_md5_d = (splt_flac_md5_decoder *)client_data;
 
-  int bytes_per_sample = (int) (frame->header.bits_per_sample + 7) / 8;
+  int bytes_per_sample = (int)(frame->header.bits_per_sample + 7) / 8;
 
   size_t channel, sample;
-  for (sample = 0;sample < frame->header.blocksize; sample++)
+  for (sample = 0; sample < frame->header.blocksize; sample++)
   {
-    for (channel = 0;channel < frame->header.channels; channel++)
+    for (channel = 0; channel < frame->header.channels; channel++)
     {
       FLAC__int32 num = buffer[channel][sample];
       MD5_Update(&flac_md5_d->md5_context, &num, bytes_per_sample);
@@ -74,16 +74,16 @@ static FLAC__StreamDecoderWriteStatus splt_flac_md5_decoder_write(const FLAC__St
   return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-static void splt_flac_md5_decoder_error(const FLAC__StreamDecoder *decoder,
-    FLAC__StreamDecoderErrorStatus status, void *client_data)
+static void splt_flac_md5_decoder_error(
+  const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data)
 {
-  splt_flac_md5_decoder *flac_md5_d = (splt_flac_md5_decoder *) client_data;
+  splt_flac_md5_decoder *flac_md5_d = (splt_flac_md5_decoder *)client_data;
 
   flac_md5_d->error = SPLT_ERROR_INVALID;
   splt_e_set_error_data(flac_md5_d->state, splt_t_get_filename_to_split(flac_md5_d->state));
 
-  splt_d_print_debug(flac_md5_d->state, "Error while decoding flac file: %s\n", 
-      FLAC__StreamDecoderErrorStatusString[status]);
+  splt_d_print_debug(flac_md5_d->state, "Error while decoding flac file: %s\n",
+    FLAC__StreamDecoderErrorStatusString[status]);
 }
 
 static splt_flac_md5_decoder *splt_flac_md5_decoder_new(splt_code *error, splt_state *state)
@@ -122,10 +122,8 @@ splt_flac_md5_decoder *splt_flac_md5_decoder_new_and_init(splt_state *state, spl
   }
 
   FLAC__StreamDecoderInitStatus status = FLAC__stream_decoder_init_stream(flac_md5_d->decoder,
-      splt_flac_md5_decoder_read, 
-      NULL /* seek */, NULL /* tell */, NULL /* length */, NULL /* eof */,
-      splt_flac_md5_decoder_write, NULL /* metadata */,
-      splt_flac_md5_decoder_error, flac_md5_d);
+    splt_flac_md5_decoder_read, NULL /* seek */, NULL /* tell */, NULL /* length */, NULL /* eof */,
+    splt_flac_md5_decoder_write, NULL /* metadata */, splt_flac_md5_decoder_error, flac_md5_d);
 
   if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK)
   {
@@ -140,8 +138,8 @@ splt_flac_md5_decoder *splt_flac_md5_decoder_new_and_init(splt_state *state, spl
   return flac_md5_d;
 }
 
-void splt_flac_md5_decode_frame(unsigned char *frame,
-    size_t frame_size, splt_flac_md5_decoder *flac_md5_d, splt_code *error, splt_state *state)
+void splt_flac_md5_decode_frame(unsigned char *frame, size_t frame_size,
+  splt_flac_md5_decoder *flac_md5_d, splt_code *error, splt_state *state)
 {
   if (!splt_o_get_int_option(state, SPLT_OPT_DECODE_AND_WRITE_FLAC_MD5SUM_FOR_CREATED_FILES))
   {
@@ -165,10 +163,7 @@ unsigned char *splt_flac_md5_decoder_free_and_get_md5sum(splt_flac_md5_decoder *
 {
   if (!flac_md5_d) { return NULL; }
 
-  if (flac_md5_d->decoder)
-  {
-    FLAC__stream_decoder_delete(flac_md5_d->decoder);
-  }
+  if (flac_md5_d->decoder) { FLAC__stream_decoder_delete(flac_md5_d->decoder); }
 
   unsigned char *md5sum = NULL;
   md5sum = malloc(sizeof(unsigned char) * 16);
@@ -178,4 +173,3 @@ unsigned char *splt_flac_md5_decoder_free_and_get_md5sum(splt_flac_md5_decoder *
 
   return md5sum;
 }
-

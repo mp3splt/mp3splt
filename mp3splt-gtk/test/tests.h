@@ -5,4 +5,3 @@
 
 #define _SPLT_TESTS_H
 #endif
-

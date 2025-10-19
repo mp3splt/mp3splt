@@ -59,4 +59,3 @@ void splt_o_unlock_messages(splt_state *state);
 #define SPLT_OPTIONS_H
 
 #endif
-

@@ -40,7 +40,8 @@
 #include "widgets_helper.h"
 #include "ui_types.h"
 
-enum {
+enum
+{
   MULTIPLE_COL_FILENAME,
   MULTIPLE_FILES_COLUMNS
 };
@@ -51,4 +52,3 @@ void multiple_files_add_button_event(GtkWidget *widget, ui_state *ui);
 void multiple_files_add_filename(const gchar *filename, ui_state *ui);
 
 #endif
-

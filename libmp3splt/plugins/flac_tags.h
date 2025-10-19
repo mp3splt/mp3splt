@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -34,31 +34,32 @@
 #include "splt.h"
 #include "from_flac_library.h"
 
-typedef struct {
+typedef struct
+{
   char **tags;
   FLAC__uint32 number_of_tags;
   FLAC__uint32 total_bytes;
 } splt_flac_vorbis_tags;
 
-typedef struct {
+typedef struct
+{
   FLAC__uint32 vendor_length;
   char *vendor_string;
   splt_flac_vorbis_tags *other_tags;
   splt_tags *original_tags;
 } splt_flac_tags;
 
-splt_flac_tags *splt_flac_t_new(unsigned char *comments, FLAC__uint32 total_block_length,
-    splt_code *error);
+splt_flac_tags *splt_flac_t_new(
+  unsigned char *comments, FLAC__uint32 total_block_length, splt_code *error);
 void splt_flac_t_free(splt_flac_tags **flac_tags);
 
 splt_flac_vorbis_tags *splt_flac_vorbis_tags_new(splt_code *error);
 void splt_flac_vorbis_tags_free(splt_flac_vorbis_tags **vorbis_tags);
-void splt_flac_vorbis_tags_append_with_prefix(splt_flac_vorbis_tags *vorbis_tags,
-    char *prefix, char *comment, splt_code *error);
-void splt_flac_vorbis_tags_append(splt_flac_vorbis_tags *vorbis_tags,
-    char *comment, splt_code *error);
+void splt_flac_vorbis_tags_append_with_prefix(
+  splt_flac_vorbis_tags *vorbis_tags, char *prefix, char *comment, splt_code *error);
+void splt_flac_vorbis_tags_append(
+  splt_flac_vorbis_tags *vorbis_tags, char *comment, splt_code *error);
 
 #define MP3SPLT_FLAC_TAGS_H
 
 #endif
-

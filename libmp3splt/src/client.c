@@ -33,8 +33,6 @@
 
 #include "splt.h"
 
-static void splt_c_put_message_to_client(splt_state *state, const char *message,
-    splt_message_type mess_type);
 static int splt_c_append_to_m3u_file(splt_state *state, const char *filename);
 static void splt_c_set_filename_shorted_from_current_point_name(splt_state *state);
 
@@ -67,8 +65,8 @@ void splt_c_put_progress_text(splt_state *state, int type)
   p_bar->progress_type = type;
 }
 
-static void splt_c_put_message_to_clientv(splt_state *state, splt_message_type type, 
-    const char *message, va_list ap)
+static void splt_c_put_message_to_clientv(
+  splt_state *state, splt_message_type type, const char *message, va_list ap)
 {
   char *mess = splt_su_format_messagev(state, message, ap);
   if (mess)
@@ -104,40 +102,33 @@ void splt_c_put_debug_message_to_client(splt_state *state, const char *message, 
   va_end(ap);
 }
 
-void splt_c_update_progress(splt_state *state, double current_point,
-    double total_points, int progress_stage,
-    float progress_start, int refresh_rate)
+void splt_c_update_progress(splt_state *state, double current_point, double total_points,
+  int progress_stage, float progress_start, int refresh_rate)
 {
   splt_progress *p_bar = state->split.p_bar;
   if (p_bar->progress == NULL) { return; }
 
   if (splt_o_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) > refresh_rate)
   {
-    p_bar->percent_progress = (float) (current_point / total_points);
+    p_bar->percent_progress = (float)(current_point / total_points);
 
     p_bar->percent_progress = p_bar->percent_progress / progress_stage + progress_start;
 
-    if (p_bar->percent_progress < 0)
-    {
-      p_bar->percent_progress = 0;
-    }
-    if (p_bar->percent_progress > 1)
-    {
-      p_bar->percent_progress = 1;
-    }
+    if (p_bar->percent_progress < 0) { p_bar->percent_progress = 0; }
+    if (p_bar->percent_progress > 1) { p_bar->percent_progress = 1; }
 
     p_bar->progress(p_bar, p_bar->progress_cb_data);
     splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE, 0);
   }
   else
   {
-    splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,
-        splt_o_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) + 1);
+    splt_o_set_iopt(
+      state, SPLT_INTERNAL_PROGRESS_RATE, splt_o_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) + 1);
   }
 }
 
-static void splt_c_put_message_to_client(splt_state *state, const char *message,
-    splt_message_type mess_type)
+void splt_c_put_message_to_client(
+  splt_state *state, const char *message, splt_message_type mess_type)
 {
   if (!splt_o_messages_locked(state))
   {
@@ -156,12 +147,9 @@ static int splt_c_append_to_m3u_file(splt_state *state, const char *filename)
 {
   int err = SPLT_OK;
 
-  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
-  {
-    return err;
-  }
+  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT)) { return err; }
 
-  char *new_m3u_file = splt_t_get_m3u_file_with_path(state, &err); 
+  char *new_m3u_file = splt_t_get_m3u_file_with_path(state, &err);
   if (err < 0 || !new_m3u_file) { return err; }
 
   FILE *file_input = NULL;
@@ -209,13 +197,12 @@ static void splt_c_set_filename_shorted_from_current_point_name(splt_state *stat
       if (strlen(point_name) > max_size)
       {
         size_t size = strlen(filename_shorted);
-        filename_shorted[size-1] = '.';
-        filename_shorted[size-2] = '.';
-        filename_shorted[size-3] = '.';
+        filename_shorted[size - 1] = '.';
+        filename_shorted[size - 2] = '.';
+        filename_shorted[size - 3] = '.';
       }
     }
   }
 
   snprintf(p_bar->filename_shorted, 512, "%s", filename_shorted);
 }
-

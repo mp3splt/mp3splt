@@ -42,4 +42,3 @@ void ch_set_active_str_value(GtkComboBox *combo, gchar *new_value);
 
 #define COMBO_HELPER_H
 #endif
-

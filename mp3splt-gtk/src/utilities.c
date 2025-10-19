@@ -33,7 +33,7 @@
  * \file
  *  miscellaneous utilities
  *
- * Miscellaneous utilities like the check if a string may 
+ * Miscellaneous utilities like the check if a string may
  * contain a valid file- or directory name.
  ********************************************************/
 
@@ -43,16 +43,12 @@
 */
 gint directory_exists(const gchar *directory)
 {
-  if (directory == NULL)
-  {
-    return FALSE;
-  }
+  if (directory == NULL) { return FALSE; }
 
   struct stat buffer;
   gint status = g_stat(directory, &buffer);
 
-  if (status == 0 && S_ISDIR(buffer.st_mode) != 0)
-    return TRUE;
+  if (status == 0 && S_ISDIR(buffer.st_mode) != 0) return TRUE;
 
   return FALSE;
 }
@@ -61,16 +57,12 @@ gint directory_exists(const gchar *directory)
 */
 gint file_exists(const gchar *fname)
 {
-  if (fname == NULL)
-  {
-    return FALSE;
-  }
+  if (fname == NULL) { return FALSE; }
 
   struct stat buffer;
   gint status = g_stat(fname, &buffer);
 
-  if (status == 0 && S_ISREG(buffer.st_mode) != 0)
-    return TRUE;
+  if (status == 0 && S_ISREG(buffer.st_mode) != 0) return TRUE;
 
   return FALSE;
 }
@@ -96,23 +88,13 @@ void print_processing_file(gchar *filename, ui_state *ui)
  */
 void remove_end_slash_n_r_from_filename(char *filename)
 {
-  if (filename == NULL)
-  {
-    return;
-  }
+  if (filename == NULL) { return; }
 
   gint index = strlen(filename) - 1;
   while (index >= 0)
   {
-    if (filename[index] == '\n' ||
-        filename[index] == '\r')
-    {
-      filename[index] = '\0';
-    }
-    else if (filename[index] != '\0')
-    {
-      break;
-    }
+    if (filename[index] == '\n' || filename[index] == '\r') { filename[index] = '\0'; }
+    else if (filename[index] != '\0') { break; }
 
     index--;
   }
@@ -125,8 +107,8 @@ void remove_end_slash_n_r_from_filename(char *filename)
 during conversion it has to copy the text to a new (e.G. larger) buffer.
 \param must_be_freed reads true, if this function has allocated a new
 chunk of memory to have somewhere to put the output string in - which
-means that the memory the output string is in has to be freed after usage. 
-\return 
+means that the memory the output string is in has to be freed after usage.
+\return
 */
 gchar *transform_to_utf8(gchar *text, gint free_or_not, gint *must_be_freed)
 {
@@ -135,13 +117,10 @@ gchar *transform_to_utf8(gchar *text, gint free_or_not, gint *must_be_freed)
   gsize bytes_read;
   gsize bytes_written;
 
-  if (!(g_utf8_validate (text, -1,NULL)) && (text != NULL))
+  if (!(g_utf8_validate(text, -1, NULL)) && (text != NULL))
   {
     temp = g_convert(text, -1, "UTF-8", "ISO-8859-1", &bytes_read, &bytes_written, NULL);
-    if (free_or_not)
-    {
-      g_free(text);
-    }
+    if (free_or_not) { g_free(text); }
 
     *must_be_freed = TRUE;
 
@@ -160,11 +139,8 @@ void build_path(GString *path, const gchar *dir, const gchar *filename)
   g_string_append(path, G_DIR_SEPARATOR_S);
   g_string_append(path, filename);
 #else
-  if (strlen(dir) == 0)
-  {
-    g_string_assign(path, filename);
-  }
-  else 
+  if (strlen(dir) == 0) { g_string_assign(path, filename); }
+  else
   {
     g_string_assign(path, dir);
     g_string_append(path, G_DIR_SEPARATOR_S);
@@ -204,8 +180,4 @@ void append_point_to_pat(splt_point *point, points_and_tags *pat)
   g_ptr_array_add(pat->splitpoints, point);
 }
 
-void append_tags_to_pat(splt_tags *tags, points_and_tags *pat)
-{
-  g_ptr_array_add(pat->tags, tags);
-}
-
+void append_tags_to_pat(splt_tags *tags, points_and_tags *pat) { g_ptr_array_add(pat->tags, tags); }

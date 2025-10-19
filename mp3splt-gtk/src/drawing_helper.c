@@ -34,9 +34,9 @@
 void dh_set_color(cairo_t *cairo, GdkColor *color)
 {
   GdkRGBA rgba_color;
-  rgba_color.red = ((double) color->red) / 65535.0;
-  rgba_color.green = ((double) color->green) / 65535.0;
-  rgba_color.blue = ((double) color->blue) / 65535.0;
+  rgba_color.red = ((double)color->red) / 65535.0;
+  rgba_color.green = ((double)color->green) / 65535.0;
+  rgba_color.blue = ((double)color->blue) / 65535.0;
   rgba_color.alpha = 1.0;
   gdk_cairo_set_source_rgba(cairo, &rgba_color);
 }
@@ -44,39 +44,36 @@ void dh_set_color(cairo_t *cairo, GdkColor *color)
 void dh_set_white_color(cairo_t *cairo_surface)
 {
   GdkColor color;
-  color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 255;
+  color.red = 255 * 255;
+  color.green = 255 * 255;
+  color.blue = 255 * 255;
   dh_set_color(cairo_surface, &color);
 }
 
 void dh_set_red_color(cairo_t *cairo_surface)
 {
   GdkColor color;
-  color.red = 255 * 255;color.green = 0 * 255;color.blue = 0 * 255;
+  color.red = 255 * 255;
+  color.green = 0 * 255;
+  color.blue = 0 * 255;
   dh_set_color(cairo_surface, &color);
 }
 
-void dh_draw_rectangle(cairo_t *cairo, gboolean filled, gint x, gint y, 
-    gint width, gint height)
+void dh_draw_rectangle(cairo_t *cairo, gboolean filled, gint x, gint y, gint width, gint height)
 {
   cairo_rectangle(cairo, x, y, width, height);
 
-  if (filled)
-  {
-    cairo_fill(cairo);
-  }
+  if (filled) { cairo_fill(cairo); }
 
   cairo_stroke(cairo);
 }
 
-void dh_draw_arc(cairo_t *cairo, gboolean filled, gint x, gint y,
-    double radius, double angle1, double angle2)
+void dh_draw_arc(
+  cairo_t *cairo, gboolean filled, gint x, gint y, double radius, double angle1, double angle2)
 {
   cairo_arc(cairo, x, y, radius, angle1, angle2);
 
-  if (filled)
-  {
-    cairo_fill(cairo);
-  }
+  if (filled) { cairo_fill(cairo); }
 
   cairo_stroke(cairo);
 }
@@ -86,8 +83,7 @@ void dh_draw_text(cairo_t *cairo, const gchar *text, gint x, gint y)
   dh_draw_text_with_size(cairo, text, x, y, 11.0);
 }
 
-void dh_draw_text_with_size(cairo_t *cairo, const gchar *text, gint x, gint y, 
-    gdouble font_size)
+void dh_draw_text_with_size(cairo_t *cairo, const gchar *text, gint x, gint y, gdouble font_size)
 {
   cairo_select_font_face(cairo, "Sans 11", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
   cairo_set_font_size(cairo, font_size);
@@ -97,38 +93,24 @@ void dh_draw_text_with_size(cairo_t *cairo, const gchar *text, gint x, gint y,
 }
 
 void dh_draw_line_with_width(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
-    gboolean line_is_dashed, gboolean stroke, double line_width)
+  gboolean line_is_dashed, gboolean stroke, double line_width)
 {
   double dashes[] = { 1.0, 3.0 };
-  if (line_is_dashed)
-  {
-    cairo_set_dash(cairo, dashes, 2, -50.0);
-  }
-  else
-  {
-    cairo_set_dash(cairo, dashes, 0, 0.0);
-  }
+  if (line_is_dashed) { cairo_set_dash(cairo, dashes, 2, -50.0); }
+  else { cairo_set_dash(cairo, dashes, 0, 0.0); }
 
   cairo_set_line_width(cairo, line_width);
   cairo_set_line_cap(cairo, CAIRO_LINE_CAP_ROUND);
   cairo_move_to(cairo, x1, y1);
   cairo_line_to(cairo, x2, y2);
 
-  if (stroke)
-  {
-    cairo_stroke(cairo);
-  }
+  if (stroke) { cairo_stroke(cairo); }
 }
 
-void dh_draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
-    gboolean line_is_dashed, gboolean stroke)
+void dh_draw_line(
+  cairo_t *cairo, gint x1, gint y1, gint x2, gint y2, gboolean line_is_dashed, gboolean stroke)
 {
   dh_draw_line_with_width(cairo, x1, y1, x2, y2, line_is_dashed, stroke, 1.2);
 }
 
-void draw_point(cairo_t *cairo, gint x, gint y)
-{
-  dh_draw_line(cairo, x, y, x, y, FALSE, FALSE);
-}
-
-
+void draw_point(cairo_t *cairo, gint x, gint y) { dh_draw_line(cairo, x, y, x, y, FALSE, FALSE); }

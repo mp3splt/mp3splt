@@ -58,4 +58,3 @@ gint get_selected_split_mode(ui_state *ui);
 void set_selected_split_mode(gint value, ui_state *ui);
 
 #endif
-

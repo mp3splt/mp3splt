@@ -38,4 +38,3 @@ char **win32_get_utf8_args(main_data *data);
 #endif
 
 #endif
-

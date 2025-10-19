@@ -35,38 +35,41 @@
 #include <libmp3splt/mp3splt.h>
 
 #ifndef NO_GSTREAMER
-  #include <gst/gst.h>
+#include <gst/gst.h>
 #endif
 
 #ifndef NO_AUDACIOUS
-  #include <audacious/audctrl.h>
-  #include <audacious/dbus.h>
+#include <audacious/audctrl.h>
+#include <audacious/dbus.h>
 #endif
 
 #ifdef __WIN32__
-  #include <windows.h>
-  #include <winsock2.h>
+#include <windows.h>
+#include <winsock2.h>
 #endif
 
-typedef struct {
-  gchar* main_key;
-  gchar* second_key;
+typedef struct
+{
+  gchar *main_key;
+  gchar *second_key;
   gint default_value;
   GtkWidget *spinner;
   void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data);
   gpointer user_data_for_cb;
 } spinner_int_preference;
 
-typedef struct {
-  gchar* main_key;
-  gchar* second_key;
+typedef struct
+{
+  gchar *main_key;
+  gchar *second_key;
   gint default_value;
   GtkWidget *range;
   void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data);
   gpointer user_data_for_cb;
 } range_preference;
 
-typedef struct {
+typedef struct
+{
   GArray *spinner_int_preferences;
   GArray *range_preferences;
 } preferences_state;
@@ -79,29 +82,34 @@ typedef struct
   gint hundr_secs;
 } Split_point;
 
-typedef struct {
+typedef struct
+{
   gint root_x_pos;
   gint root_y_pos;
   gint width;
   gint height;
 } ui_main_window;
 
-typedef struct {
+typedef struct
+{
   long time;
   float level;
 } silence_wave;
 
-typedef struct {
+typedef struct
+{
   gint index;
   gpointer data;
 } preview_index_and_data;
 
-typedef struct points_and_tags {
+typedef struct points_and_tags
+{
   GPtrArray *splitpoints;
   GPtrArray *tags;
 } points_and_tags;
 
-typedef struct {
+typedef struct
+{
   gchar *browser_directory;
   ui_main_window *main_win;
   GList *text_options_list;
@@ -197,7 +205,8 @@ typedef struct {
   gint drawing_preferences_silence_wave;
 } ui_infos;
 
-typedef struct {
+typedef struct
+{
 #ifndef NO_GSTREAMER
   const gchar *song_artist;
   const gchar *song_title;
@@ -224,7 +233,8 @@ typedef struct {
 
 } player_infos;
 
-typedef struct {
+typedef struct
+{
   GtkApplication *application;
   GtkWidget *window;
 
@@ -428,7 +438,7 @@ typedef struct {
 
   GtkWidget *split_files_widget;
   GtkWidget *split_files_window;
- 
+
   GtkWidget *freedb_widget;
   GtkWidget *freedb_window;
 
@@ -436,7 +446,8 @@ typedef struct {
   GtkWidget *splitpoints_window;
 } gui_state;
 
-typedef struct {
+typedef struct
+{
   gint splitting;
   gint process_in_progress;
   gint mouse_on_progress_bar;
@@ -506,7 +517,8 @@ typedef struct {
 
 #define SPLT_MUTEX GMutex
 
-typedef struct {
+typedef struct
+{
   gint return_code;
 
   ui_infos *infos;
@@ -528,13 +540,15 @@ typedef struct {
   gchar **argv;
 } ui_state;
 
-typedef struct {
+typedef struct
+{
   gint err;
   ui_state *ui;
   gboolean show_errors;
 } ui_with_err;
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
   gpointer data;
   GThreadFunc thread;
@@ -542,7 +556,8 @@ typedef struct {
   gchar *filename_to_split;
 } ui_with_data;
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
   char *fname;
   gboolean is_checked_output_radio_box;
@@ -550,25 +565,29 @@ typedef struct {
   gboolean show_errors;
 } ui_with_fname;
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
   points_and_tags *pat;
   GThread *previous_thread;
   gchar *export_filename;
 } ui_with_pat;
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
   GSList *list;
 } ui_with_list;
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
   char **filenames;
   int num_of_filenames;
 } ui_with_fnames;
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
 
   int frame_mode;
@@ -594,8 +613,8 @@ typedef struct {
   float silence_threshold;
   float silence_offset;
   int silence_number;
-  float silence_minimum_length; 
-  float silence_minimum_track_length; 
+  float silence_minimum_length;
+  float silence_minimum_track_length;
   int silence_remove;
   int silence_shots;
 
@@ -606,8 +625,8 @@ typedef struct {
   int single_silence_shots;
   float single_silence_offset;
   int single_silence_number;
-  float single_silence_minimum_length; 
-  float single_silence_minimum_track_length; 
+  float single_silence_minimum_length;
+  float single_silence_minimum_track_length;
   int single_silence_remove;
 
   //no_tags, default_tags, ...
@@ -638,4 +657,3 @@ typedef struct {
 } ui_for_split;
 
 #endif
-

@@ -30,7 +30,7 @@
  *********************************************************/
 
 /*!********************************************************
- * \file 
+ * \file
  * The messages history dialog
  *********************************************************/
 
@@ -61,8 +61,8 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type, u
     GtkTextIter iter;
     gtk_text_buffer_get_end_iter(ui->gui->mess_hist_buffer, &iter);
     const char *current_system_time = get_current_system_time();
-    gtk_text_buffer_insert_with_tags(ui->gui->mess_hist_buffer,
-        &iter, current_system_time, -1, gray_tag, NULL);
+    gtk_text_buffer_insert_with_tags(
+      ui->gui->mess_hist_buffer, &iter, current_system_time, -1, gray_tag, NULL);
 
     gtk_text_buffer_insert(ui->gui->mess_hist_buffer, &iter, message, -1);
     gtk_text_buffer_insert(ui->gui->mess_hist_buffer, &iter, "\n", -1);
@@ -136,16 +136,15 @@ static GtkWidget *create_text_component(ui_state *ui)
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-      GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy(
+    GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   gtk_container_add(GTK_CONTAINER(scrolled_window), mess_hist_view);
 
   GtkWidget *hbox = wh_hbox_new();
 
   //debug option
-  GtkWidget *debug_check_button =
-    gtk_check_button_new_with_mnemonic(_("Enable _debug messages"));
+  GtkWidget *debug_check_button = gtk_check_button_new_with_mnemonic(_("Enable _debug messages"));
   g_signal_connect(G_OBJECT(debug_check_button), "toggled", G_CALLBACK(debug_check_event), ui);
   gtk_box_pack_start(GTK_BOX(hbox), debug_check_button, FALSE, FALSE, 0);
 
@@ -164,9 +163,6 @@ static GtkWidget *create_text_component(ui_state *ui)
 void create_mess_history_window(ui_state *ui)
 {
   GtkWidget *text_component = create_text_component(ui);
-  ui->gui->mess_history_window = 
-    wh_create_window_with_close_button(_("Messages history"), 550, 300,
-        GTK_WIN_POS_CENTER, GTK_WINDOW(ui->gui->window),
-        text_component, NULL);
+  ui->gui->mess_history_window = wh_create_window_with_close_button(_("Messages history"), 550, 300,
+    GTK_WIN_POS_CENTER, GTK_WINDOW(ui->gui->window), text_component, NULL);
 }
-

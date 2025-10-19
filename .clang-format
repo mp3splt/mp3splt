@@ -1,0 +1,20 @@
+# Format Style Options - Created with Clang Power Tools
+---
+BasedOnStyle: Google
+AllowShortBlocksOnASingleLine: true
+AlignAfterOpenBracket: DontAlign
+AlignOperands: Align
+BreakBeforeBraces: Allman
+BreakStringLiterals: false
+ColumnLimit: 100
+ContinuationIndentWidth: 2
+Cpp11BracedListStyle: false
+ExperimentalAutoDetectBinPacking: true
+IncludeBlocks: Preserve
+IndentGotoLabels: false
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 2
+ReflowComments: false
+SortIncludes: false
+SpacesBeforeTrailingComments: 1
+...

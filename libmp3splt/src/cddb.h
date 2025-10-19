@@ -31,7 +31,8 @@
 
 #ifndef MP3SPLT_CDDB_H
 
-typedef struct {
+typedef struct
+{
   int read_offsets;
   int error;
   int tracks;
@@ -39,9 +40,8 @@ typedef struct {
   int field_counter;
 } cddb_utils;
 
-int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error);
+int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error);
 
 #define MP3SPLT_CDDB_H
 
 #endif
-

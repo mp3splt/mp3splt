@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -38,7 +38,8 @@
 
 #define SPLT_FLAC_EXT ".flac"
 
-typedef struct {
+typedef struct
+{
   FLAC__StreamMetadata_StreamInfo streaminfo;
   splt_flac_frame_reader *fr;
   splt_flac_metadatas *metadatas;
@@ -51,4 +52,3 @@ typedef struct {
 #define MP3SPLT_FLAC_H
 
 #endif
-

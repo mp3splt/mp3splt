@@ -28,7 +28,8 @@
 
 #ifndef SPLT_SILENCE_PROCESSORS_H
 
-typedef struct {
+typedef struct
+{
   short first;
   short flush;
   double silence_begin;
@@ -46,18 +47,17 @@ typedef struct {
   double previous_time;
 } splt_scan_silence_data;
 
-short splt_scan_silence_processor(double time, float level, int silence_was_found, short must_flush, 
-    splt_scan_silence_data *data, int *found_silence_points, int *error);
+short splt_scan_silence_processor(double time, float level, int silence_was_found, short must_flush,
+  splt_scan_silence_data *data, int *found_silence_points, int *error);
 
 short splt_trim_silence_processor(double time, float level, int silence_was_found, short must_flush,
-    splt_scan_silence_data *data, int *found_silence_points, int *error);
+  splt_scan_silence_data *data, int *found_silence_points, int *error);
 
-splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short first, 
-    float min, int shots, short set_new_length);
+splt_scan_silence_data *splt_scan_silence_data_new(
+  splt_state *state, short first, float min, int shots, short set_new_length);
 
 void splt_free_scan_silence_data(splt_scan_silence_data **ssd);
 
 #define SPLT_SILENCE_PROCESSORS_H
 
 #endif
-

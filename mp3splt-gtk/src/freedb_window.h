@@ -40,4 +40,3 @@ GtkWidget *create_freedb_frame(ui_state *ui);
 void hide_freedb_spinner(gui_state *gui);
 
 #endif
-

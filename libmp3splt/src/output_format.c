@@ -63,15 +63,12 @@ void splt_of_set_oformat_digits_tracks(splt_state *state, int tracks)
 {
   splt_oformat *oformat = &state->oformat;
 
-  int i = (int) (log10((double) (tracks)));
-  oformat->output_format_digits = (char) (i + '1');
+  int i = (int)(log10((double)(tracks)));
+  oformat->output_format_digits = (char)(i + '1');
 
   //Number of alphabetical "digits": almost base-27
   oformat->output_alpha_format_digits = 1;
-  for (i = (tracks - 1) / 26; i > 0; i /= 27)
-  {
-    ++ oformat->output_alpha_format_digits;
-  }
+  for (i = (tracks - 1) / 26; i > 0; i /= 27) { ++oformat->output_alpha_format_digits; }
 }
 
 void splt_of_set_oformat_digits(splt_state *state)
@@ -85,8 +82,8 @@ static int splt_of_new_oformat(splt_state *state, const char *format_string)
   return splt_su_copy(format_string, &state->oformat.format_string);
 }
 
-void splt_of_set_oformat(splt_state *state, const char *format_string,
-    int *error, int ignore_incorrect_format_warning)
+void splt_of_set_oformat(
+  splt_state *state, const char *format_string, int *error, int ignore_incorrect_format_warning)
 {
   if (format_string == NULL || format_string[0] == '\0')
   {
@@ -102,25 +99,27 @@ void splt_of_set_oformat(splt_state *state, const char *format_string,
   }
 
   int err = splt_of_new_oformat(state, format_string);
-  if (err < 0) { *error = err; return; }
+  if (err < 0)
+  {
+    *error = err;
+    return;
+  }
 
   char *new_str = NULL;
   err = splt_su_copy(format_string, &new_str);
-  if (err < 0) { *error =err; return; }
-
-  err = splt_of_parse_outformat(new_str, state);
-  if (! ignore_incorrect_format_warning)
+  if (err < 0)
   {
     *error = err;
+    return;
   }
+
+  err = splt_of_parse_outformat(new_str, state);
+  if (!ignore_incorrect_format_warning) { *error = err; }
 
   free(new_str);
   new_str = NULL;
 
-  if (*error > 0)
-  {
-    splt_of_set_oformat_digits(state); 
-  }
+  if (*error > 0) { splt_of_set_oformat_digits(state); }
 }
 
 int splt_of_reparse_oformat(splt_state *state)
@@ -153,8 +152,4 @@ char splt_of_get_oformat_number_of_digits_as_char(splt_state *state)
   return state->oformat.output_format_digits;
 }
 
-const char *splt_of_get_oformat(splt_state *state)
-{
-  return state->oformat.format_string;
-}
-
+const char *splt_of_get_oformat(splt_state *state) { return state->oformat.format_string; }

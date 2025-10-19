@@ -68,4 +68,3 @@ gint gstreamer_is_playing(ui_state *ui);
 void gstreamer_quit(ui_state *ui);
 
 #endif
-

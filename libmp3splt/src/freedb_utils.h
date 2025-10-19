@@ -40,8 +40,8 @@ int splt_fu_freedb_append_result(splt_state *state, const char *album_name, int 
 int splt_fu_freedb_get_found_cds(splt_state *state);
 void splt_fu_freedb_found_cds_next(splt_state *state);
 
-void splt_fu_freedb_set_disc(splt_state *state, int index,
-    const char *discid, const char *category, int category_size);
+void splt_fu_freedb_set_disc(
+  splt_state *state, int index, const char *discid, const char *category, int category_size);
 
 const char *splt_fu_freedb_get_disc_category(splt_state *state, int index);
 const char *splt_fu_freedb_get_disc_id(splt_state *state, int index);
@@ -49,4 +49,3 @@ const char *splt_fu_freedb_get_disc_id(splt_state *state, int index);
 #define SPLT_FREEDB_UTILS_H
 
 #endif
-

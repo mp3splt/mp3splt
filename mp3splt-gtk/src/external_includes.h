@@ -61,7 +61,7 @@
 #include <windows.h>
 
 #include <shlwapi.h>
-#define usleep(x) Sleep(x/1000)
+#define usleep(x) Sleep(x / 1000)
 
 #else
 
@@ -84,4 +84,3 @@
 #include <libmp3splt/mp3splt.h>
 
 #endif
-

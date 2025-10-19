@@ -39,4 +39,3 @@ int splt_se_serrors_append_point(splt_state *state, off_t point);
 #define SPLT_SYNC_ERRORS_H
 
 #endif
-

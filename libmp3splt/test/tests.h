@@ -9,4 +9,3 @@ void mp3splt_assert_equal_error_message(splt_state *state, int error, char *expe
 
 #define SPLT_TESTS_H
 #endif
-

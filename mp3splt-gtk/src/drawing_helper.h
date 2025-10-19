@@ -39,22 +39,19 @@ void dh_set_color(cairo_t *cairo, GdkColor *color);
 void dh_set_white_color(cairo_t *cairo_surface);
 void dh_set_red_color(cairo_t *cairo_surface);
 
-void dh_draw_rectangle(cairo_t *cairo, gboolean filled, gint x, gint y, 
-    gint width, gint height);
+void dh_draw_rectangle(cairo_t *cairo, gboolean filled, gint x, gint y, gint width, gint height);
 
-void dh_draw_arc(cairo_t *cairo, gboolean filled, gint x, gint y,
-    double radius, double angle1, double angle2);
+void dh_draw_arc(
+  cairo_t *cairo, gboolean filled, gint x, gint y, double radius, double angle1, double angle2);
 
 void dh_draw_text(cairo_t *cairo, const gchar *text, gint x, gint y);
-void dh_draw_text_with_size(cairo_t *cairo, const gchar *text, gint x, gint y, 
-    gdouble font_size);
+void dh_draw_text_with_size(cairo_t *cairo, const gchar *text, gint x, gint y, gdouble font_size);
 
-void dh_draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
-    gboolean line_is_dashed, gboolean stroke);
+void dh_draw_line(
+  cairo_t *cairo, gint x1, gint y1, gint x2, gint y2, gboolean line_is_dashed, gboolean stroke);
 void dh_draw_line_with_width(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
-    gboolean line_is_dashed, gboolean stroke, double line_width);
+  gboolean line_is_dashed, gboolean stroke, double line_width);
 
 void draw_point(cairo_t *cairo, gint x, gint y);
 
 #endif
-

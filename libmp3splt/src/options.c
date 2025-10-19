@@ -158,13 +158,13 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       state->options.handle_bit_reservoir = *((int *)data);
       break;
     case SPLT_OPT_ID3V2_ENCODING:
-      state->options.id3v2_encoding = *((int *) data);
+      state->options.id3v2_encoding = *((int *)data);
       break;
     case SPLT_OPT_INPUT_TAGS_ENCODING:
-      state->options.input_tags_encoding = *((int *) data); 
+      state->options.input_tags_encoding = *((int *)data);
       break;
     case SPLT_OPT_TIME_MINIMUM_THEORETICAL_LENGTH:
-      state->options.time_minimum_length = *((long *) data);
+      state->options.time_minimum_length = *((long *)data);
       break;
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = *((int *)data);
@@ -227,7 +227,7 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       state->options.set_file_from_cue_if_file_tag_found = *((int *)data);
       break;
     default:
-      splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      splt_e_error(SPLT_IERROR_INT, __func__, option_name, NULL);
       break;
   }
 }
@@ -342,7 +342,7 @@ static void *splt_o_get_option(splt_state *state, int option_name)
     case SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND:
       return &state->options.set_file_from_cue_if_file_tag_found;
     default:
-      splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      splt_e_error(SPLT_IERROR_INT, __func__, option_name, NULL);
       break;
   }
 
@@ -416,38 +416,19 @@ int splt_o_get_iopt(splt_state *state, int type)
 
 void splt_o_set_default_iopts(splt_state *state)
 {
-  splt_o_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED,SPLT_FALSE);
-  splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,0);
+  splt_o_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED, SPLT_FALSE);
+  splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE, 0);
   splt_t_set_new_filename_path(state, NULL, NULL);
 }
 
-int splt_o_library_locked(splt_state *state)
-{
-  return state->iopts.library_locked;
-}
+int splt_o_library_locked(splt_state *state) { return state->iopts.library_locked; }
 
-void splt_o_lock_library(splt_state *state)
-{
-  state->iopts.library_locked = SPLT_TRUE;
-}
+void splt_o_lock_library(splt_state *state) { state->iopts.library_locked = SPLT_TRUE; }
 
-void splt_o_unlock_library(splt_state *state)
-{
-  state->iopts.library_locked = SPLT_FALSE;
-}
+void splt_o_unlock_library(splt_state *state) { state->iopts.library_locked = SPLT_FALSE; }
 
-int splt_o_messages_locked(splt_state *state)
-{
-  return state->iopts.messages_locked;
-}
+int splt_o_messages_locked(splt_state *state) { return state->iopts.messages_locked; }
 
-void splt_o_lock_messages(splt_state *state)
-{
-  state->iopts.messages_locked = SPLT_TRUE;
-}
+void splt_o_lock_messages(splt_state *state) { state->iopts.messages_locked = SPLT_TRUE; }
 
-void splt_o_unlock_messages(splt_state *state)
-{
-  state->iopts.messages_locked = SPLT_FALSE;
-}
-
+void splt_o_unlock_messages(splt_state *state) { state->iopts.messages_locked = SPLT_FALSE; }

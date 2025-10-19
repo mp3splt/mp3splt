@@ -38,7 +38,7 @@ char **win32_get_utf8_args(main_data *data)
   int i = 0;
 
   argv_utf16 = CommandLineToArgvW(GetCommandLineW(), &nArgs);
-  if (argv_utf16 == NULL )
+  if (argv_utf16 == NULL)
   {
     if (argv_utf8)
     {
@@ -50,7 +50,7 @@ char **win32_get_utf8_args(main_data *data)
   }
   else
   {
-    for (i=0; i<nArgs; i++)
+    for (i = 0; i < nArgs; i++)
     {
       argv_utf8[i] = mp3splt_win32_utf16_to_utf8((wchar_t *)argv_utf16[i]);
       if (argv_utf8[i] == NULL)
@@ -77,33 +77,20 @@ wchar_t *win32_get_current_directory()
     dir_name = malloc(sizeof(wchar_t) * buffer_size);
     memset(dir_name, sizeof(wchar_t) * buffer_size, '\0');
 
-    if (!dir_name)
-    {
-      return NULL;
-    }
+    if (!dir_name) { return NULL; }
 
-    errno=0;
-    if (_wgetcwd(dir_name, buffer_size-1) != NULL)
-    {
-      return dir_name;
-    }
+    errno = 0;
+    if (_wgetcwd(dir_name, buffer_size - 1) != NULL) { return dir_name; }
 
     free(dir_name);
     buffer_size += 256;
 
-    if (errno != ERANGE)
-    {
-      break;
-    }
+    if (errno != ERANGE) { break; }
   }
 
   return NULL;
 }
 
-void win32_set_current_working_directory(const wchar_t *dir)
-{
-  _wchdir(dir);
-}
+void win32_set_current_working_directory(const wchar_t *dir) { _wchdir(dir); }
 
 #endif
-

@@ -6,17 +6,11 @@
 
 static splt_array *array = NULL;
 
-void cut_setup()
-{
-  array = splt_array_new();
-}
+void cut_setup() { array = splt_array_new(); }
 
 void cut_teardown()
 {
-  if (array)
-  {
-    splt_array_free(&array);
-  }
+  if (array) { splt_array_free(&array); }
 }
 
 void test_new()
@@ -80,4 +74,3 @@ void test_free()
 
   cut_assert_null(array);
 }
-

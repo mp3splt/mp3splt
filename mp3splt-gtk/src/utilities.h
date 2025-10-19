@@ -55,4 +55,3 @@ void append_point_to_pat(splt_point *point, points_and_tags *pat);
 void append_tags_to_pat(splt_tags *tags, points_and_tags *pat);
 
 #endif
-

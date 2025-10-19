@@ -62,17 +62,11 @@ void ui_set_browser_directory(ui_state *ui, const gchar *directory)
   infos->browser_directory = g_strdup(directory);
 }
 
-const gchar *ui_get_browser_directory(ui_state *ui)
-{
-  return ui->infos->browser_directory;
-}
+const gchar *ui_get_browser_directory(ui_state *ui) { return ui->infos->browser_directory; }
 
 void ui_set_main_win_position(ui_state *ui, gint x, gint y)
 {
-  if (x == 0 && y == 0)
-  {
-    return;
-  }
+  if (x == 0 && y == 0) { return; }
 
   ui_main_window *main_win = ui->infos->main_win;
   main_win->root_x_pos = x;
@@ -86,10 +80,7 @@ void ui_set_main_win_size(ui_state *ui, gint width, gint height)
   main_win->height = height;
 }
 
-const ui_main_window *ui_get_main_window_infos(ui_state *ui)
-{
-  return ui->infos->main_win;
-}
+const ui_main_window *ui_get_main_window_infos(ui_state *ui) { return ui->infos->main_win; }
 
 ui_state *ui_state_new()
 {
@@ -100,10 +91,7 @@ ui_state *ui_state_new()
 
   gint error = SPLT_OK;
   ui->mp3splt_state = mp3splt_new_state(&error);
-  if (error < 0)
-  {
-    ui_fail(ui, "mp3splt state initialization failed\n", NULL);
-  }
+  if (error < 0) { ui_fail(ui, "mp3splt state initialization failed\n", NULL); }
 
   ui->splitpoints = g_array_new(FALSE, FALSE, sizeof(Split_point));
   ui->files_to_split = NULL;
@@ -128,10 +116,7 @@ void ui_state_free(ui_state *ui)
   ui_infos_free(&ui->infos);
   pm_free(&ui->preferences);
 
-  if (ui->mp3splt_state)
-  {
-    mp3splt_free_state(ui->mp3splt_state);
-  }
+  if (ui->mp3splt_state) { mp3splt_free_state(ui->mp3splt_state); }
 
   g_array_free(ui->splitpoints, TRUE);
 
@@ -144,33 +129,25 @@ void ui_state_free(ui_state *ui)
   g_free(ui);
 }
 
-void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
-    gint default_value, GtkWidget *spinner,
-    void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
-    gpointer user_data_for_cb, ui_state *ui)
+void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key, gint default_value,
+  GtkWidget *spinner, void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
+  gpointer user_data_for_cb, ui_state *ui)
 {
-  pm_register_spinner_int_preference(main_key, second_key,
-      default_value, spinner, update_spinner_value_cb, user_data_for_cb, ui->preferences);
+  pm_register_spinner_int_preference(main_key, second_key, default_value, spinner,
+    update_spinner_value_cb, user_data_for_cb, ui->preferences);
 }
 
-void ui_register_range_preference(gchar *main_key, gchar *second_key,
-    gint default_value, GtkWidget *range,
-    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data),
-    gpointer user_data_for_cb, ui_state *ui)
+void ui_register_range_preference(gchar *main_key, gchar *second_key, gint default_value,
+  GtkWidget *range, void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data),
+  gpointer user_data_for_cb, ui_state *ui)
 {
-  pm_register_range_preference(main_key, second_key,
-      default_value, range, update_adjustment_value, user_data_for_cb, ui->preferences);
+  pm_register_range_preference(main_key, second_key, default_value, range, update_adjustment_value,
+    user_data_for_cb, ui->preferences);
 }
 
-void ui_load_preferences(ui_state *ui)
-{
-  load_preferences(ui);
-}
+void ui_load_preferences(ui_state *ui) { load_preferences(ui); }
 
-void ui_save_preferences(GtkWidget *dummy_widget, ui_state *ui)
-{
-  save_preferences(ui);
-}
+void ui_save_preferences(GtkWidget *dummy_widget, ui_state *ui) { save_preferences(ui); }
 
 void ui_fail(ui_state *ui, const gchar *message, ...)
 {
@@ -274,7 +251,7 @@ static void ui_infos_new(ui_state *ui)
 
   infos->debug_is_active = FALSE;
 
-  infos->silence_threshold_value = (gfloat) SPLT_DEFAULT_PARAM_THRESHOLD;
+  infos->silence_threshold_value = (gfloat)SPLT_DEFAULT_PARAM_THRESHOLD;
   infos->silence_shots_value = SPLT_DEFAULT_PARAM_SHOTS;
   infos->silence_offset_value = SPLT_DEFAULT_PARAM_OFFSET;
   infos->silence_number_of_tracks = SPLT_DEFAULT_PARAM_TRACKS;
@@ -295,7 +272,7 @@ static void ui_infos_new(ui_state *ui)
   infos->outputdirname = NULL;
 
   gint i = 0;
-  for (i = 0; i < 6;i++)
+  for (i = 0; i < 6; i++)
   {
     infos->preview_indexes[i].index = 0;
     infos->preview_indexes[i].data = NULL;
@@ -315,10 +292,9 @@ static void ui_infos_new(ui_state *ui)
   infos->previous_mark_pixel = 0.0;
   infos->pixels_diff_regarding_previous = -1;
   infos->accumulated_diff = 0.0;
-  infos->previous_pixel_by_time = 
+  infos->previous_pixel_by_time =
     g_hash_table_new_full(g_double_hash, g_double_equal, g_free, g_free);
-  infos->pixel_moved_by_time =
-    g_hash_table_new_full(g_double_hash, g_double_equal, g_free, g_free);
+  infos->pixel_moved_by_time = g_hash_table_new_full(g_double_hash, g_double_equal, g_free, g_free);
 
   infos->drawing_preferences_silence_wave = SPLT_FALSE;
 
@@ -393,7 +369,7 @@ static gui_status *ui_status_new(ui_state *ui)
 
   status->previous_zoom_coeff = -2;
   status->previous_interpolation_level = -2;
- 
+
   return status;
 }
 
@@ -409,7 +385,7 @@ static player_infos *ui_player_infos_new()
   pi->bus = NULL;
   pi->_gstreamer_is_running = FALSE;
 #endif
- 
+
 #ifndef NO_AUDACIOUS
   pi->dbus_proxy = NULL;
   pi->dbus_connection = NULL;
@@ -443,10 +419,7 @@ static gui_state *ui_gui_new()
 
 static void ui_main_window_free(ui_main_window **main_win)
 {
-  if (!main_win || !*main_win)
-  {
-    return;
-  }
+  if (!main_win || !*main_win) { return; }
 
   g_free(*main_win);
   *main_win = NULL;
@@ -454,10 +427,7 @@ static void ui_main_window_free(ui_main_window **main_win)
 
 static void ui_infos_free(ui_infos **infos)
 {
-  if (!infos || !*infos)
-  {
-    return;
-  }
+  if (!infos || !*infos) { return; }
 
   ui_main_window_free(&(*infos)->main_win);
 
@@ -467,10 +437,7 @@ static void ui_infos_free(ui_infos **infos)
     (*infos)->browser_directory = NULL;
   }
 
-  if ((*infos)->text_options_list)
-  {
-    g_list_free((*infos)->text_options_list);
-  }
+  if ((*infos)->text_options_list) { g_list_free((*infos)->text_options_list); }
 
   if ((*infos)->silence_points)
   {
@@ -482,13 +449,13 @@ static void ui_infos_free(ui_infos **infos)
   if ((*infos)->previous_pixel_by_time != NULL)
   {
     g_hash_table_destroy((*infos)->previous_pixel_by_time);
-    (*infos)->previous_pixel_by_time = NULL; 
+    (*infos)->previous_pixel_by_time = NULL;
   }
 
   if ((*infos)->pixel_moved_by_time != NULL)
   {
     g_hash_table_destroy((*infos)->pixel_moved_by_time);
-    (*infos)->pixel_moved_by_time = NULL; 
+    (*infos)->pixel_moved_by_time = NULL;
   }
 
   g_array_free((*infos)->preview_time_windows, TRUE);
@@ -499,10 +466,7 @@ static void ui_infos_free(ui_infos **infos)
 
 static void ui_status_free(gui_status **status)
 {
-  if (!status || !*status)
-  {
-    return;
-  }
+  if (!status || !*status) { return; }
 
   g_free(*status);
   *status = NULL;
@@ -510,10 +474,7 @@ static void ui_status_free(gui_status **status)
 
 static void ui_player_infos_free(player_infos **pi)
 {
-  if (!pi || !*pi)
-  {
-    return;
-  }
+  if (!pi || !*pi) { return; }
 
   g_free(*pi);
   *pi = NULL;
@@ -521,12 +482,8 @@ static void ui_player_infos_free(player_infos **pi)
 
 static void ui_gui_free(gui_state **gui)
 {
-  if (!gui|| !*gui)
-  {
-    return;
-  }
+  if (!gui || !*gui) { return; }
 
   g_free(*gui);
   *gui = NULL;
 }
-

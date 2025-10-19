@@ -67,4 +67,3 @@ gint myaudacious_get_total_time(ui_state *ui);
 gint myaudacious_is_playing(ui_state *ui);
 
 #endif
-

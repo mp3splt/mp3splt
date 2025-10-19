@@ -34,8 +34,8 @@
  * \file
  * Functions to access the currently selected player
  *
- * this file is used to play for the appropriate player, 
- * for example if we choose snackamp, the player will use 
+ * this file is used to play for the appropriate player,
+ * for example if we choose snackamp, the player will use
  * snackamp
  **********************************************************/
 
@@ -44,10 +44,7 @@
 //!returns the elapsed time of the player
 gint player_get_elapsed_time(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_get_time_elapsed(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_get_time_elapsed(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -69,10 +66,7 @@ gint player_get_elapsed_time(ui_state *ui)
 //!returns total time of the song
 gint player_get_total_time(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_get_total_time(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_get_total_time(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -94,10 +88,7 @@ gint player_get_total_time(ui_state *ui)
 //!returns FALSE if the player is not running, else TRUE
 gint player_is_running(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_is_running(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_is_running(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -119,10 +110,7 @@ gint player_is_running(ui_state *ui)
 //!starts the player
 void player_start(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_start(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_start(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -142,10 +130,7 @@ void player_start(ui_state *ui)
 //!start player and add files to playlist
 void player_start_add_files(GList *list, ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_start_with_songs(list, ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_start_with_songs(list, ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -158,17 +143,14 @@ void player_start_add_files(GList *list, ui_state *ui)
   {
 #ifndef NO_GSTREAMER
     gstreamer_start_with_songs(list, ui);
-#endif 
+#endif
   }
 }
 
 //!add files to playlist
 void player_add_files(GList *list, ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_add_files(list, ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_add_files(list, ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -216,10 +198,7 @@ void player_add_play_files(GList *list, ui_state *ui)
 {
   player_add_files(list, ui);
 
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_next(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_next(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -265,10 +244,7 @@ void player_start_play_with_songs(GList *list, ui_state *ui)
 //!plays the song
 void player_play(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_play(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_play(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -288,10 +264,7 @@ void player_play(ui_state *ui)
 //!stops the song
 void player_stop(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_stop(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_stop(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -311,10 +284,7 @@ void player_stop(ui_state *ui)
 //!pause the song
 void player_pause(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_pause(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_pause(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -334,10 +304,7 @@ void player_pause(ui_state *ui)
 //!pass to the next song
 void player_next(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_next(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_next(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -357,10 +324,7 @@ void player_next(ui_state *ui)
 //!pass to the previous song
 void player_prev(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_prev(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_prev(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -382,10 +346,7 @@ void player_seek(gint position, ui_state *ui)
 {
   clear_previous_distances(ui);
 
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_jump(position, ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_jump(position, ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -408,10 +369,7 @@ void player_seek(gint position, ui_state *ui)
 */
 void player_get_song_infos(gchar *total_infos, ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_get_song_infos(total_infos, ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_get_song_infos(total_infos, ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -431,10 +389,7 @@ void player_get_song_infos(gchar *total_infos, ui_state *ui)
 //!returns TRUE if the player is playing, else FALSE
 gint player_is_playing(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_is_playing(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_is_playing(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -456,10 +411,7 @@ gint player_is_playing(ui_state *ui)
 //! Check if the player is paused
 gint player_is_paused(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_is_paused(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_is_paused(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -484,10 +436,7 @@ The returned string must be g_free'd after use
 */
 gchar *player_get_filename(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_get_filename(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_get_filename(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -512,10 +461,7 @@ The returned string must be g_freed after use
 */
 gchar *player_get_title(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_get_title_song(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_get_title_song(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -537,10 +483,7 @@ gchar *player_get_title(ui_state *ui)
 //!gets the volume of the player
 gint player_get_volume(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_get_volume(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_get_volume(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -562,10 +505,7 @@ gint player_get_volume(ui_state *ui)
 //!sets the volume of the player
 void player_set_volume(gint volume, ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    snackamp_set_volume(volume, ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { snackamp_set_volume(volume, ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -585,10 +525,7 @@ void player_set_volume(gint volume, ui_state *ui)
 //!returns the number of songs in the playlist
 gint player_get_playlist_number(ui_state *ui)
 {
-  if (ui->infos->selected_player == PLAYER_SNACKAMP)
-  {
-    return snackamp_get_playlist_number(ui);
-  }
+  if (ui->infos->selected_player == PLAYER_SNACKAMP) { return snackamp_get_playlist_number(ui); }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
   {
 #ifndef __WIN32__
@@ -619,4 +556,3 @@ gint player_quit(ui_state *ui)
 
   return 0;
 }
-

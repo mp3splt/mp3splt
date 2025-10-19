@@ -32,12 +32,12 @@ void cut_teardown()
 void test_all_fields_no_conversion()
 {
   tags = splt_fr_parse(state,
-      "artist producing Slow Rock _ album named geek by performer in 2007 with comment and track 2 of 5",
+    "artist producing Slow Rock _ album named geek by performer in 2007 with comment and track 2 of 5",
 
-      "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
-      ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
+    "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
+    ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -70,12 +70,12 @@ void test_all_fields_to_uppercase()
 
   tags = splt_fr_parse(state,
 
-      "artist producing Slow Rock _ album named geek by performer in 2007 with comment and track 2 of 5",
+    "artist producing Slow Rock _ album named geek by performer in 2007 with comment and track 2 of 5",
 
-      "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
-      ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
+    "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
+    ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -107,12 +107,12 @@ void test_all_fields_to_lowercase()
   set_tags_format_options(state, SPLT_TO_LOWERCASE);
 
   tags = splt_fr_parse(state,
-      "arTist producing Slow Rock _ alBum named GEEK by PERFORMER in 2007 with coMMent and track 2 of 5",
+    "arTist producing Slow Rock _ alBum named GEEK by PERFORMER in 2007 with coMMent and track 2 of 5",
 
-      "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
-      ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
+    "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
+    ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -144,12 +144,12 @@ void test_all_fields_to_first_uppercase()
   set_tags_format_options(state, SPLT_TO_FIRST_UPPERCASE);
 
   tags = splt_fr_parse(state,
-      "arTist good producing Tango _ alBum named gEEK by pERFORMER in 2007 with coMMent and track 2 of 5",
+    "arTist good producing Tango _ alBum named gEEK by pERFORMER in 2007 with coMMent and track 2 of 5",
 
-      "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
-      ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
+    "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
+    ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -182,12 +182,12 @@ void test_all_fields_to_word_first_uppercase()
   set_tags_format_options(state, SPLT_TO_WORD_FIRST_UPPERCASE);
 
   tags = splt_fr_parse(state,
-      "arTist good producing Tango _ alBum second named gEEK y by pERFORMER me in 2007 with coMMent this and track 2 of 5",
+    "arTist good producing Tango _ alBum second named gEEK y by pERFORMER me in 2007 with coMMent this and track 2 of 5",
 
-      "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
-      ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
+    "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
+    ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -217,18 +217,18 @@ void test_all_fields_to_word_first_uppercase()
 
 void test_invalid_regex()
 {
-  splt_fr_parse(state, "another one", "(?ohh my test", 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+  splt_fr_parse(
+    state, "another one", "(?ohh my test", NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_INVALID_REGEX, error);
-  mp3splt_assert_equal_error_message(state, error, 
-      " regular expression error: @2: unrecognized character after (? or (?-");
+  mp3splt_assert_equal_error_message(
+    state, error, " regular expression error: @2: unrecognized character after (? or (?-");
 }
 
 void test_no_regex_match()
 {
-  splt_fr_parse(state, "another one", "(?<artist>.*?) one test", 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+  splt_fr_parse(
+    state, "another one", "(?<artist>.*?) one test", NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_NO_MATCH, error);
   mp3splt_assert_equal_error_message(state, error, " regular expression error: no match");
@@ -236,9 +236,8 @@ void test_no_regex_match()
 
 void test_no_title_with_total_tracks()
 {
-  tags = splt_fr_parse(state, "track 3 of 6",
-      "track (?<tracknum>.*?) of (?<tracks>.*)",
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+  tags = splt_fr_parse(state, "track 3 of 6", "track (?<tracknum>.*?) of (?<tracks>.*)",
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -252,8 +251,8 @@ void test_no_title_with_total_tracks()
 
 void test_no_title_no_total_tracks()
 {
-  tags = splt_fr_parse(state, "track 3", "track (?<tracknum>.*)",
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+  tags = splt_fr_parse(
+    state, "track 3", "track (?<tracknum>.*)", NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -267,8 +266,8 @@ void test_no_title_no_total_tracks()
 
 void test_default_comment()
 {
-  tags = splt_fr_parse(state, "track 3", "track (?<tracknum>.*)",
-      "default_comment", NO_DEFAULT_GENRE, &error);
+  tags = splt_fr_parse(
+    state, "track 3", "track (?<tracknum>.*)", "default_comment", NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -279,8 +278,8 @@ void test_default_comment()
 
 void test_default_genre()
 {
-  tags = splt_fr_parse(state, "track 3", "track (?<tracknum>.*)",
-      NO_DEFAULT_COMMENT, "Freestyle", &error);
+  tags = splt_fr_parse(
+    state, "track 3", "track (?<tracknum>.*)", NO_DEFAULT_COMMENT, "Freestyle", &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -298,12 +297,12 @@ void test_mixed_formats()
   splt_o_set_int_option(state, SPLT_OPT_COMMENT_TAG_FORMAT, SPLT_TO_WORD_FIRST_UPPERCASE);
 
   tags = splt_fr_parse(state,
-      "arTist_good producing Tribal _ alBum named gEEK by pERFORMER in 2007 with coMMent kk and track 2 of 5",
+    "arTist_good producing Tribal _ alBum named gEEK by pERFORMER in 2007 with coMMent kk and track 2 of 5",
 
-      "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
-      ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
+    "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
+    ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -340,12 +339,12 @@ void test_with_replace_underscores()
   splt_o_set_int_option(state, SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT, SPLT_TRUE);
 
   tags = splt_fr_parse(state,
-      "arTist_good producing Dance Hall _ alBum named gE_EK by pERFORMER in 2007 with coMMent kk and track 2 of 5",
+    "arTist_good producing Dance Hall _ alBum named gE_EK by pERFORMER in 2007 with coMMent kk and track 2 of 5",
 
-      "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
-      ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
+    "(?<artist>.*?) producing (?<genre>.*?) _ (?<album>.*?) named (?<title>.*?) by "
+    ".*? in (?<year>.*?) with (?<comment>.*?) and track (?<tracknum>.*?) of (?<tracks>.*)",
 
-      NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
+    NO_DEFAULT_COMMENT, NO_DEFAULT_GENRE, &error);
 
   cut_assert_equal_int(SPLT_REGEX_OK, error);
 
@@ -379,4 +378,3 @@ static void set_tags_format_options(splt_state *state, int format)
   splt_o_set_int_option(state, SPLT_OPT_TITLE_TAG_FORMAT, format);
   splt_o_set_int_option(state, SPLT_OPT_COMMENT_TAG_FORMAT, format);
 }
-

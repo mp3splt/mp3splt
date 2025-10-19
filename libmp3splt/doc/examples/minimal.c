@@ -56,10 +56,7 @@ int main(int argc, char *argv[])
 static void print_confirmation_and_exit_if_error(splt_state *state, splt_code error)
 {
   char *message = mp3splt_get_strerror(state, error);
-  if (!message)
-  {
-    return;
-  }
+  if (!message) { return; }
 
   if (error < 0)
   {
@@ -97,4 +94,3 @@ static void print_split_filename(const char *filename, void *data)
   fprintf(stdout, "   %s created.\n", filename);
   fflush(stdout);
 }
-

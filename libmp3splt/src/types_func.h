@@ -38,8 +38,7 @@ void splt_t_set_total_time(splt_state *state, long value);
 long splt_t_get_total_time(splt_state *state);
 double splt_t_get_total_time_as_double_secs(splt_state *state);
 
-void splt_t_set_new_filename_path(splt_state *state, 
-    const char *new_filename_path, int *error);
+void splt_t_set_new_filename_path(splt_state *state, const char *new_filename_path, int *error);
 char *splt_t_get_new_filename_path(splt_state *state);
 
 int splt_t_set_path_of_split(splt_state *state, const char *path);
@@ -79,7 +78,7 @@ int splt_t_get_splitnumber(splt_state *state);
 void splt_t_free_splitpoints_tags(splt_state *state);
 
 void splt_t_clean_one_split_data(splt_state *state, int num);
-void splt_t_clean_split_data(splt_state *state,int tracks);
+void splt_t_clean_split_data(splt_state *state, int tracks);
 
 int splt_t_split_is_canceled(splt_state *state);
 void splt_t_set_stop_split(splt_state *state, int bool_value);
@@ -89,4 +88,3 @@ void splt_t_set_current_split_file_number_next(splt_state *state);
 #define SPLT_TYPES_FUNC_H
 
 #endif
-

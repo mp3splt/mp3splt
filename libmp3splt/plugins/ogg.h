@@ -39,12 +39,14 @@
 /**********************************/
 /* Ogg structures                 */
 
-typedef struct {
+typedef struct
+{
   int length;
   unsigned char *packet;
 } splt_v_packet;
 
-typedef struct {
+typedef struct
+{
   ogg_sync_state *sync_in;
   ogg_stream_state *stream_in;
   vorbis_dsp_state *vd;
@@ -61,7 +63,7 @@ typedef struct {
   OggVorbis_File vf;
   vorbis_comment vc;
   short cloned_vorbis_comment;
-  FILE *in,*out;
+  FILE *in, *out;
   short end;
   float off;
   float temp_level;
@@ -84,4 +86,3 @@ typedef struct {
 #define MP3SPLT_OGG_H
 
 #endif
-

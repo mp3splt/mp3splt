@@ -30,8 +30,8 @@
 #include "splt.h"
 #include "tags_utils.h"
 
-static void splt_tu_copy_tags_without_original_and_version(splt_tags *from, splt_tags *to, 
-    int *error);
+static void splt_tu_copy_tags_without_original_and_version(
+  splt_tags *from, splt_tags *to, int *error);
 
 void splt_tu_free_original_tags(splt_state *state)
 {
@@ -41,10 +41,7 @@ void splt_tu_free_original_tags(splt_state *state)
   splt_p_clear_original_tags(state, &err);
 }
 
-splt_tags_group *splt_tu_get_tags_group(splt_state *state)
-{
-  return state->split.tags_group;
-}
+splt_tags_group *splt_tu_get_tags_group(splt_state *state) { return state->split.tags_group; }
 
 static splt_tags *splt_tu_duplicate_tags(splt_state *state, splt_code *error, int *tags_number)
 {
@@ -63,7 +60,7 @@ static splt_tags *splt_tu_duplicate_tags(splt_state *state, splt_code *error, in
   }
 
   int i = 0;
-  for (i = 0;i < total_tags;i++)
+  for (i = 0; i < total_tags; i++)
   {
     splt_tu_reset_tags(&tags[i]);
     splt_tu_copy_tags(&state->split.tags_group->tags[i], &tags[i], error);
@@ -72,7 +69,7 @@ static splt_tags *splt_tu_duplicate_tags(splt_state *state, splt_code *error, in
     if (*error < 0)
     {
       int j = 0;
-      for (j = 0; i < i; j++) { splt_tu_free_one_tags_content(&tags[i]); }
+      for (j = 0; j < i; j++) { splt_tu_free_one_tags_content(&tags[i]); }
       *tags_number = 0;
       return NULL;
     }
@@ -87,42 +84,23 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
   int old_current_split = current_split;
 
   int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
-  if (remaining_tags_like_x == -1)
-  {
-    return;
-  }
+  if (remaining_tags_like_x == -1) { return; }
 
   int real_tags_number = 0;
-  if (state->split.tags_group)
-  {
-    real_tags_number = state->split.tags_group->real_tagsnumber;
-  }
+  if (state->split.tags_group) { real_tags_number = state->split.tags_group->real_tagsnumber; }
 
-  if (current_split >= real_tags_number)
-  {
-    current_split = remaining_tags_like_x;
-  }
+  if (current_split >= real_tags_number) { current_split = remaining_tags_like_x; }
 
-  if (splt_o_get_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS) <= 0)
-  {
-    return;
-  }
+  if (splt_o_get_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS) <= 0) { return; }
 
-  if (current_split != remaining_tags_like_x)
-  {
-    return;
-  }
+  if (current_split != remaining_tags_like_x) { return; }
 
-  if ((old_current_split > 0) && 
-      (old_current_split-1 < real_tags_number) && 
+  if ((old_current_split > 0) && (old_current_split - 1 < real_tags_number) &&
       (old_current_split != remaining_tags_like_x))
   {
     const int *prev_track = splt_tu_get_tags_field(state, old_current_split - 1, SPLT_TAGS_TRACK);
     int previous_track = 0;
-    if (prev_track != NULL)
-    {
-      previous_track = *prev_track;
-    }
+    if (prev_track != NULL) { previous_track = *prev_track; }
     splt_tu_set_tags_field(state, remaining_tags_like_x, SPLT_TAGS_TRACK, &previous_track);
 
     splt_tags *tags_like_x = splt_tu_get_tags_like_x(state);
@@ -135,10 +113,7 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
     if (splt_tu_tags_exists(state, current_split))
     {
       const int *track = splt_tu_get_tags_field(state, current_split, SPLT_TAGS_TRACK);
-      if (track != NULL)
-      {
-        tracknumber = *track;
-      }
+      if (track != NULL) { tracknumber = *track; }
     }
     int new_tracknumber = tracknumber + 1;
     splt_tu_set_tags_field(state, current_split, SPLT_TAGS_TRACK, &new_tracknumber);
@@ -154,57 +129,44 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
 
 void splt_tu_get_original_tags(splt_state *state, int *err)
 {
-  if (! splt_io_input_is_stdin(state))
+  if (!splt_io_input_is_stdin(state))
   {
     splt_tu_free_original_tags(state);
     splt_p_set_original_tags(state, err);
   }
 }
 
-int splt_tu_append_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, const char *genre, int set_original_tags)
+int splt_tu_append_tags(splt_state *state, const char *title, const char *artist, const char *album,
+  const char *performer, const char *year, const char *comment, int track, const char *genre,
+  int set_original_tags)
 {
   int error = SPLT_OK;
   int old_tagsnumber = 0;
-  if (state->split.tags_group)
-  {
-    old_tagsnumber = state->split.tags_group->real_tagsnumber;
-  }
+  if (state->split.tags_group) { old_tagsnumber = state->split.tags_group->real_tagsnumber; }
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_TITLE, title);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_ARTIST, artist);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_ALBUM, album);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_PERFORMER, performer);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_YEAR, year);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_COMMENT, comment);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_TRACK, &track);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_ORIGINAL, &set_original_tags);
-  if (error != SPLT_OK)
-    return error;
+  if (error != SPLT_OK) return error;
 
   error = splt_tu_set_tags_field(state, old_tagsnumber, SPLT_TAGS_GENRE, genre);
   return error;
@@ -264,8 +226,8 @@ int splt_tu_append_original_tags(splt_state *state)
   new_genre = splt_su_replace_all(tags->genre, "@", "@@", &err);
   if (err != SPLT_OK) { goto end; }
 
-  err = splt_tu_append_tags(state, new_title, new_artist, new_album, NULL,
-      new_year, new_comment, tags->track, new_genre, SPLT_TRUE);
+  err = splt_tu_append_tags(state, new_title, new_artist, new_album, NULL, new_year, new_comment,
+    tags->track, new_genre, SPLT_TRUE);
 
 end:
   if (new_title) { free(new_title); }
@@ -278,23 +240,15 @@ end:
   return err;
 }
 
-int splt_tu_append_only_non_null_previous_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, const char *genre, int set_original_tags)
+int splt_tu_append_only_non_null_previous_tags(splt_state *state, const char *title,
+  const char *artist, const char *album, const char *performer, const char *year,
+  const char *comment, int track, const char *genre, int set_original_tags)
 {
   int error = SPLT_OK;
   int old_tagsnumber = 0;
-  if (state->split.tags_group)
-  {
-    old_tagsnumber = state->split.tags_group->real_tagsnumber - 1;
-  }
+  if (state->split.tags_group) { old_tagsnumber = state->split.tags_group->real_tagsnumber - 1; }
 
-  if (old_tagsnumber < 0)
-  {
-    return error;
-  }
+  if (old_tagsnumber < 0) { return error; }
 
   if (title != NULL)
   {
@@ -395,17 +349,11 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
 
   if (!state->split.tags_group)
   {
-    if (index != 0)
-    {
-      splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
-    }
+    if (index != 0) { splt_e_error(SPLT_IERROR_INT, __func__, index, NULL); }
     else
     {
       state->split.tags_group = malloc(sizeof(splt_tags_group));
-      if (state->split.tags_group == NULL)
-      {
-        return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
+      if (state->split.tags_group == NULL) { return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
 
       state->split.tags_group->real_tagsnumber = 0;
       state->split.tags_group->iterator_counter = 0;
@@ -413,7 +361,7 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
       state->split.tags_group->tags = splt_tu_new_tags(&error);
       if (error < 0)
       {
-        free(state->split.tags_group); 
+        free(state->split.tags_group);
         state->split.tags_group = NULL;
         return error;
       }
@@ -426,21 +374,21 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
   {
     if ((index > state->split.tags_group->real_tagsnumber) || (index < 0))
     {
-      splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
+      splt_e_error(SPLT_IERROR_INT, __func__, index, NULL);
     }
     else
     {
       if (index == state->split.tags_group->real_tagsnumber)
       {
-        if ((state->split.tags_group->tags = 
-              realloc(state->split.tags_group->tags, sizeof(splt_tags) * (index+1))) == NULL)
+        if ((state->split.tags_group->tags =
+                realloc(state->split.tags_group->tags, sizeof(splt_tags) * (index + 1))) == NULL)
         {
           error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           return error;
         }
         else
         {
-          splt_tu_set_empty_tags(state,index);
+          splt_tu_set_empty_tags(state, index);
           state->split.tags_group->real_tagsnumber++;
         }
       }
@@ -452,41 +400,30 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
 
 int splt_tu_tags_exists(splt_state *state, int index)
 {
-  if (!state->split.tags_group)
-  {
-    return SPLT_FALSE;
-  }
+  if (!state->split.tags_group) { return SPLT_FALSE; }
 
-  if ((index >= 0) && (index < state->split.tags_group->real_tagsnumber))
-  {
-    return SPLT_TRUE;
-  }
+  if ((index >= 0) && (index < state->split.tags_group->real_tagsnumber)) { return SPLT_TRUE; }
 
   return SPLT_FALSE;
 }
 
-int splt_tu_set_tags_field(splt_state *state, int index,
-    int tags_field, const void *data)
+int splt_tu_set_tags_field(splt_state *state, int index, int tags_field, const void *data)
 {
   int error = SPLT_OK;
 
-  error = splt_tu_new_tags_if_necessary(state,index);
+  error = splt_tu_new_tags_if_necessary(state, index);
   if (error != SPLT_OK) { return error; }
 
-  if (!state->split.tags_group ||
-      (index >= state->split.tags_group->real_tagsnumber) ||
+  if (!state->split.tags_group || (index >= state->split.tags_group->real_tagsnumber) ||
       (index < 0))
   {
     error = SPLT_ERROR_INEXISTENT_SPLITPOINT;
-    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT, __func__, index, NULL);
     return error;
   }
 
   splt_tu_set_field_on_tags(&state->split.tags_group->tags[index], tags_field, data);
-  if (error != SPLT_OK)
-  {
-    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
-  }
+  if (error != SPLT_OK) { splt_e_error(SPLT_IERROR_INT, __func__, index, NULL); }
 
   return error;
 }
@@ -526,43 +463,34 @@ void splt_tu_set_original_tags_last_plugin_used(splt_state *state, int plugin_us
   state->original_tags.last_plugin_used = plugin_used;
 }
 
-splt_tags *splt_tu_get_original_tags_tags(splt_state *state)
-{
-  return &state->original_tags.tags;
-}
+splt_tags *splt_tu_get_original_tags_tags(splt_state *state) { return &state->original_tags.tags; }
 
-static char *splt_tu_get_replaced_with_tags(const char *word,
-    const splt_tags *tags, const splt_tags *original_tags,
-    int track, int *error, int replace_tags_in_tags, 
-    int current_split, splt_state *state)
+static char *splt_tu_get_replaced_with_tags(const char *word, const splt_tags *tags,
+  const splt_tags *original_tags, int track, int *error, int replace_tags_in_tags,
+  int current_split, splt_state *state)
 {
   int err = SPLT_OK;
 
-  if (current_split == -1)
-  {
-    current_split = splt_t_get_current_split_file_number(state) - 1;
-  }
+  if (current_split == -1) { current_split = splt_t_get_current_split_file_number(state) - 1; }
 
-  long mins = -1; long secs = -1; long hundr = -1;
+  long mins = -1;
+  long secs = -1;
+  long hundr = -1;
   long point_value = splt_sp_get_splitpoint_value(state, current_split, &err);
   splt_co_get_mins_secs_hundr(point_value, &mins, &secs, &hundr);
-  long next_mins = -1; long next_secs = -1; long next_hundr = -1;
+  long next_mins = -1;
+  long next_secs = -1;
+  long next_hundr = -1;
   long next_point_value = -1;
   if (splt_sp_splitpoint_exists(state, current_split + 1))
   {
     next_point_value = splt_sp_get_splitpoint_value(state, current_split + 1, &err);
     long total_time = splt_t_get_total_time(state);
-    if (total_time > 0 && next_point_value > total_time)
-    {
-      next_point_value = total_time;
-    }
+    if (total_time > 0 && next_point_value > total_time) { next_point_value = total_time; }
     splt_co_get_mins_secs_hundr(next_point_value, &next_mins, &next_secs, &next_hundr);
   }
   short write_eof = SPLT_FALSE;
-  if (next_point_value == LONG_MAX)
-  {
-    write_eof = SPLT_TRUE;
-  }
+  if (next_point_value == LONG_MAX) { write_eof = SPLT_TRUE; }
 
   long mMsShH_value = 1;
   short eof_written = SPLT_FALSE;
@@ -578,10 +506,7 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
 
   char buffer[256] = { '\0' };
 
-  if (word == NULL)
-  {
-    return NULL;
-  }
+  if (word == NULL) { return NULL; }
 
   const splt_tags *tags_to_replace = tags;
 
@@ -589,18 +514,12 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
   const char *ptr = NULL;
   for (ptr = word; *ptr != '\0'; ptr++)
   {
-    if (*ptr == '@')
-    {
-      tags_to_replace = tags;
-    }
-    else if (*ptr == '#')
-    {
-      tags_to_replace = original_tags;
-    }
+    if (*ptr == '@') { tags_to_replace = tags; }
+    else if (*ptr == '#') { tags_to_replace = original_tags; }
 
     const char *title = tags_to_replace->title;
     const char *artist = tags_to_replace->artist;
-    const char *album= tags_to_replace->album;
+    const char *album = tags_to_replace->album;
     const char *performer = tags_to_replace->performer;
     const char *year = tags_to_replace->year;
     const char *comment = tags_to_replace->comment;
@@ -639,8 +558,7 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
 put_value:
           if (!eof_written)
           {
-            if (write_eof &&
-                (*ptr == 'S' || *ptr == 'M' || *ptr == 'H'))
+            if (write_eof && (*ptr == 'S' || *ptr == 'M' || *ptr == 'H'))
             {
               write_eof = SPLT_FALSE;
               eof_written = SPLT_TRUE;
@@ -720,14 +638,10 @@ put_value:
           }
           break;
         case 'N':
-        case 'n':
-          ;
+        case 'n':;
           int track_to_set = track;
 
-          if (*ptr == 'n')
-          {
-            track_to_set = real_track;
-          }
+          if (*ptr == 'n') { track_to_set = real_track; }
 
           char temp[5] = { '\0' };
           temp[0] = '%';
@@ -746,7 +660,7 @@ put_value:
           if (err != SPLT_OK) { goto error; }
           break;
         default:
-          err = splt_su_append(&word_with_tags, (ptr-1), 2, NULL);
+          err = splt_su_append(&word_with_tags, (ptr - 1), 2, NULL);
           if (err != SPLT_OK) { goto error; }
           break;
       }
@@ -772,10 +686,7 @@ put_value:
   return word_with_tags;
 
 error:
-  if (word_with_tags)
-  {
-    free(word_with_tags);
-  }
+  if (word_with_tags) { free(word_with_tags); }
 
   *error = err;
 
@@ -784,10 +695,7 @@ error:
 
 void splt_tu_free_one_tags(splt_tags **tags)
 {
-  if (!tags || !*tags)
-  {
-    return;
-  }
+  if (!tags || !*tags) { return; }
 
   splt_tu_free_one_tags_content(*tags);
 
@@ -839,8 +747,8 @@ void splt_tu_free_one_tags_content(splt_tags *tags)
   }
 }
 
-void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
-    int append_new_tags, int original_tags_value, int use_original_tags_set, int *error)
+void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, int append_new_tags,
+  int original_tags_value, int use_original_tags_set, int *error)
 {
   int err = SPLT_OK;
 
@@ -849,24 +757,20 @@ void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags,
     int original_tags = SPLT_FALSE;
     if (use_original_tags_set) { original_tags = tags->set_original_tags; }
 
-    err = splt_tu_append_tags(state, tags->title, tags->artist, tags->album,
-        tags->performer, tags->year, tags->comment, tags->track, tags->genre,
-        original_tags);
+    err = splt_tu_append_tags(state, tags->title, tags->artist, tags->album, tags->performer,
+      tags->year, tags->comment, tags->track, tags->genre, original_tags);
   }
   else
   {
-    err = splt_tu_append_only_non_null_previous_tags(state, tags->title,
-        tags->artist, tags->album, tags->performer, tags->year, 
-        tags->comment, tags->track, tags->genre,
-        original_tags_value);
+    err = splt_tu_append_only_non_null_previous_tags(state, tags->title, tags->artist, tags->album,
+      tags->performer, tags->year, tags->comment, tags->track, tags->genre, original_tags_value);
   }
 
   if (err < 0) { *error = err; }
 }
 
-void splt_tu_set_new_tags_where_current_tags_are_null(splt_state *state,
-    splt_tags *current_tags, splt_tags *new_tags,
-    int index, int *error)
+void splt_tu_set_new_tags_where_current_tags_are_null(
+  splt_state *state, splt_tags *current_tags, splt_tags *new_tags, int index, int *error)
 {
   if (!current_tags->title)
   {
@@ -882,13 +786,9 @@ void splt_tu_set_new_tags_where_current_tags_are_null(splt_state *state,
   }
   if (!current_tags->performer)
   {
-    splt_tu_set_tags_field(state, index, SPLT_TAGS_PERFORMER,
-        new_tags->performer);
+    splt_tu_set_tags_field(state, index, SPLT_TAGS_PERFORMER, new_tags->performer);
   }
-  if (!current_tags->year)
-  {
-    splt_tu_set_tags_field(state, index, SPLT_TAGS_YEAR, new_tags->year);
-  }
+  if (!current_tags->year) { splt_tu_set_tags_field(state, index, SPLT_TAGS_YEAR, new_tags->year); }
   if (!current_tags->comment)
   {
     splt_tu_set_tags_field(state, index, SPLT_TAGS_COMMENT, new_tags->comment);
@@ -906,13 +806,8 @@ void splt_tu_set_new_tags_where_current_tags_are_null(splt_state *state,
 
 int splt_tu_has_one_tag_set(splt_tags *tags)
 {
-  if (tags->title != NULL ||
-      tags->artist != NULL ||
-      tags->album != NULL ||
-      tags->performer != NULL ||
-      tags->year != NULL ||
-      tags->comment != NULL ||
-      tags->track != -1 ||
+  if (tags->title != NULL || tags->artist != NULL || tags->album != NULL ||
+      tags->performer != NULL || tags->year != NULL || tags->comment != NULL || tags->track != -1 ||
       tags->genre != NULL)
   {
     return SPLT_TRUE;
@@ -921,13 +816,10 @@ int splt_tu_has_one_tag_set(splt_tags *tags)
   return SPLT_FALSE;
 }
 
-static void splt_tu_copy_all_tags(splt_tags *from, splt_tags *to, int *error,
-    int copy_original_and_version)
+static void splt_tu_copy_all_tags(
+  splt_tags *from, splt_tags *to, int *error, int copy_original_and_version)
 {
-  if (!from)
-  {
-    return;
-  }
+  if (!from) { return; }
 
   int err = SPLT_OK;
 
@@ -970,7 +862,8 @@ error:
   *error = err;
 }
 
-static void splt_tu_copy_tags_without_original_and_version(splt_tags *from, splt_tags *to, int *error)
+static void splt_tu_copy_tags_without_original_and_version(
+  splt_tags *from, splt_tags *to, int *error)
 {
   splt_tu_copy_all_tags(from, to, error, SPLT_FALSE);
 }
@@ -984,16 +877,12 @@ static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
 
-  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
 
   int real_tags_number = 0;
-  if (state->split.tags_group)
-  {
-    real_tags_number = state->split.tags_group->real_tagsnumber;
-  }
+  if (state->split.tags_group) { real_tags_number = state->split.tags_group->real_tagsnumber; }
 
-  if ((current_tags_number >= real_tags_number) &&
-      (remaining_tags_like_x != -1))
+  if ((current_tags_number >= real_tags_number) && (remaining_tags_like_x != -1))
   {
     return splt_tu_get_tags_like_x(state);
   }
@@ -1008,30 +897,15 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
   splt_tags *tags = splt_tu_get_tags_to_replace_in_tags(state);
   splt_tags *cur_tags = splt_tu_get_current_tags(state);
 
-  if (!tags || !cur_tags)
-  {
-    return err;
-  }
+  if (!tags || !cur_tags) { return err; }
 
   int track = -1;
-  if (tags->track > 0)
-  {
-    track = tags->track;
-  }
-  else if (tags->track == -2)
-  {
-    track = -2;
-  }
+  if (tags->track > 0) { track = tags->track; }
+  else if (tags->track == -2) { track = -2; }
   else if (splt_tu_has_one_tag_set(tags))
   {
-    if (current_split != -1)
-    {
-      track = current_split + 1;
-    }
-    else
-    {
-      track = splt_t_get_current_split_file_number(state);
-    }
+    if (current_split != -1) { track = current_split + 1; }
+    else { track = splt_t_get_current_split_file_number(state); }
   }
 
   cur_tags->track = track;
@@ -1041,23 +915,23 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
 
   splt_tags *original_tags = splt_tu_get_original_tags_tags(state);
 
-  char *t = splt_tu_get_replaced_with_tags(tags->title, tags, original_tags,
-      track, &err, replace_tags_in_tags, current_split, state);
+  char *t = splt_tu_get_replaced_with_tags(
+    tags->title, tags, original_tags, track, &err, replace_tags_in_tags, current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *y = splt_tu_get_replaced_with_tags(tags->year, tags, original_tags, track, &err, replace_tags_in_tags, 
-      current_split, state);
+  char *y = splt_tu_get_replaced_with_tags(
+    tags->year, tags, original_tags, track, &err, replace_tags_in_tags, current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, original_tags, track, &err, replace_tags_in_tags, 
-      current_split, state);
+  char *a = splt_tu_get_replaced_with_tags(
+    tags->artist, tags, original_tags, track, &err, replace_tags_in_tags, current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *al = splt_tu_get_replaced_with_tags(tags->album, tags, original_tags, track, &err, replace_tags_in_tags, 
-      current_split, state);
+  char *al = splt_tu_get_replaced_with_tags(
+    tags->album, tags, original_tags, track, &err, replace_tags_in_tags, current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, original_tags, track, &err, replace_tags_in_tags,
-      current_split, state);
+  char *c = splt_tu_get_replaced_with_tags(
+    tags->comment, tags, original_tags, track, &err, replace_tags_in_tags, current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *g = splt_tu_get_replaced_with_tags(tags->genre, tags, original_tags, track, &err, replace_tags_in_tags,
-      current_split, state);
+  char *g = splt_tu_get_replaced_with_tags(
+    tags->genre, tags, original_tags, track, &err, replace_tags_in_tags, current_split, state);
   if (err != SPLT_OK) { return err; }
 
   splt_su_free_replace(&cur_tags->title, t);
@@ -1072,36 +946,27 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
 
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index)
 {
-  if (!splt_tu_tags_exists(state, tags_index))
-  {
-    return NULL;
-  }
+  if (!splt_tu_tags_exists(state, tags_index)) { return NULL; }
 
   return &state->split.tags_group->tags[tags_index];
 }
 
 splt_tags splt_tu_get_last_tags(splt_state *state)
 {
-  return state->split.tags_group->tags[state->split.tags_group->real_tagsnumber-1];
+  return state->split.tags_group->tags[state->split.tags_group->real_tagsnumber - 1];
 }
 
 const void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
 {
   int real_tags_number = 0;
-  if (state->split.tags_group)
-  {
-    real_tags_number = state->split.tags_group->real_tagsnumber;
-  }
+  if (state->split.tags_group) { real_tags_number = state->split.tags_group->real_tagsnumber; }
 
   if ((index >= real_tags_number) || (index < 0))
   {
-    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT, __func__, index, NULL);
     return NULL;
   }
-  else
-  {
-    return splt_tu_get_tags_value(&state->split.tags_group->tags[index], tags_field);
-  }
+  else { return splt_tu_get_tags_value(&state->split.tags_group->tags[index], tags_field); }
 
   return NULL;
 }
@@ -1146,17 +1011,11 @@ const void *splt_tu_get_tags_value(const splt_tags *tags, int tags_field)
   }
 }
 
-splt_tags *splt_tu_get_tags_like_x(splt_state *state)
-{
-  return &state->split.tags_like_x;
-}
+splt_tags *splt_tu_get_tags_like_x(splt_state *state) { return &state->split.tags_like_x; }
 
 void splt_tu_free_tags_group(splt_tags_group **tags_group)
 {
-  if (!tags_group || !*tags_group)
-  {
-    return;
-  }
+  if (!tags_group || !*tags_group) { return; }
 
   int i = 0;
   for (i = 0; i < (*tags_group)->real_tagsnumber; i++)
@@ -1180,17 +1039,13 @@ void splt_tu_free_tags(splt_state *state)
 splt_tags *splt_tu_get_current_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
-  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
   int real_tags_number = 0;
-  if (state->split.tags_group)
-  {
-    real_tags_number = state->split.tags_group->real_tagsnumber;
-  }
+  if (state->split.tags_group) { real_tags_number = state->split.tags_group->real_tagsnumber; }
 
-  if ((current_tags_number >= real_tags_number) &&
-      (remaining_tags_like_x != -1))
+  if ((current_tags_number >= real_tags_number) && (remaining_tags_like_x != -1))
   {
-    current_tags_number = remaining_tags_like_x; 
+    current_tags_number = remaining_tags_like_x;
   }
 
   return splt_tu_get_tags_at(state, current_tags_number);
@@ -1198,22 +1053,13 @@ splt_tags *splt_tu_get_current_tags(splt_state *state)
 
 char *splt_tu_get_artist_or_performer_ptr(const splt_tags *tags)
 {
-  if (!tags)
-  {
-    return NULL;
-  }
+  if (!tags) { return NULL; }
 
   char *artist_or_performer = tags->artist;
 
-  if (tags->performer == NULL)
-  {
-    return artist_or_performer;
-  }
+  if (tags->performer == NULL) { return artist_or_performer; }
 
-  if (tags->performer[0] != '\0')
-  {
-    return tags->performer;
-  }
+  if (tags->performer[0] != '\0') { return tags->performer; }
 
   return artist_or_performer;
 }
@@ -1230,7 +1076,7 @@ int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_ta
   const char *all_comment = splt_tu_get_tags_value(all_tags, SPLT_TAGS_COMMENT);
 
   int i = 0;
-  for (i = 0; i < tracks;i++)
+  for (i = 0; i < tracks; i++)
   {
     if (all_artist != NULL)
     {
@@ -1333,7 +1179,7 @@ int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data)
       tags->set_original_tags = *((int *)data);
       break;
     default:
-      splt_e_error(SPLT_IERROR_INT,__func__, -500, NULL);
+      splt_e_error(SPLT_IERROR_INT, __func__, -500, NULL);
       break;
   }
 
@@ -1352,7 +1198,7 @@ splt_code splt_tu_remove_tags_of_skippoints(splt_state *state)
 
   int splitpoints_number = state->split.points->real_splitnumber;
   int i = 0;
-  for (i = 0;i < splitpoints_number;i++)
+  for (i = 0; i < splitpoints_number; i++)
   {
     if (i >= number) { continue; }
 
@@ -1364,12 +1210,8 @@ splt_code splt_tu_remove_tags_of_skippoints(splt_state *state)
   }
 
 end:
-  for (i = 0;i < number;i++)
-  {
-    splt_tu_free_one_tags_content(&tags[i]);
-  }
+  for (i = 0; i < number; i++) { splt_tu_free_one_tags_content(&tags[i]); }
   free(tags);
 
   return error;
 }
-

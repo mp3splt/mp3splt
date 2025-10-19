@@ -29,7 +29,7 @@
  *
  *********************************************************/
 
-#ifndef MUTEX_H 
+#ifndef MUTEX_H
 
 #define MUTEX_H
 
@@ -43,4 +43,3 @@ void lock_mutex(SPLT_MUTEX *mutex);
 void unlock_mutex(SPLT_MUTEX *mutex);
 
 #endif
-

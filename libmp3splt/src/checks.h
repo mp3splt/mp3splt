@@ -34,18 +34,16 @@
 /****************************/
 /* splitpoints checks */
 
-void splt_check_points_inf_song_length_and_convert_negatives(splt_state *state,
-    int *error);
-void splt_check_if_points_in_order(splt_state *state,
-    int *error);
+void splt_check_points_inf_song_length_and_convert_negatives(splt_state *state, int *error);
+void splt_check_if_points_in_order(splt_state *state, int *error);
 
 /****************************/
 /* path check */
 
-void splt_check_if_fname_path_is_correct(splt_state *state,
-    const char *new_filename_path, int *error);
-char *splt_check_put_dir_of_cur_song(const char *filename,
-    const char *the_filename_path, int *error);
+void splt_check_if_fname_path_is_correct(
+  splt_state *state, const char *new_filename_path, int *error);
+char *splt_check_put_dir_of_cur_song(
+  const char *filename, const char *the_filename_path, int *error);
 
 /****************************/
 /* options check */
@@ -56,12 +54,11 @@ void splt_check_set_correct_options(splt_state *state);
 /****************************/
 /* file checks */
 
-void splt_check_file_type_and_set_plugin(splt_state *state, short force_check_by_extension, 
-    short show_warnings, int *error);
-int splt_check_is_the_same_file(splt_state *state, const char *file1,
-    const char *file2, int *error);
+void splt_check_file_type_and_set_plugin(
+  splt_state *state, short force_check_by_extension, short show_warnings, int *error);
+int splt_check_is_the_same_file(
+  splt_state *state, const char *file1, const char *file2, int *error);
 
 #define MP3SPLT_CHECKS_H
 
 #endif
-

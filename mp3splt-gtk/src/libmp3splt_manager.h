@@ -39,7 +39,8 @@ void lmanager_init_and_find_plugins(ui_state *ui);
 void lmanager_put_split_filename(const char *filename, void *data);
 void lmanager_stop_split(ui_state *ui);
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
   int progress_type;
   char *filename_shorted;
@@ -50,11 +51,11 @@ typedef struct {
   float percent_progress;
 } ui_with_p_bar;
 
-typedef struct {
+typedef struct
+{
   ui_state *ui;
   char *message;
   splt_message_type mess_type;
 } ui_with_message;
 
 #endif
-

@@ -30,7 +30,7 @@
  *********************************************************/
 
 /*!********************************************************
- * \file 
+ * \file
  * The Douglas Peucker algorithm used to reduce the number of points of the amplitude
  * wave curve
  *
@@ -40,20 +40,20 @@
 #include "utilities.h"
 
 static GArray *splt_copy_as_new_array(GArray *array);
-static GArray *splt_merge_arrays_with_bounds(GArray *first, gint first_end_bound, 
-    GArray *second, gint second_end_bound);
-static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, 
-    void (*callback)(ui_state *ui), ui_state *ui, gdouble threshold_to_discard_point);
+static GArray *splt_merge_arrays_with_bounds(
+  GArray *first, gint first_end_bound, GArray *second, gint second_end_bound);
+static GArray *splt_recursive_douglas_peucker(GArray *douglas_points,
+  void (*callback)(ui_state *ui), ui_state *ui, gdouble threshold_to_discard_point);
 static GArray *splt_split_as_new_array(GArray *array, gint start_index, gint end_index);
 static GArray *build_input_douglas_points(GArray *gdk_points);
 static GArray *build_presence_array(GArray *output_douglas_points, guint length);
-static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points, 
-    void (*callback)(ui_state *ui), ui_state *ui, gdouble threshold_to_discard_point);
+static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points,
+  void (*callback)(ui_state *ui), ui_state *ui, gdouble threshold_to_discard_point);
 
 //returns an array of arrays of ints
 //for each threshold, an [arrays of int] set to 1 if the point has been chosen, 0 otherwise
 GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(ui_state *ui), ui_state *ui,
-    gdouble threshold_to_discard_points, ...)
+  gdouble threshold_to_discard_points, ...)
 {
   GArray *input_douglas_points = build_input_douglas_points(gdk_points);
   guint length = input_douglas_points->len;
@@ -64,14 +64,13 @@ GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(ui_state *u
   va_start(ap, threshold_to_discard_points);
   while (threshold_to_discard_points > 0)
   {
-    GArray *output_douglas_points =
-      splt_douglas_peucker_for_one_threshold(input_douglas_points, callback, ui,
-          threshold_to_discard_points);
+    GArray *output_douglas_points = splt_douglas_peucker_for_one_threshold(
+      input_douglas_points, callback, ui, threshold_to_discard_points);
 
     GArray *presence_array = build_presence_array(output_douglas_points, length);
     g_array_free(output_douglas_points, TRUE);
 
-    g_ptr_array_add(presence_points_by_threshold, (gpointer) presence_array);
+    g_ptr_array_add(presence_points_by_threshold, (gpointer)presence_array);
 
     threshold_to_discard_points = va_arg(ap, gdouble);
   }
@@ -84,13 +83,10 @@ GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(ui_state *u
 
 void splt_douglas_peucker_free(GPtrArray *douglas_peucker_ptr_array)
 {
-  if (douglas_peucker_ptr_array == NULL)
-  {
-    return;
-  }
+  if (douglas_peucker_ptr_array == NULL) { return; }
 
   gint i = 0;
-  for (i = 0;i < douglas_peucker_ptr_array->len; i++)
+  for (i = 0; i < douglas_peucker_ptr_array->len; i++)
   {
     g_array_free(g_ptr_array_index(douglas_peucker_ptr_array, i), TRUE);
   }
@@ -98,12 +94,11 @@ void splt_douglas_peucker_free(GPtrArray *douglas_peucker_ptr_array)
   g_ptr_array_free(douglas_peucker_ptr_array, TRUE);
 }
 
-static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points, 
-    void (*callback)(ui_state *ui), ui_state *ui, gdouble threshold_to_discard_point)
+static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points,
+  void (*callback)(ui_state *ui), ui_state *ui, gdouble threshold_to_discard_point)
 {
-  GArray *output_douglas_points =
-    splt_recursive_douglas_peucker(splt_copy_as_new_array(input_douglas_points), callback, ui,
-        threshold_to_discard_point);
+  GArray *output_douglas_points = splt_recursive_douglas_peucker(
+    splt_copy_as_new_array(input_douglas_points), callback, ui, threshold_to_discard_point);
 
   return output_douglas_points;
 }
@@ -136,7 +131,7 @@ static GArray *build_presence_array(GArray *output_douglas_points, guint length)
   gint true_value = 1;
 
   gint i = 0;
-  for (i = 0;i < length; i++)
+  for (i = 0; i < length; i++)
   {
     if (current_point_index == i)
     {
@@ -173,8 +168,8 @@ static GArray *build_input_douglas_points(GArray *gdk_points)
   return input_douglas_points;
 }
 
-static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, void (*callback)(ui_state *ui), 
-    ui_state *ui, gdouble threshold_to_discard_point)
+static GArray *splt_recursive_douglas_peucker(GArray *douglas_points,
+  void (*callback)(ui_state *ui), ui_state *ui, gdouble threshold_to_discard_point)
 {
   GArray *new_points = NULL;
 
@@ -185,10 +180,7 @@ static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, void (*cal
     return new_points;
   }
 
-  if (callback != NULL)
-  {
-    callback(ui);
-  }
+  if (callback != NULL) { callback(ui); }
 
   douglas_point first_point = g_array_index(douglas_points, douglas_point, 0);
   douglas_point last_point = g_array_index(douglas_points, douglas_point, douglas_points->len - 1);
@@ -208,19 +200,19 @@ static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, void (*cal
 
   if (max_distance_point->distance >= threshold_to_discard_point)
   {
-    GArray *first_half_points = 
+    GArray *first_half_points =
       splt_split_as_new_array(douglas_points, 0, max_distance_point->index);
-    GArray *first_half_filtered_points = 
+    GArray *first_half_filtered_points =
       splt_recursive_douglas_peucker(first_half_points, callback, ui, threshold_to_discard_point);
 
     GArray *second_half_points =
       splt_split_as_new_array(douglas_points, max_distance_point->index, douglas_points->len - 1);
-    GArray *second_half_filtered_points = 
+    GArray *second_half_filtered_points =
       splt_recursive_douglas_peucker(second_half_points, callback, ui, threshold_to_discard_point);
 
-    new_points = 
+    new_points =
       splt_merge_arrays_with_bounds(first_half_filtered_points, first_half_filtered_points->len - 2,
-          second_half_filtered_points, second_half_filtered_points->len - 1);
+        second_half_filtered_points, second_half_filtered_points->len - 1);
 
     g_array_free(first_half_filtered_points, TRUE);
     g_array_free(second_half_filtered_points, TRUE);
@@ -238,14 +230,11 @@ static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, void (*cal
   return new_points;
 }
 
-distance_and_index *splt_find_point_with_maximum_distance(GArray *douglas_points,
-    GdkPoint first_point, GdkPoint last_point)
+distance_and_index *splt_find_point_with_maximum_distance(
+  GArray *douglas_points, GdkPoint first_point, GdkPoint last_point)
 {
   distance_and_index *max_distance_point = malloc(sizeof(*max_distance_point));
-  if (max_distance_point == NULL)
-  {
-    return NULL;
-  }
+  if (max_distance_point == NULL) { return NULL; }
 
   max_distance_point->index = 0;
   max_distance_point->distance = 0;
@@ -257,10 +246,7 @@ distance_and_index *splt_find_point_with_maximum_distance(GArray *douglas_points
 
     gdouble perpendicular_distance =
       splt_find_perpendicular_distance(point.point, first_point, last_point);
-    if (perpendicular_distance <= max_distance_point->distance)
-    {
-      continue;
-    }
+    if (perpendicular_distance <= max_distance_point->distance) { continue; }
 
     max_distance_point->index = i;
     max_distance_point->distance = perpendicular_distance;
@@ -274,29 +260,29 @@ gdouble splt_find_distance(GdkPoint first, GdkPoint second)
   return sqrt(pow(second.x - first.x, 2) + pow(second.y - first.y, 2));
 }
 
-gdouble splt_find_perpendicular_distance(GdkPoint point, 
-    GdkPoint segment_begin_point, GdkPoint segment_end_point)
+gdouble splt_find_perpendicular_distance(
+  GdkPoint point, GdkPoint segment_begin_point, GdkPoint segment_end_point)
 {
-  gdouble distance_A = splt_find_distance(segment_begin_point, point); 
-  gdouble distance_B = splt_find_distance(point, segment_end_point); 
-  gdouble distance_C = splt_find_distance(segment_begin_point, segment_end_point); 
+  gdouble distance_A = splt_find_distance(segment_begin_point, point);
+  gdouble distance_B = splt_find_distance(point, segment_end_point);
+  gdouble distance_C = splt_find_distance(segment_begin_point, segment_end_point);
 
   gdouble semiperimeter = (distance_A + distance_B + distance_C) / 2.0;
 
   gdouble perpendicular_distance =
-    2.0 * sqrt(semiperimeter * 
-        (semiperimeter - distance_A) *
-        (semiperimeter - distance_B) *
-        (semiperimeter - distance_C)) / distance_C;
+    2.0 *
+    sqrt(semiperimeter * (semiperimeter - distance_A) * (semiperimeter - distance_B) *
+         (semiperimeter - distance_C)) /
+    distance_C;
 
   return perpendicular_distance;
 }
 
-static void splt_append_array_with_bounds(GArray *source, GArray *target,
-    gint start_index, gint end_index)
+static void splt_append_array_with_bounds(
+  GArray *source, GArray *target, gint start_index, gint end_index)
 {
   gint i = 0;
-  for (i = start_index;i <= end_index;i++)
+  for (i = start_index; i <= end_index; i++)
   {
     douglas_point point = g_array_index(source, douglas_point, i);
     g_array_append_val(target, point);
@@ -306,7 +292,7 @@ static void splt_append_array_with_bounds(GArray *source, GArray *target,
 static GArray *splt_split_as_new_array(GArray *array, gint start_index, gint end_index)
 {
   GArray *new_array = g_array_new(TRUE, TRUE, g_array_get_element_size(array));
-  splt_append_array_with_bounds(array, new_array, start_index, end_index); 
+  splt_append_array_with_bounds(array, new_array, start_index, end_index);
   return new_array;
 }
 
@@ -315,17 +301,17 @@ static void splt_append_array(GArray *source, GArray *target)
   splt_append_array_with_bounds(source, target, 0, source->len - 1);
 }
 
-static GArray *splt_copy_as_new_array(GArray *array) {
+static GArray *splt_copy_as_new_array(GArray *array)
+{
   GArray *new_array = g_array_new(TRUE, TRUE, g_array_get_element_size(array));
   splt_append_array(array, new_array);
   return new_array;
 }
 
-static GArray *splt_merge_arrays_with_bounds(GArray *first, gint first_end_bound, 
-    GArray *second, gint second_end_bound)
+static GArray *splt_merge_arrays_with_bounds(
+  GArray *first, gint first_end_bound, GArray *second, gint second_end_bound)
 {
   GArray *new_array = splt_split_as_new_array(first, 0, first_end_bound);
   splt_append_array_with_bounds(second, new_array, 0, second_end_bound);
   return new_array;
 }
-

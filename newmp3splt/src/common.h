@@ -48,14 +48,14 @@
 #endif
 
 #ifdef ENABLE_NLS
-#  include <libintl.h>
+#include <libintl.h>
 #endif
 
 #ifdef ENABLE_NLS
-#  define MP3SPLT_GETTEXT_DOMAIN "mp3splt"
-#  define _(STR) gettext(STR)
+#define MP3SPLT_GETTEXT_DOMAIN "mp3splt"
+#define _(STR) gettext(STR)
 #else
-#  define _(STR) ((const char *)STR)
+#define _(STR) ((const char *)STR)
 #endif
 
 #define MP3SPLT_DATE "13/03/15"
@@ -67,4 +67,3 @@
 
 #define COMMON_H
 #endif
-

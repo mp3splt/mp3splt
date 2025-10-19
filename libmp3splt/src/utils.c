@@ -31,24 +31,21 @@
 
 #include "splt.h"
 
-/*! \file 
+/*! \file
 
 Miscelaneous utilities.
  */
 
 /*! Finish Tags and provide splitpoints with a filename generated from them
 
-  \param state The central structure that keeps all variables for 
+  \param state The central structure that keeps all variables for
   libmp3splt.
   \param current_splt The number of the split point to run this function for..
  */
 int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int current_split)
 {
   int err = splt_tu_set_tags_in_tags(state, current_split);
-  if (err < 0)
-  {
-    return err;
-  }
+  if (err < 0) { return err; }
 
   return splt_of_put_output_format_filename(state, current_split);
 }
@@ -57,24 +54,20 @@ int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int cur
 void splt_u_print_overlap_time(splt_state *state)
 {
   long overlap_time = splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
-  if (overlap_time <= 0)
-  {
-    return;
-  }
+  if (overlap_time <= 0) { return; }
 
   long mins = -1;
   long secs = -1;
   long hundr = -1;
   splt_co_get_mins_secs_hundr(overlap_time, &mins, &secs, &hundr);
-  splt_c_put_info_message_to_client(state, 
-      _(" info: overlapping split files with %ld.%ld.%ld\n"),
-      mins, secs, hundr);
+  splt_c_put_info_message_to_client(
+    state, _(" info: overlapping split files with %ld.%ld.%ld\n"), mins, secs, hundr);
 }
 
 /*! Is a time value [in seconds] after the end of our file?
 
 \param fend_sec The time [in seconds] we have to compare with the end
-of file 
+of file
 \param state The central structure that keeps all data for this library.
 
 \return SPLT_TRUE or SPLT_FALSE
@@ -86,7 +79,7 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state, double fend_s
   //TODO: comparing with the total time does not work: for example for concatenated
   //mp3's, the total time is WRONG !
 
-/*  double total_time = splt_t_get_total_time_as_double_secs(state);
+  /*  double total_time = splt_t_get_total_time_as_double_secs(state);
 
   if (total_time - 0.01 > 0)
   {
@@ -123,9 +116,8 @@ splt_code splt_u_process_no_auto_adjust_found(splt_state *state, double point)
     long time = splt_co_time_to_long(point);
     long mins, secs, hundr;
     splt_co_get_mins_secs_hundr(time, &mins, &secs, &hundr);
-    splt_c_put_warning_message_to_client(state,
-        _(" warning: splitpoint %ld.%ld.%ld is not auto-adjusted\n"), 
-        mins, secs, hundr);
+    splt_c_put_warning_message_to_client(
+      state, _(" warning: splitpoint %ld.%ld.%ld is not auto-adjusted\n"), mins, secs, hundr);
   }
 
   if (splt_o_get_int_option(state, SPLT_OPT_STOP_IF_NO_AUTO_ADJUST_FOUND))
@@ -135,4 +127,3 @@ splt_code splt_u_process_no_auto_adjust_found(splt_state *state, double point)
 
   return SPLT_OK;
 }
-

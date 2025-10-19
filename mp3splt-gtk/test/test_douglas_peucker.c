@@ -39,7 +39,8 @@ void test_find_perpendicular_distance()
   second_segment_point.x = 7;
   second_segment_point.y = 27;
 
-  gdouble distance = splt_find_perpendicular_distance(point, first_segment_point, second_segment_point);
+  gdouble distance =
+    splt_find_perpendicular_distance(point, first_segment_point, second_segment_point);
   cut_assert_equal_double(6.00832755, DOUBLE_PRECISION, distance);
 
   point.x = 1;
@@ -80,7 +81,7 @@ void test_find_point_with_maximum_distance()
 
   g_array_append_val(points, second_segment_point);
 
-  distance_and_index *max_distance_point = 
+  distance_and_index *max_distance_point =
     splt_find_point_with_maximum_distance(points, first_segment_point, second_segment_point);
 
   cut_assert_equal_int(3, max_distance_point->index);
@@ -128,22 +129,26 @@ void test_douglas_peucker()
   //0.4 - filter just one point
   //4.1 - filter three points
 
-  GPtrArray *points_presence_by_threshold = splt_douglas_peucker(points,
-      NULL, NULL, (gdouble) 6.4, (gdouble) 0.4, (gdouble) 4.1, (gdouble) -1);
+  GPtrArray *points_presence_by_threshold =
+    splt_douglas_peucker(points, NULL, NULL, (gdouble)6.4, (gdouble)0.4, (gdouble)4.1, (gdouble)-1);
   cut_assert_equal_int(3, points_presence_by_threshold->len);
 
   //filter all points except first segment and second segment
 
-  gdouble distance = splt_find_perpendicular_distance(first_point, first_segment_point, second_segment_point);
+  gdouble distance =
+    splt_find_perpendicular_distance(first_point, first_segment_point, second_segment_point);
   cut_assert_equal_double(6.00832755, DOUBLE_PRECISION, distance);
 
-  distance = splt_find_perpendicular_distance(second_point, first_segment_point, second_segment_point);
+  distance =
+    splt_find_perpendicular_distance(second_point, first_segment_point, second_segment_point);
   cut_assert_equal_double(1.89736659, DOUBLE_PRECISION, distance);
 
-  distance = splt_find_perpendicular_distance(third_point, first_segment_point, second_segment_point);
+  distance =
+    splt_find_perpendicular_distance(third_point, first_segment_point, second_segment_point);
   cut_assert_equal_double(6.32455532, DOUBLE_PRECISION, distance);
 
-  distance = splt_find_perpendicular_distance(fourth_point, first_segment_point, second_segment_point);
+  distance =
+    splt_find_perpendicular_distance(fourth_point, first_segment_point, second_segment_point);
   cut_assert_equal_double(5.37587202, DOUBLE_PRECISION, distance);
 
   GArray *points_presence = g_ptr_array_index(points_presence_by_threshold, 0);
@@ -225,4 +230,3 @@ void test_douglas_peucker_with_only_one_point()
   splt_douglas_peucker_free(points_presence_by_threshold);
   g_array_free(points, TRUE);
 }
-

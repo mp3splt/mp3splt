@@ -44,15 +44,12 @@ void save_preferences(ui_state *ui);
 preferences_state *pm_state_new();
 void pm_free(preferences_state **pm);
 
-void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
-    gint default_value, GtkWidget *spinner,
-    void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
-    gpointer user_data_for_cb, preferences_state *pm);
+void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key, gint default_value,
+  GtkWidget *spinner, void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
+  gpointer user_data_for_cb, preferences_state *pm);
 
-void pm_register_range_preference(gchar *main_key, gchar *second_key,
-    gint default_value, GtkWidget *range,
-    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data),
-    gpointer user_data_for_cb, preferences_state *pm);
+void pm_register_range_preference(gchar *main_key, gchar *second_key, gint default_value,
+  GtkWidget *range, void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data),
+  gpointer user_data_for_cb, preferences_state *pm);
 
 #endif
-

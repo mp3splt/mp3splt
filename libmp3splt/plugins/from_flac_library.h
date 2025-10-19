@@ -64,15 +64,17 @@
 extern unsigned splt_flac_l_crc16_table[256];
 extern unsigned char const splt_flac_l_crc8_table[256];
 
-#define SPLT_FLAC_UPDATE_CRC16(crc16, data) crc16 = ((crc16<<8) ^ splt_flac_l_crc16_table[(crc16>>8) ^ data]) & 0xffff
+#define SPLT_FLAC_UPDATE_CRC16(crc16, data) \
+  crc16 = ((crc16 << 8) ^ splt_flac_l_crc16_table[(crc16 >> 8) ^ data]) & 0xffff
 #define SPLT_FLAC_UPDATE_CRC8(crc8, data) crc8 = splt_flac_l_crc8_table[crc8 ^ data]
 
-uint32_t splt_flac_l_read_utf8_uint32(void *flac_frame_reader, splt_code *error, 
-    unsigned char *number_of_bytes);
-uint64_t splt_flac_l_read_utf8_uint64(void *flac_frame_reader, splt_code *error,
-    unsigned char *number_of_bytes);
+uint32_t splt_flac_l_read_utf8_uint32(
+  void *flac_frame_reader, splt_code *error, unsigned char *number_of_bytes);
+uint64_t splt_flac_l_read_utf8_uint64(
+  void *flac_frame_reader, splt_code *error, unsigned char *number_of_bytes);
 
-void splt_flac_l_convert_to_streaminfo(FLAC__StreamMetadata_StreamInfo *block, unsigned char *bytes);
+void splt_flac_l_convert_to_streaminfo(
+  FLAC__StreamMetadata_StreamInfo *block, unsigned char *bytes);
 unsigned char *splt_flac_l_convert_from_streaminfo(FLAC__StreamMetadata_StreamInfo *block);
 FLAC__uint32 splt_flac_l_unpack_uint32(FLAC__byte *b, unsigned bytes);
 void splt_flac_l_pack_uint32(FLAC__uint32 val, FLAC__byte *b, unsigned bytes);
@@ -81,26 +83,16 @@ void splt_flac_l_pack_uint32_little_endian(FLAC__uint32 val, FLAC__byte *b, unsi
 
 unsigned char *splt_flac_l_convert_to_utf8(FLAC__uint64 val, unsigned char *utf8_used_bytes);
 
-static const unsigned char splt_flac_l_byte_to_unary_table[] = {
-  8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+static const unsigned char splt_flac_l_byte_to_unary_table[] = { 8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4,
+  4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 #define MP3SPLT_FROM_FLAC_LIBRARY_H
 
 #endif
-

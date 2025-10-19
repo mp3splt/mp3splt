@@ -88,9 +88,9 @@ void test_keep_path_and_remove_filename()
 void test_convert_with_null_str()
 {
   converted_str = splt_su_convert(NULL, SPLT_TO_LOWERCASE, &error);
- 
+
   cut_assert_equal_int(SPLT_OK, error);
-  cut_assert_null(converted_str); 
+  cut_assert_null(converted_str);
 }
 
 void test_convert_with_empty_str()
@@ -98,7 +98,7 @@ void test_convert_with_empty_str()
   converted_str = splt_su_convert("", SPLT_TO_LOWERCASE, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
-  cut_assert_equal_string("", converted_str); 
+  cut_assert_equal_string("", converted_str);
 }
 
 void test_convert_with_no_conversion()
@@ -106,7 +106,7 @@ void test_convert_with_no_conversion()
   converted_str = splt_su_convert(sample_text, SPLT_NO_CONVERSION, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
-  cut_assert_equal_string(sample_text, converted_str); 
+  cut_assert_equal_string(sample_text, converted_str);
 }
 
 void test_convert_with_conversion_to_uppercase()
@@ -114,7 +114,7 @@ void test_convert_with_conversion_to_uppercase()
   converted_str = splt_su_convert(sample_text, SPLT_TO_UPPERCASE, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
-  cut_assert_equal_string("JUST A SAMPLE OF 2 BITS", converted_str); 
+  cut_assert_equal_string("JUST A SAMPLE OF 2 BITS", converted_str);
 }
 
 void test_convert_with_conversion_to_lowercase()
@@ -122,7 +122,7 @@ void test_convert_with_conversion_to_lowercase()
   converted_str = splt_su_convert(sample_text, SPLT_TO_LOWERCASE, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
-  cut_assert_equal_string("just a sample of 2 bits", converted_str); 
+  cut_assert_equal_string("just a sample of 2 bits", converted_str);
 }
 
 void test_convert_with_conversion_to_first_uppercase()
@@ -130,7 +130,7 @@ void test_convert_with_conversion_to_first_uppercase()
   converted_str = splt_su_convert(sample_text, SPLT_TO_FIRST_UPPERCASE, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
-  cut_assert_equal_string("JuSt a sAmple of 2 bIts", converted_str); 
+  cut_assert_equal_string("JuSt a sAmple of 2 bIts", converted_str);
 }
 
 void test_convert_with_conversion_to_word_first_uppercase()
@@ -138,24 +138,21 @@ void test_convert_with_conversion_to_word_first_uppercase()
   converted_str = splt_su_convert(sample_text, SPLT_TO_WORD_FIRST_UPPERCASE, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
-  cut_assert_equal_string("JuSt A SAmple Of 2 BIts", converted_str); 
+  cut_assert_equal_string("JuSt A SAmple Of 2 BIts", converted_str);
 }
 
 void test_get_fname_without_path()
 {
-  const char *ptr =
-    splt_su_get_fname_without_path("/home/ion/hacking/simple file.ogg");
+  const char *ptr = splt_su_get_fname_without_path("/home/ion/hacking/simple file.ogg");
 
   cut_assert_equal_string("simple file.ogg", ptr);
 }
 
 void test_get_formatted_message()
 {
-  char *msg = splt_su_get_formatted_message(state,
-      "This is a formatted %d part %s.", 3, "hellOo!");
+  char *msg = splt_su_get_formatted_message(state, "This is a formatted %d part %s.", 3, "hellOo!");
 
   cut_assert_equal_string("This is a formatted 3 part hellOo!.", msg);
 
   free(msg);
 }
-

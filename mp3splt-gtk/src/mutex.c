@@ -32,23 +32,10 @@
 #include "mutex.h"
 #include "ui_types.h"
 
-void init_mutex(SPLT_MUTEX *mutex)
-{
-  g_mutex_init(mutex);
-}
+void init_mutex(SPLT_MUTEX *mutex) { g_mutex_init(mutex); }
 
-void clear_mutex(SPLT_MUTEX *mutex)
-{
-  g_mutex_clear(mutex);
-}
+void clear_mutex(SPLT_MUTEX *mutex) { g_mutex_clear(mutex); }
 
-void lock_mutex(SPLT_MUTEX *mutex)
-{
-  g_mutex_lock(mutex);
-}
+void lock_mutex(SPLT_MUTEX *mutex) { g_mutex_lock(mutex); }
 
-void unlock_mutex(SPLT_MUTEX *mutex)
-{
-  g_mutex_unlock(mutex);
-}
-
+void unlock_mutex(SPLT_MUTEX *mutex) { g_mutex_unlock(mutex); }

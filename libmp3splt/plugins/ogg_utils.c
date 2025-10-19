@@ -43,26 +43,25 @@
 
 static void splt_ogg_submit_headers_to_stream(ogg_stream_state *stream, splt_ogg_state *oggstate);
 static char *splt_ogg_trackstring(int number, int *error);
-static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *artist,
-    char *album, char *title, char *tracknum, char *date, char *genre, char *comment,
-    int *error);
-static void delete_all_non_null_tags(vorbis_comment *vc, 
-    const char *artist, const char *album, const char *title,
-    const char *tracknum, const char *date, const char *genre, 
-    const char *comment, int *error);
+static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *artist, char *album,
+  char *title, char *tracknum, char *date, char *genre, char *comment, int *error);
+static void delete_all_non_null_tags(vorbis_comment *vc, const char *artist, const char *album,
+  const char *title, const char *tracknum, const char *date, const char *genre, const char *comment,
+  int *error);
 
 long splt_ogg_get_blocksize(splt_ogg_state *oggstate, vorbis_info *vi, ogg_packet *op)
 {
   //if this < 0, there is a problem
   int this = vorbis_packet_blocksize(vi, op);
-  int ret = (this + oggstate->prevW)/4;
+  int ret = (this + oggstate->prevW) / 4;
 
   oggstate->prevW = this;
 
   return ret;
 }
 
-ogg_int64_t splt_ogg_compute_first_granulepos(splt_state *state, splt_ogg_state *oggstate, ogg_packet *packet, int bs)
+ogg_int64_t splt_ogg_compute_first_granulepos(
+  splt_state *state, splt_ogg_state *oggstate, ogg_packet *packet, int bs)
 {
   ogg_int64_t first_granpos = 0;
 
@@ -72,24 +71,20 @@ ogg_int64_t splt_ogg_compute_first_granulepos(splt_state *state, splt_ogg_state 
     fprintf(stdout,"packet granulepos = %ld\n",packet->granulepos);
     fflush(stdout);*/
 
-    if ((packet->granulepos > oggstate->total_blocksize + bs) &&
-        (oggstate->total_blocksize > 0) &&
-        !packet->e_o_s &&
-        (oggstate->first_granpos == 0))
+    if ((packet->granulepos > oggstate->total_blocksize + bs) && (oggstate->total_blocksize > 0) &&
+        !packet->e_o_s && (oggstate->first_granpos == 0))
     {
       first_granpos = packet->granulepos;
       oggstate->first_granpos = first_granpos;
       splt_c_put_info_message_to_client(state,
-          _(" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.\n"));
+        _(" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.\n"));
     }
 
     oggstate->total_blocksize = packet->granulepos;
   }
-  else if (oggstate->total_blocksize == -1)
+  else if (oggstate->total_blocksize == -1) { oggstate->total_blocksize = 0; }
+  else
   {
-    oggstate->total_blocksize = 0;
-  }
-  else {
     oggstate->total_blocksize += bs;
     /*fprintf(stdout,"blocksize = %d, total = %ld\n", bs, oggstate->total_blocksize);
     fflush(stdout);*/
@@ -106,7 +101,7 @@ int splt_ogg_update_sync(splt_state *state, ogg_sync_state *sync_in, FILE *f, in
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return -1;
   }
-  int bytes = fread(buffer,1,SPLT_OGG_BUFSIZE,f);
+  int bytes = fread(buffer, 1, SPLT_OGG_BUFSIZE, f);
 
   if (ogg_sync_wrote(sync_in, bytes) != 0)
   {
@@ -131,7 +126,7 @@ splt_v_packet *splt_ogg_clone_packet(ogg_packet *packet, int *error)
 
   p->length = packet->bytes;
   p->packet = malloc(p->length);
-  if (! p->packet)
+  if (!p->packet)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     free(p);
@@ -145,10 +140,7 @@ splt_v_packet *splt_ogg_clone_packet(ogg_packet *packet, int *error)
 
 void splt_ogg_free_packet(splt_v_packet **p)
 {
-  if (!p || !*p)
-  {
-    return;
-  }
+  if (!p || !*p) { return; }
 
   if ((*p)->packet)
   {
@@ -162,24 +154,18 @@ void splt_ogg_free_packet(splt_v_packet **p)
 
 void splt_ogg_free_oggstate_headers(splt_ogg_state *oggstate)
 {
-  if (!oggstate->headers)
-  {
-    return;
-  }
+  if (!oggstate->headers) { return; }
 
   int i = 0;
-  for (i = 0;i < TOTAL_HEADER_PACKETS; i++)
-  {
-    splt_ogg_free_packet(&oggstate->headers[i]);
-  }
+  for (i = 0; i < TOTAL_HEADER_PACKETS; i++) { splt_ogg_free_packet(&oggstate->headers[i]); }
 
   free(oggstate->headers);
   oggstate->headers = NULL;
 }
 
 /* Returns 0 for success, or -1 on failure. */
-int splt_ogg_write_pages_to_file(splt_state *state, ogg_stream_state *stream,
-    FILE *file, int flush, int *error, const char *output_fname)
+int splt_ogg_write_pages_to_file(splt_state *state, ogg_stream_state *stream, FILE *file, int flush,
+  int *error, const char *output_fname)
 {
   ogg_page page;
 
@@ -201,11 +187,11 @@ int splt_ogg_write_pages_to_file(splt_state *state, ogg_stream_state *stream,
   {
     while (ogg_stream_pageout(stream, &page))
     {
-      if (splt_io_fwrite(state, page.header,1,page.header_len, file) < page.header_len)
+      if (splt_io_fwrite(state, page.header, 1, page.header_len, file) < page.header_len)
       {
         goto write_error;
       }
-      if (splt_io_fwrite(state, page.body,1,page.body_len, file) < page.body_len)
+      if (splt_io_fwrite(state, page.body, 1, page.body_len, file) < page.body_len)
       {
         goto write_error;
       }
@@ -221,11 +207,10 @@ write_error:
 }
 
 int splt_ogg_write_header_packets(splt_state *state, splt_ogg_state *oggstate,
-    ogg_stream_state *stream_out, const char *output_fname, int *error)
+  ogg_stream_state *stream_out, const char *output_fname, int *error)
 {
   splt_ogg_submit_headers_to_stream(stream_out, oggstate);
-  return splt_ogg_write_pages_to_file(state, stream_out, oggstate->out, 1,
-      error, output_fname);
+  return splt_ogg_write_pages_to_file(state, stream_out, oggstate->out, 1, error, output_fname);
 }
 
 void splt_ogg_set_tags_in_headers(splt_ogg_state *oggstate, int *error)
@@ -243,10 +228,7 @@ void splt_ogg_set_tags_in_headers(splt_ogg_state *oggstate, int *error)
 vorbis_comment *splt_ogg_clone_vorbis_comment(vorbis_comment *comment)
 {
   vorbis_comment *cloned_comment = malloc(sizeof(vorbis_comment));
-  if (cloned_comment == NULL)
-  {
-    return NULL;
-  }
+  if (cloned_comment == NULL) { return NULL; }
   memset(cloned_comment, 0x0, sizeof(vorbis_comment));
 
   vorbis_comment_init(cloned_comment);
@@ -258,7 +240,7 @@ vorbis_comment *splt_ogg_clone_vorbis_comment(vorbis_comment *comment)
     return NULL;
   }
 
-  long number_of_comments = comment->comments; 
+  long number_of_comments = comment->comments;
   cloned_comment->comments = number_of_comments;
 
   if (number_of_comments <= 0)
@@ -287,7 +269,7 @@ vorbis_comment *splt_ogg_clone_vorbis_comment(vorbis_comment *comment)
   memset(cloned_comment->user_comments, 0x0, sizeof(char *) * number_of_comments);
 
   int i = 0;
-  for (i = 0;i < number_of_comments; i++)
+  for (i = 0; i < number_of_comments; i++)
   {
     int err = splt_su_copy(comment->user_comments[i], &cloned_comment->user_comments[i]);
     if (err < 0)
@@ -304,31 +286,24 @@ vorbis_comment *splt_ogg_clone_vorbis_comment(vorbis_comment *comment)
 
 void splt_ogg_put_tags(splt_state *state, int *error)
 {
-  splt_d_print_debug(state,"Setting ogg tags ...\n");
+  splt_d_print_debug(state, "Setting ogg tags ...\n");
 
   splt_ogg_state *oggstate = state->codec;
 
   splt_ogg_free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
   oggstate->cloned_vorbis_comment = 2;
 
-  if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_NO_TAGS)
-  {
-    return;
-  }
+  if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_NO_TAGS) { return; }
 
   splt_tags *tags = splt_tu_get_current_tags(state);
-  if (!tags)
-  {
-    return;
-  }
+  if (!tags) { return; }
 
   char *track_string = splt_ogg_trackstring(tags->track, error);
   if (*error < 0) { return; }
 
   char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
 
-  vorbis_comment *original_vc = 
-    (vorbis_comment *) splt_tu_get_original_tags_data(state);
+  vorbis_comment *original_vc = (vorbis_comment *)splt_tu_get_original_tags_data(state);
 
   if (tags->set_original_tags && original_vc)
   {
@@ -343,14 +318,14 @@ void splt_ogg_put_tags(splt_state *state, int *error)
     free(cloned_vc);
     oggstate->cloned_vorbis_comment = SPLT_TRUE;
   }
-  else {
+  else
+  {
     vorbis_comment_init(&oggstate->vc);
     oggstate->cloned_vorbis_comment = SPLT_FALSE;
   }
 
-  splt_ogg_v_comment(state, &oggstate->vc,
-      artist_or_performer, tags->album, tags->title, track_string,
-      tags->year, tags->genre, tags->comment, error);
+  splt_ogg_v_comment(state, &oggstate->vc, artist_or_performer, tags->album, tags->title,
+    track_string, tags->year, tags->genre, tags->comment, error);
 
 error:
   free(track_string);
@@ -359,10 +334,7 @@ error:
 
 void splt_ogg_free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_comment)
 {
-  if (!vc || cloned_vorbis_comment == 2)
-  {
-    return;
-  }
+  if (!vc || cloned_vorbis_comment == 2) { return; }
 
   vorbis_comment *comment = vc;
 
@@ -373,7 +345,7 @@ void splt_ogg_free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_commen
   }
 
   long i = 0;
-  for (i = 0;i < comment->comments; i++)
+  for (i = 0; i < comment->comments; i++)
   {
     if (comment->user_comments[i])
     {
@@ -404,9 +376,8 @@ void splt_ogg_free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_commen
 //puts tags in vc
 //what happens if 'vorbis_comment_add_tag(..)' fails ?
 //- ask vorbis developers
-static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *artist,
-    char *album, char *title, char *tracknum, char *date, char *genre, char *comment,
-    int *error)
+static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *artist, char *album,
+  char *title, char *tracknum, char *date, char *genre, char *comment, int *error)
 {
   if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE &&
       state->original_tags.tags.tags_version == 0)
@@ -425,8 +396,8 @@ static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *arti
   if (comment != NULL) { vorbis_comment_add_tag(vc, SPLT_OGG_COMMENT, comment); }
 }
 
-static void add_tag_and_equal(const char *tag_name, const char *value, splt_array *to_delete, 
-    int *error)
+static void add_tag_and_equal(
+  const char *tag_name, const char *value, splt_array *to_delete, int *error)
 {
   if (value == NULL) { return; }
 
@@ -440,15 +411,12 @@ static void add_tag_and_equal(const char *tag_name, const char *value, splt_arra
   snprintf(tag_and_equal, size, "%s=", tag_name);
 
   int err = splt_array_append(to_delete, tag_and_equal);
-  if (err == -1)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
+  if (err == -1) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
 }
 
-static splt_array *build_tag_and_equal_to_delete(const char *artist, 
-    const char *album, const char *title, const char *tracknum,
-    const char *date, const char *genre, const char *comment, int *error)
+static splt_array *build_tag_and_equal_to_delete(const char *artist, const char *album,
+  const char *title, const char *tracknum, const char *date, const char *genre, const char *comment,
+  int *error)
 {
   splt_array *to_delete = splt_array_new();
 
@@ -458,7 +426,10 @@ static splt_array *build_tag_and_equal_to_delete(const char *artist,
   if (*error < 0) { goto error; }
   add_tag_and_equal(SPLT_OGG_ALBUM, album, to_delete, error);
   if (*error < 0) { goto error; }
-  if (date != NULL && strlen(date) > 0) { add_tag_and_equal(SPLT_OGG_DATE, date, to_delete, error); }
+  if (date != NULL && strlen(date) > 0)
+  {
+    add_tag_and_equal(SPLT_OGG_DATE, date, to_delete, error);
+  }
   if (*error < 0) { goto error; }
   add_tag_and_equal(SPLT_OGG_GENRE, genre, to_delete, error);
   if (*error < 0) { goto error; }
@@ -474,34 +445,32 @@ error:
   return NULL;
 }
 
-static void delete_all_non_null_tags(vorbis_comment *vc, 
-    const char *artist, const char *album, const char *title,
-    const char *tracknum, const char *date, const char *genre, 
-    const char *comment, int *error)
+static void delete_all_non_null_tags(vorbis_comment *vc, const char *artist, const char *album,
+  const char *title, const char *tracknum, const char *date, const char *genre, const char *comment,
+  int *error)
 {
   char *vendor_backup = NULL;
   splt_array *tag_and_equal_to_delete = NULL;
   splt_array *comments = NULL;
   long i = 0, j = 0;
 
-  tag_and_equal_to_delete = 
+  tag_and_equal_to_delete =
     build_tag_and_equal_to_delete(artist, album, title, tracknum, date, genre, comment, error);
   if (*error < 0) { return; }
 
   comments = splt_array_new();
   if (comments == NULL) { goto end; }
 
-  for (i = 0;i < vc->comments; i++)
+  for (i = 0; i < vc->comments; i++)
   {
     short keep_comment = SPLT_TRUE;
 
     long number_of_tags_to_delete = splt_array_get_number_of_elements(tag_and_equal_to_delete);
-    for (j = 0;j < number_of_tags_to_delete; j++)
+    for (j = 0; j < number_of_tags_to_delete; j++)
     {
-      char *tag_and_equal = (char *) splt_array_get(tag_and_equal_to_delete, j);
+      char *tag_and_equal = (char *)splt_array_get(tag_and_equal_to_delete, j);
 
-      if (strncasecmp(vc->user_comments[i], 
-            tag_and_equal, strlen(tag_and_equal)) == 0)
+      if (strncasecmp(vc->user_comments[i], tag_and_equal, strlen(tag_and_equal)) == 0)
       {
         keep_comment = SPLT_FALSE;
         break;
@@ -511,21 +480,32 @@ static void delete_all_non_null_tags(vorbis_comment *vc,
     if (keep_comment)
     {
       char *user_comment = NULL;
-      int err = splt_su_append(&user_comment, 
-          vc->user_comments[i], vc->comment_lengths[i], NULL);
-      if (err <  0) { *error = err; goto end; }
+      int err = splt_su_append(&user_comment, vc->user_comments[i], vc->comment_lengths[i], NULL);
+      if (err < 0)
+      {
+        *error = err;
+        goto end;
+      }
       err = splt_array_append(comments, user_comment);
-      if (err == -1) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto end; }
+      if (err == -1)
+      {
+        *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        goto end;
+      }
     }
   }
 
   int err = splt_su_copy(vc->vendor, &vendor_backup);
-  if (err < 0) { *error = err; goto end; }
+  if (err < 0)
+  {
+    *error = err;
+    goto end;
+  }
 
   vorbis_comment_clear(vc);
 
   long tags_to_keep = splt_array_get_number_of_elements(comments);
-  for (i = 0;i < tags_to_keep; i++)
+  for (i = 0; i < tags_to_keep; i++)
   {
     char *user_comment = splt_array_get(comments, i);
     vorbis_comment_add(vc, user_comment);
@@ -533,10 +513,7 @@ static void delete_all_non_null_tags(vorbis_comment *vc,
     user_comment = NULL;
   }
 
-  if (vendor_backup)
-  {
-    splt_su_set(&vc->vendor, vendor_backup, strlen(vendor_backup), NULL);
-  }
+  if (vendor_backup) { splt_su_set(&vc->vendor, vendor_backup, strlen(vendor_backup), NULL); }
 
 end:
   if (vendor_backup)
@@ -548,26 +525,25 @@ end:
   splt_array_free(&comments);
 
   long number_of_tags_to_delete = splt_array_get_number_of_elements(tag_and_equal_to_delete);
-  for (j = 0;j < number_of_tags_to_delete; j++)
+  for (j = 0; j < number_of_tags_to_delete; j++)
   {
-    char *tag_and_equal = (char *) splt_array_get(tag_and_equal_to_delete, j);
+    char *tag_and_equal = (char *)splt_array_get(tag_and_equal_to_delete, j);
     if (tag_and_equal) { free(tag_and_equal); }
   }
   splt_array_free(&tag_and_equal_to_delete);
 }
 
-static void splt_ogg_submit_headers_to_stream(ogg_stream_state *stream, 
-    splt_ogg_state *oggstate)
+static void splt_ogg_submit_headers_to_stream(ogg_stream_state *stream, splt_ogg_state *oggstate)
 {
   int i;
-  for(i = 0;i < TOTAL_HEADER_PACKETS;i++)
+  for (i = 0; i < TOTAL_HEADER_PACKETS; i++)
   {
     ogg_packet p;
     p.bytes = oggstate->headers[i]->length;
     p.packet = oggstate->headers[i]->packet;
-    p.b_o_s = ((i==0)?1:0);
+    p.b_o_s = ((i == 0) ? 1 : 0);
     p.e_o_s = 0;
-    p.granulepos=0;
+    p.granulepos = 0;
 
     ogg_stream_packetin(stream, &p);
   }
@@ -580,21 +556,20 @@ static char *splt_ogg_trackstring(int number, int *error)
   if (number > 0)
   {
     int len = 0, i;
-    len = ((int) (log10((double) (number)))) + 1;
+    len = ((int)(log10((double)(number)))) + 1;
 
-    if ((track = malloc(len + 1))==NULL)
+    if ((track = malloc(len + 1)) == NULL)
     {
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       return NULL;
     }
     memset(track, 0, len + 1);
-    for (i=len-1; i >= 0; i--)
+    for (i = len - 1; i >= 0; i--)
     {
-      track[i] = ((number%10) | 0x30);
+      track[i] = ((number % 10) | 0x30);
       number /= 10;
     }
   }
 
   return track;
 }
-

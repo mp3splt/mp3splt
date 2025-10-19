@@ -32,7 +32,8 @@
 #include "libmp3splt_manager.h"
 
 static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data);
-static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type, void *data);
+static void lmanager_put_message_from_library(
+  const char *message, splt_message_type mess_type, void *data);
 
 void lmanager_init_and_find_plugins(ui_state *ui)
 {
@@ -41,8 +42,8 @@ void lmanager_init_and_find_plugins(ui_state *ui)
   mp3splt_set_message_function(ui->mp3splt_state, lmanager_put_message_from_library, ui);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, SPLT_FALSE);
-  mp3splt_set_int_option(ui->mp3splt_state,
-      SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND, SPLT_TRUE);
+  mp3splt_set_int_option(
+    ui->mp3splt_state, SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND, SPLT_TRUE);
 
   gint error = mp3splt_find_plugins(ui->mp3splt_state);
   if (error < 0)
@@ -81,10 +82,7 @@ static gboolean lmanager_put_split_filename_idle(ui_with_fname *ui_fname)
   gtk_widget_set_sensitive(ui->gui->queue_files_button, TRUE);
   gtk_widget_set_sensitive(ui->gui->remove_all_files_button, TRUE);
 
-  if (filename)
-  {
-    g_free(filename);
-  }
+  if (filename) { g_free(filename); }
   g_free(ui_fname);
 
   return FALSE;
@@ -98,13 +96,9 @@ void lmanager_put_split_filename(const char *filename, void *data)
   ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
   ui_fname->ui = ui;
   ui_fname->fname = NULL;
-  if (filename)
-  {
-    ui_fname->fname = strdup(filename);
-  }
+  if (filename) { ui_fname->fname = strdup(filename); }
 
-  add_idle(G_PRIORITY_HIGH_IDLE,
-      (GSourceFunc)lmanager_put_split_filename_idle, ui_fname, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)lmanager_put_split_filename_idle, ui_fname, NULL);
 }
 
 static gboolean lmanager_put_message_from_library_idle(ui_with_message *ui_message)
@@ -117,12 +111,9 @@ static gboolean lmanager_put_message_from_library_idle(ui_with_message *ui_messa
   {
     gint i = 0;
     //replace '\n' with ' '
-    for (i = 0;i < strlen(mess);i++)
+    for (i = 0; i < strlen(mess); i++)
     {
-      if (mess[i] == '\n')
-      {
-        mess[i] = ' ';
-      }
+      if (mess[i] == '\n') { mess[i] = ' '; }
     }
 
     put_status_message_with_type(mess, mess_type, ui);
@@ -137,21 +128,19 @@ static gboolean lmanager_put_message_from_library_idle(ui_with_message *ui_messa
 }
 
 //!prints a message from the library
-static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type, void *data)
+static void lmanager_put_message_from_library(
+  const char *message, splt_message_type mess_type, void *data)
 {
   ui_state *ui = (ui_state *)data;
 
   ui_with_message *ui_message = g_malloc0(sizeof(ui_with_message));
   ui_message->ui = ui;
   ui_message->message = NULL;
-  if (message)
-  {
-    ui_message->message = strdup(message);
-  }
+  if (message) { ui_message->message = strdup(message); }
   ui_message->mess_type = mess_type;
 
-  add_idle(G_PRIORITY_HIGH_IDLE,
-      (GSourceFunc)lmanager_put_message_from_library_idle, ui_message, NULL);
+  add_idle(
+    G_PRIORITY_HIGH_IDLE, (GSourceFunc)lmanager_put_message_from_library_idle, ui_message, NULL);
 }
 
 static gboolean lmanager_change_window_progress_bar_idle(ui_with_p_bar *ui_p_bar)
@@ -163,34 +152,29 @@ static gboolean lmanager_change_window_progress_bar_idle(ui_with_p_bar *ui_p_bar
   switch (ui_p_bar->progress_type)
   {
     case SPLT_PROGRESS_PREPARE:
-      g_snprintf(progress_text,1023, _(" preparing \"%s\" (%d of %d)"),
-          ui_p_bar->filename_shorted,
-          ui_p_bar->current_split,
-          ui_p_bar->max_splits);
+      g_snprintf(progress_text, 1023, _(" preparing \"%s\" (%d of %d)"), ui_p_bar->filename_shorted,
+        ui_p_bar->current_split, ui_p_bar->max_splits);
       break;
     case SPLT_PROGRESS_CREATE:
-      g_snprintf(progress_text,1023, _(" creating \"%s\" (%d of %d)"),
-          ui_p_bar->filename_shorted,
-          ui_p_bar->current_split,
-          ui_p_bar->max_splits);
+      g_snprintf(progress_text, 1023, _(" creating \"%s\" (%d of %d)"), ui_p_bar->filename_shorted,
+        ui_p_bar->current_split, ui_p_bar->max_splits);
       break;
     case SPLT_PROGRESS_SEARCH_SYNC:
-      g_snprintf(progress_text,1023, _(" searching for sync errors..."));
+      g_snprintf(progress_text, 1023, _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE:
       if (get_currently_scanning_for_silence_safe(ui))
       {
-        g_snprintf(progress_text,1023, _("Computing amplitude wave data..."));
+        g_snprintf(progress_text, 1023, _("Computing amplitude wave data..."));
       }
       else
       {
-        g_snprintf(progress_text,1023,
-            _("S: %02d, Level: %.2f dB; scanning for silence..."),
-            ui_p_bar->silence_found_tracks, ui_p_bar->silence_db_level);
+        g_snprintf(progress_text, 1023, _("S: %02d, Level: %.2f dB; scanning for silence..."),
+          ui_p_bar->silence_found_tracks, ui_p_bar->silence_db_level);
       }
       break;
     default:
-      g_snprintf(progress_text,1023, " ");
+      g_snprintf(progress_text, 1023, " ");
       break;
   }
 
@@ -200,10 +184,7 @@ static gboolean lmanager_change_window_progress_bar_idle(ui_with_p_bar *ui_p_bar
   gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, ui_p_bar->percent_progress);
   gtk_progress_bar_set_text(ui->gui->percent_progress_bar, printed_value);
 
-  if (ui_p_bar->filename_shorted)
-  {
-    g_free(ui_p_bar->filename_shorted);
-  }
+  if (ui_p_bar->filename_shorted) { g_free(ui_p_bar->filename_shorted); }
   g_free(ui_p_bar);
 
   return FALSE;
@@ -212,7 +193,7 @@ static gboolean lmanager_change_window_progress_bar_idle(ui_with_p_bar *ui_p_bar
 //!Allows to set the value shown by the progress bar
 static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data)
 {
-  ui_state *ui = (ui_state *) data;
+  ui_state *ui = (ui_state *)data;
 
   ui_with_p_bar *ui_p_bar = g_malloc0(sizeof(ui_with_p_bar));
   ui_p_bar->ui = ui;
@@ -225,7 +206,6 @@ static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data
   ui_p_bar->silence_db_level = mp3splt_progress_get_silence_db_level(p_bar);
   ui_p_bar->percent_progress = mp3splt_progress_get_percent_progress(p_bar);
 
-  add_idle(G_PRIORITY_HIGH_IDLE,
-      (GSourceFunc)lmanager_change_window_progress_bar_idle, ui_p_bar, NULL);
+  add_idle(
+    G_PRIORITY_HIGH_IDLE, (GSourceFunc)lmanager_change_window_progress_bar_idle, ui_p_bar, NULL);
 }
-

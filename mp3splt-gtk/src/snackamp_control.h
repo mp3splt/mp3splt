@@ -68,4 +68,3 @@ gint snackamp_is_playing(ui_state *ui);
 gint snackamp_is_paused(ui_state *ui);
 
 #endif
-

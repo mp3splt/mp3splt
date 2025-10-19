@@ -31,4 +31,3 @@ int we_have_incompatible_stdin_option(options *opt);
 
 #define OPTIONS_CHECKER_H
 #endif
-

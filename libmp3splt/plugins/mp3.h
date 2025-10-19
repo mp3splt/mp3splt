@@ -57,7 +57,8 @@
 #define SPLT_MP3_MAX_BYTE_RESERVOIR_HEADERS 30
 
 #ifndef NO_ID3TAG
-typedef struct {
+typedef struct
+{
   id3_byte_t *tag_bytes;
   id3_length_t tag_length;
 
@@ -69,8 +70,9 @@ typedef struct {
 } tag_bytes_and_size;
 #endif
 
-struct splt_header {
-  off_t ptr;    // offset of header
+struct splt_header
+{
+  off_t ptr; // offset of header
   int bitrate;
   int padding;
   int framesize;
@@ -83,7 +85,8 @@ struct splt_header {
   int frame_data_space;
 };
 
-struct splt_reservoir {
+struct splt_reservoir
+{
   unsigned char reservoir[511];
   int reservoir_end;
   unsigned char *reservoir_frame;
@@ -91,9 +94,10 @@ struct splt_reservoir {
 };
 
 // Struct that will contains infos on mp3 and an header struct of first valid header
-struct splt_mp3 {
-  int mpgid;    // mpgid among SPLT_MP3_MPEG1_ID or SPLT_MP3_MPEG2_ID or SPLT_MP3_MPEG25_ID
-  int layer;    // layer 1, 2 or 3
+struct splt_mp3
+{
+  int mpgid; // mpgid among SPLT_MP3_MPEG1_ID or SPLT_MP3_MPEG2_ID or SPLT_MP3_MPEG25_ID
+  int layer; // layer 1, 2 or 3
   //0 = single channel
   //1 = dual channel
   //2 = joint stereo
@@ -122,7 +126,8 @@ struct splt_mp3 {
   struct splt_header firsthead;
 };
 
-typedef struct {
+typedef struct
+{
   FILE *file_input;
   struct splt_header h;
   //if we are in framemode or not
@@ -212,9 +217,9 @@ typedef struct {
 #define SPLT_MP3_XING_MAGIC 0x58696E67
 #define SPLT_MP3_INFO_MAGIC 0x496E666F
 
-#define SPLT_MP3_XING_FRAMES  0x00000001L
-#define SPLT_MP3_XING_BYTES   0x00000002L
-#define SPLT_MP3_XING_TOC     0x00000004L
+#define SPLT_MP3_XING_FRAMES 0x00000001L
+#define SPLT_MP3_XING_BYTES 0x00000002L
+#define SPLT_MP3_XING_TOC 0x00000004L
 #define SPLT_MP3_XING_QUALITY 0x00000008L
 
 #define SPLT_MP3_XING_FLAGS_SIZE 4
@@ -240,17 +245,110 @@ typedef struct {
 #define SPLT_MP3EXT ".mp3"
 
 //! The layer- and-bitrate-table
-static const int splt_mp3_tabsel_123[2][3][16] = {
-  { {128,32,64,96,128,160,192,224,256,288,320,352,384,416,448,},
-    {128,32,48,56, 64, 80, 96,112,128,160,192,224,256,320,384,},
-    {128,32,40,48, 56, 64, 80, 96,112,128,160,192,224,256,320,} },
+static const int splt_mp3_tabsel_123[2][3][16] = { { {
+                                                       128,
+                                                       32,
+                                                       64,
+                                                       96,
+                                                       128,
+                                                       160,
+                                                       192,
+                                                       224,
+                                                       256,
+                                                       288,
+                                                       320,
+                                                       352,
+                                                       384,
+                                                       416,
+                                                       448,
+                                                     },
+                                                     {
+                                                       128,
+                                                       32,
+                                                       48,
+                                                       56,
+                                                       64,
+                                                       80,
+                                                       96,
+                                                       112,
+                                                       128,
+                                                       160,
+                                                       192,
+                                                       224,
+                                                       256,
+                                                       320,
+                                                       384,
+                                                     },
+                                                     {
+                                                       128,
+                                                       32,
+                                                       40,
+                                                       48,
+                                                       56,
+                                                       64,
+                                                       80,
+                                                       96,
+                                                       112,
+                                                       128,
+                                                       160,
+                                                       192,
+                                                       224,
+                                                       256,
+                                                       320,
+                                                     } },
 
-  { {128,32,48,56,64,80,96,112,128,144,160,176,192,224,256,},
-    {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,},
-    {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,} }
-};
+  { {
+      128,
+      32,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      128,
+      144,
+      160,
+      176,
+      192,
+      224,
+      256,
+    },
+    {
+      128,
+      8,
+      16,
+      24,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      128,
+      144,
+      160,
+    },
+    {
+      128,
+      8,
+      16,
+      24,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      128,
+      144,
+      160,
+    } } };
 
 #define MP3SPLT_MP3_H
 
 #endif
-

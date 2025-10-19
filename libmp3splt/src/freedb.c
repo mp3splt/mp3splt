@@ -24,7 +24,7 @@
  * 02111-1307, USA.
  *********************************************************/
 
-/*! \file 
+/*! \file
 
 All functions that are needed in order to do a Freedb search
 
@@ -61,8 +61,7 @@ char *get_cgi_path_and_cut_server(int type, const char *search_server)
     return cgi_path;
   }
 
-  if (type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI ||
-      type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
+  if (type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI || type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
   {
     char *path = strchr(search_server, '/');
     if (path)
@@ -79,36 +78,26 @@ static char *splt_freedb_get_server(const char search_server[256])
 {
   char *server = NULL;
 
-  if (strlen(search_server) == 0)
-  {
-    splt_su_copy(SPLT_FREEDB2_SITE, &server);
-  }
-  else
-  {
-    splt_su_copy(search_server, &server);
-  }
+  if (strlen(search_server) == 0) { splt_su_copy(SPLT_FREEDB2_SITE, &server); }
+  else { splt_su_copy(search_server, &server); }
 
   return server;
 }
 
 static int splt_freedb_get_port(int port_number)
 {
-  if (port_number == -1)
-  {
-    return SPLT_FREEDB_CDDB_CGI_PORT;
-  }
+  if (port_number == -1) { return SPLT_FREEDB_CDDB_CGI_PORT; }
 
   return port_number;
 }
 
 //line ="category discid artist / album"
-static int splt_freedb_search_result_processor(const char *line, 
-    int line_number, void *user_data)
+static int splt_freedb_search_result_processor(const char *line, int line_number, void *user_data)
 {
   char *category = NULL;
   char *discid = NULL;
 
-  splt_state *state = (splt_state *) user_data;
+  splt_state *state = (splt_state *)user_data;
 
   const char *category_begin = splt_su_skip_spaces(line);
   const char *category_end = strchr(category_begin, ' ');
@@ -120,8 +109,8 @@ static int splt_freedb_search_result_processor(const char *line,
   if (discid_end == NULL) { goto end; }
   splt_su_append(&discid, discid_begin, discid_end - discid_begin + 1, NULL);
 
-  splt_fu_freedb_set_disc(state, splt_fu_freedb_get_found_cds(state), 
-      discid, category, strlen(category));
+  splt_fu_freedb_set_disc(
+    state, splt_fu_freedb_get_found_cds(state), discid, category, strlen(category));
 
   splt_fu_freedb_append_result(state, splt_su_skip_spaces(discid_end), 0);
 
@@ -152,11 +141,10 @@ SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI
 \param search_server The URL of the search server or NULL to select
 the default which currently means freedb2.org
 \param port The port on the server. -1 means default (Which should be
-80). 
+80).
 */
-int splt_freedb_process_search(splt_state *state, char *search,
-    int search_type, const char search_server[256],
-    int port_number)
+int splt_freedb_process_search(
+  splt_state *state, char *search, int search_type, const char *search_server, int port_number)
 {
   int error = SPLT_FREEDB_OK;
   int err = SPLT_OK;
@@ -170,25 +158,45 @@ int splt_freedb_process_search(splt_state *state, char *search,
   int port = splt_freedb_get_port(port_number);
 
   splt_sm_connect(sh, server, port, state);
-  if (sh->error < 0) { error = sh->error; goto end; }
+  if (sh->error < 0)
+  {
+    error = sh->error;
+    goto end;
+  }
 
   if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI)
   {
     splt_su_replace_all_char(search, ' ', '+');
-    err = splt_su_append_str(&message, 
-        "GET ", cgi_path, "?cmd=cddb+album+", search, SPLT_FREEDB_HELLO_PROTO, NULL);
-    if (err < 0) { error = err; goto disconnect; }
+    err = splt_su_append_str(
+      &message, "GET ", cgi_path, "?cmd=cddb+album+", search, SPLT_FREEDB_HELLO_PROTO, NULL);
+    if (err < 0)
+    {
+      error = err;
+      goto disconnect;
+    }
 
     splt_sm_send_http_message(sh, message, state);
-    if (sh->error < 0) { error = sh->error; goto disconnect; }
+    if (sh->error < 0)
+    {
+      error = sh->error;
+      goto disconnect;
+    }
 
     splt_fu_freedb_free_search(state);
     err = splt_fu_freedb_init_search(state);
-    if (err < 0) { error = err; goto disconnect; }
+    if (err < 0)
+    {
+      error = err;
+      goto disconnect;
+    }
 
-    splt_sm_receive_and_process_without_headers(sh, state, 
-        splt_freedb_search_result_processor, state, SKIP_ONE_LINE);
-    if (sh->error < 0) { error = sh->error; goto disconnect; }
+    splt_sm_receive_and_process_without_headers(
+      sh, state, splt_freedb_search_result_processor, state, SKIP_ONE_LINE);
+    if (sh->error < 0)
+    {
+      error = sh->error;
+      goto disconnect;
+    }
   }
   else if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB)
   {
@@ -196,23 +204,21 @@ int splt_freedb_process_search(splt_state *state, char *search,
   }
 
   int found_cds = splt_fu_freedb_get_found_cds(state);
-  if (found_cds == 0) 
-  {
-    error = SPLT_FREEDB_NO_CD_FOUND;
-  }
-  else if (found_cds == -1) 
+  if (found_cds == 0) { error = SPLT_FREEDB_NO_CD_FOUND; }
+  else if (found_cds == -1)
   {
     splt_e_set_error_data(state, server);
     error = SPLT_FREEDB_ERROR_GETTING_INFOS;
   }
-  else if (found_cds == SPLT_MAXCD) 
-  {
-    error = SPLT_FREEDB_MAX_CD_REACHED;
-  }
+  else if (found_cds == SPLT_MAXCD) { error = SPLT_FREEDB_MAX_CD_REACHED; }
 
 disconnect:
-  splt_sm_close(sh, state); 
-  if (sh->error < 0) { error = sh->error; goto end; }
+  splt_sm_close(sh, state);
+  if (sh->error < 0)
+  {
+    error = sh->error;
+    goto end;
+  }
 
 end:
   splt_sm_socket_handler_free(&sh);
@@ -236,22 +242,14 @@ end:
   return error;
 }
 
-static int splt_freedb_process_hello_response(const char *line, 
-    int line_number, void *user_data)
+static int splt_freedb_process_hello_response(const char *line, int line_number, void *user_data)
 {
-  int *error = (int *) user_data;
+  int *error = (int *)user_data;
 
-  if ((strncmp(line,"50",2) == 0) ||
-      (strncmp(line,"40",2) == 0))
+  if ((strncmp(line, "50", 2) == 0) || (strncmp(line, "40", 2) == 0))
   {
-    if (strncmp(line,"401",3) == 0)
-    {
-      *error = SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE;
-    }
-    else
-    {
-      *error = SPLT_FREEDB_ERROR_SITE;
-    }
+    if (strncmp(line, "401", 3) == 0) { *error = SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE; }
+    else { *error = SPLT_FREEDB_ERROR_SITE; }
   }
 
   return SPLT_FALSE;
@@ -259,24 +257,16 @@ static int splt_freedb_process_hello_response(const char *line,
 
 char *test = NULL;
 
-static int splt_freedb_process_get_file(const char *line, 
-    int line_number, void *user_data)
+static int splt_freedb_process_get_file(const char *line, int line_number, void *user_data)
 {
-  splt_get_file *get_file = (splt_get_file *) user_data;
+  splt_get_file *get_file = (splt_get_file *)user_data;
 
   if (line_number == 1)
   {
-    if ((strncmp(line,"50",2) == 0) ||
-        (strncmp(line,"40",2) == 0))
+    if ((strncmp(line, "50", 2) == 0) || (strncmp(line, "40", 2) == 0))
     {
-      if (strncmp(line,"401",3) == 0)
-      {
-        get_file->err= SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE;
-      }
-      else
-      {
-        get_file->err = SPLT_FREEDB_ERROR_SITE;
-      }
+      if (strncmp(line, "401", 3) == 0) { get_file->err = SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE; }
+      else { get_file->err = SPLT_FREEDB_ERROR_SITE; }
 
       return SPLT_FALSE;
     }
@@ -284,10 +274,7 @@ static int splt_freedb_process_get_file(const char *line,
     return SPLT_TRUE;
   }
 
-  if (get_file->stop_on_dot && strcmp(line, ".") == 0)
-  {
-    return SPLT_FALSE;
-  }
+  if (get_file->stop_on_dot && strcmp(line, ".") == 0) { return SPLT_FALSE; }
 
   int err = splt_su_append_str(&get_file->file, line, "\n", NULL);
   if (err < 0)
@@ -306,7 +293,7 @@ returns the cddb file content corresponding to the last search, for
 the disc_id (parameter of the function)
 
 \param state The central structure that keeps all data this library
-uses 
+uses
 \param error Is set to the error code this action results in
 \param disc_id The freedb disc ID.
 \param cddb_get_type specifies the type of the get:
@@ -317,18 +304,26 @@ uses
 
 \todo see when we don't have a valid port or get_type
 */
-char *splt_freedb_get_file(splt_state *state, int disc_id, int *error,
-    int get_type, const char cddb_get_server[256], int port_number)
+char *splt_freedb_get_file(splt_state *state, int disc_id, int *error, int get_type,
+  const char *cddb_get_server, int port_number)
 {
   int err = SPLT_FREEDB_FILE_OK;
   *error = err;
   char *message = NULL;
 
   splt_socket_handler *sh = splt_sm_socket_handler_new(&err);
-  if (err < 0) { *error = err; return NULL; }
+  if (err < 0)
+  {
+    *error = err;
+    return NULL;
+  }
 
   splt_get_file *get_file = malloc(sizeof(splt_get_file));
-  if (!get_file) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return NULL; }
+  if (!get_file)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
 
   get_file->err = SPLT_FREEDB_FILE_OK;
   get_file->file = NULL;
@@ -342,20 +337,36 @@ char *splt_freedb_get_file(splt_state *state, int disc_id, int *error,
   const char *cd_id = splt_fu_freedb_get_disc_id(state, disc_id);
 
   splt_sm_connect(sh, server, port, state);
-  if (sh->error < 0) { *error = sh->error; goto end; }
+  if (sh->error < 0)
+  {
+    *error = sh->error;
+    goto end;
+  }
 
   if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
   {
-    message = splt_su_get_formatted_message(state, 
-        SPLT_FREEDB_CDDB_CGI_GET_FILE, cgi_path, cd_category, cd_id, NULL);
+    message = splt_su_get_formatted_message(
+      state, SPLT_FREEDB_CDDB_CGI_GET_FILE, cgi_path, cd_category, cd_id, NULL);
 
     splt_sm_send_http_message(sh, message, state);
-    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+    if (sh->error < 0)
+    {
+      *error = sh->error;
+      goto disconnect;
+    }
 
-    splt_sm_receive_and_process_without_headers(sh, state,
-        splt_freedb_process_get_file, get_file, DONT_SKIP_LINES);
-    if (get_file->err < 0) { *error = get_file->err; goto disconnect; }
-    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+    splt_sm_receive_and_process_without_headers(
+      sh, state, splt_freedb_process_get_file, get_file, DONT_SKIP_LINES);
+    if (get_file->err < 0)
+    {
+      *error = get_file->err;
+      goto disconnect;
+    }
+    if (sh->error < 0)
+    {
+      *error = sh->error;
+      goto disconnect;
+    }
   }
   else if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
   {
@@ -368,29 +379,60 @@ char *splt_freedb_get_file(splt_state *state, int disc_id, int *error,
     get_file->stop_on_dot = SPLT_TRUE;
 
     splt_sm_send_http_message(sh, SPLT_FREEDB_HELLO, state);
-    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+    if (sh->error < 0)
+    {
+      *error = sh->error;
+      goto disconnect;
+    }
 
     splt_sm_receive_and_process(sh, state, splt_freedb_process_hello_response, &err);
-    if (err < 0) { *error = err; goto disconnect; }
-    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+    if (err < 0)
+    {
+      *error = err;
+      goto disconnect;
+    }
+    if (sh->error < 0)
+    {
+      *error = sh->error;
+      goto disconnect;
+    }
 
-    message = splt_su_get_formatted_message(state, SPLT_FREEDB_GET_FILE,
-        cd_category, cd_id, NULL);
+    message = splt_su_get_formatted_message(state, SPLT_FREEDB_GET_FILE, cd_category, cd_id, NULL);
 
     splt_sm_send_http_message(sh, message, state);
-    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+    if (sh->error < 0)
+    {
+      *error = sh->error;
+      goto disconnect;
+    }
 
     splt_sm_receive_and_process(sh, state, splt_freedb_process_get_file, get_file);
-    if (get_file->err < 0) { *error = get_file->err; goto disconnect; }
-    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+    if (get_file->err < 0)
+    {
+      *error = get_file->err;
+      goto disconnect;
+    }
+    if (sh->error < 0)
+    {
+      *error = sh->error;
+      goto disconnect;
+    }
 
     splt_sm_send_http_message(sh, "quit", state);
-    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+    if (sh->error < 0)
+    {
+      *error = sh->error;
+      goto disconnect;
+    }
   }
 
 disconnect:
-  splt_sm_close(sh, state); 
-  if (sh->error < 0) { *error = sh->error; goto end; }
+  splt_sm_close(sh, state);
+  if (sh->error < 0)
+  {
+    *error = sh->error;
+    goto end;
+  }
 
 end:
   splt_sm_socket_handler_free(&sh);
@@ -423,4 +465,3 @@ end:
 
   return NULL;
 }
-

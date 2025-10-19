@@ -32,7 +32,7 @@
 /*! \file
 
   All functions needed to handle the array of split points.
-  
+
   Growing and shrinking this array is done with realloc().
  */
 #include <stdio.h>
@@ -44,10 +44,7 @@
 splt_array *splt_array_new()
 {
   splt_array *array = malloc(sizeof(splt_array));
-  if (array == NULL)
-  {
-    return NULL;
-  }
+  if (array == NULL) { return NULL; }
 
   array->elements = NULL;
   array->number_of_elements = 0;
@@ -57,18 +54,12 @@ splt_array *splt_array_new()
 
 long splt_array_append(splt_array *array, void *element)
 {
-  if (!array || !element)
-  {
-    return 2;
-  }
+  if (!array || !element) { return 2; }
 
   if (array->number_of_elements == 0)
   {
     array->elements = malloc(sizeof(element));
-    if (!array->elements)
-    {
-      return -1;
-    }
+    if (!array->elements) { return -1; }
     array->elements[0] = element;
     array->number_of_elements++;
   }
@@ -76,10 +67,7 @@ long splt_array_append(splt_array *array, void *element)
   {
     size_t malloc_number = sizeof(element) * (array->number_of_elements + 1);
     void **new_elements = realloc(array->elements, malloc_number);
-    if (! new_elements)
-    {
-      return -1;
-    }
+    if (!new_elements) { return -1; }
     array->elements = new_elements;
     array->elements[array->number_of_elements] = element;
     array->number_of_elements++;
@@ -90,10 +78,7 @@ long splt_array_append(splt_array *array, void *element)
 
 void splt_array_clear(splt_array *array)
 {
-  if (!array)
-  {
-    return;
-  }
+  if (!array) { return; }
 
   if (array->elements)
   {
@@ -103,23 +88,14 @@ void splt_array_clear(splt_array *array)
   }
 }
 
-void **splt_array_get_elements(splt_array *array)
-{
-  return array->elements;
-}
+void **splt_array_get_elements(splt_array *array) { return array->elements; }
 
-long splt_array_get_number_of_elements(splt_array *array)
-{
-  return array->number_of_elements;
-}
+long splt_array_get_number_of_elements(splt_array *array) { return array->number_of_elements; }
 
 
 void splt_array_free(splt_array **array)
 {
-  if (!array)
-  {
-    return;
-  }
+  if (!array) { return; }
 
   if (*array)
   {
@@ -131,26 +107,16 @@ void splt_array_free(splt_array **array)
 
 void *splt_array_get(splt_array *array, long index)
 {
-  if (!array)
-  {
-    return NULL;
-  }
+  if (!array) { return NULL; }
 
-  if (index < 0 || index >= array->number_of_elements)
-  {
-    return NULL;
-  }
+  if (index < 0 || index >= array->number_of_elements) { return NULL; }
 
   return array->elements[index];
 }
 
 long splt_array_length(splt_array *array)
 {
-  if (!array)
-  {
-    return -1;
-  }
+  if (!array) { return -1; }
 
   return array->number_of_elements;
 }
-

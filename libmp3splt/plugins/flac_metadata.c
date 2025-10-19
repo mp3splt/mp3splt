@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -47,7 +47,7 @@ void splt_flac_m_free(splt_flac_metadatas *metadatas)
   if (!metadatas) { return; }
 
   int i = 0;
-  for (;i < metadatas->number_of_datas;i++)
+  for (; i < metadatas->number_of_datas; i++)
   {
     if (metadatas->datas[i].bytes)
     {
@@ -62,23 +62,31 @@ void splt_flac_m_free(splt_flac_metadatas *metadatas)
   free(metadatas);
 }
 
-void splt_flac_m_append_metadata(unsigned char block_type, FLAC__uint32 block_length, 
-    unsigned char *bytes, splt_flac_metadatas *metadatas, splt_code *error)
+void splt_flac_m_append_metadata(unsigned char block_type, FLAC__uint32 block_length,
+  unsigned char *bytes, splt_flac_metadatas *metadatas, splt_code *error)
 {
   splt_flac_one_metadata *one_metadata;
 
   if (metadatas->datas == NULL)
   {
     metadatas->datas = malloc(sizeof(splt_flac_one_metadata));
-    if (metadatas->datas == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
+    if (metadatas->datas == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return;
+    }
 
     one_metadata = &metadatas->datas[0];
   }
   else
   {
-    metadatas->datas = realloc(metadatas->datas,
-        (metadatas->number_of_datas + 1) * sizeof(splt_flac_one_metadata));
-    if (metadatas->datas == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
+    metadatas->datas =
+      realloc(metadatas->datas, (metadatas->number_of_datas + 1) * sizeof(splt_flac_one_metadata));
+    if (metadatas->datas == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return;
+    }
 
     one_metadata = &metadatas->datas[metadatas->number_of_datas];
   }
@@ -89,4 +97,3 @@ void splt_flac_m_append_metadata(unsigned char block_type, FLAC__uint32 block_le
   one_metadata->block_length = block_length;
   one_metadata->bytes = bytes;
 }
-

@@ -38,7 +38,8 @@
 #include "splt.h"
 #include "md5.h"
 
-typedef struct {
+typedef struct
+{
   FLAC__StreamDecoder *decoder;
   unsigned char *frame;
   size_t frame_size;
@@ -49,11 +50,10 @@ typedef struct {
 } splt_flac_md5_decoder;
 
 splt_flac_md5_decoder *splt_flac_md5_decoder_new_and_init(splt_state *state, splt_code *error);
-void splt_flac_md5_decode_frame(unsigned char *frame,
-    size_t frame_size, splt_flac_md5_decoder *flac_md5_d, splt_code *error, splt_state *state);
+void splt_flac_md5_decode_frame(unsigned char *frame, size_t frame_size,
+  splt_flac_md5_decoder *flac_md5_d, splt_code *error, splt_state *state);
 unsigned char *splt_flac_md5_decoder_free_and_get_md5sum(splt_flac_md5_decoder *flac_md5_d);
 
 #define MP3SPLT_FLAC_MD5_DECODER_H
 
 #endif
-

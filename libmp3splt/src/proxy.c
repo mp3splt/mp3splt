@@ -35,15 +35,12 @@
 
 static void splt_pr_free_proxy_address(splt_state *state);
 static void splt_pr_free_proxy_authentification(splt_state *state);
-static char *splt_pr_encode3to4(const unsigned char *source, int srcoffset, int num, 
-    char *destination, int destoffset);
+static char *splt_pr_encode3to4(
+  const unsigned char *source, int srcoffset, int num, char *destination, int destoffset);
 
 splt_code splt_pr_use_proxy(splt_state *state, const char *proxy_address, int proxy_port)
 {
-  if (proxy_address == NULL || proxy_address[0] == '\0')
-  {
-    return SPLT_OK;
-  }
+  if (proxy_address == NULL || proxy_address[0] == '\0') { return SPLT_OK; }
 
   splt_pr_free_proxy_address(state);
   splt_su_copy(proxy_address, &state->proxy.proxy_address);
@@ -68,23 +65,14 @@ const char *splt_pr_get_proxy_authentification(splt_state *state)
   return state->proxy.authentification;
 }
 
-const char *splt_pr_get_proxy_address(splt_state *state)
-{
-  return state->proxy.proxy_address;
-}
+const char *splt_pr_get_proxy_address(splt_state *state) { return state->proxy.proxy_address; }
 
-int splt_pr_get_proxy_port(splt_state *state)
-{
-  return state->proxy.proxy_port;
-}
+int splt_pr_get_proxy_port(splt_state *state) { return state->proxy.proxy_port; }
 
-splt_code splt_pr_use_base64_authentification(splt_state *state, 
-    const char *base64_authentification)
+splt_code splt_pr_use_base64_authentification(
+  splt_state *state, const char *base64_authentification)
 {
-  if (base64_authentification == NULL)
-  {
-    return SPLT_OK;
-  }
+  if (base64_authentification == NULL) { return SPLT_OK; }
 
   splt_pr_free_proxy_authentification(state);
   splt_su_copy(base64_authentification, &state->proxy.authentification);
@@ -110,22 +98,16 @@ char *splt_pr_base64(const unsigned char *source)
 {
   int len = strlen((char *)source);
 
-  int d = ((len*4/3)+((len%3)>0?4:0));
+  int d = ((len * 4 / 3) + ((len % 3) > 0 ? 4 : 0));
 
   char *out = malloc(d + 1);
   if (out == NULL) { return NULL; }
-  memset(out, 0x00, d+1);
+  memset(out, 0x00, d + 1);
 
   int e = 0;
-  for (d = 0;d < (len-2); d+=3,e+=4)
-  {
-    out = splt_pr_encode3to4(source, d, 3, out, e);
-  }
+  for (d = 0; d < (len - 2); d += 3, e += 4) { out = splt_pr_encode3to4(source, d, 3, out, e); }
 
-  if (d < len)
-  {
-    out = splt_pr_encode3to4(source, d, len-d, out, e);
-  }
+  if (d < len) { out = splt_pr_encode3to4(source, d, len - d, out, e); }
 
   return out;
 }
@@ -154,37 +136,36 @@ static void splt_pr_free_proxy_authentification(splt_state *state)
  * Base64 Algorithm: Base64.java v. 1.3.6 by Robert Harder
  * Ported and optimized for C by Matteo Trotta
  */
-static const char alphabet [] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-static char *splt_pr_encode3to4(const unsigned char *source, int srcoffset, int num, char *destination, int destoffset)
+static char *splt_pr_encode3to4(
+  const unsigned char *source, int srcoffset, int num, char *destination, int destoffset)
 {
-  int inbuff=
-    (num>0 ? (source[srcoffset] << 16) : 0)|
-    (num>1 ? (source[srcoffset+1] << 8) : 0) |
-    (num > 2 ? (source[srcoffset+2]) : 0);
+  int inbuff = (num > 0 ? (source[srcoffset] << 16) : 0) |
+               (num > 1 ? (source[srcoffset + 1] << 8) : 0) |
+               (num > 2 ? (source[srcoffset + 2]) : 0);
 
   switch (num)
   {
     case 3:
-      destination[destoffset] = alphabet[(inbuff>>18)];
-      destination[destoffset+1] = alphabet[(inbuff>>12) & 0x3f];
-      destination[destoffset+2] = alphabet[(inbuff>>6) & 0x3f];
-      destination[destoffset+3] = alphabet[(inbuff) & 0x3f];
+      destination[destoffset] = alphabet[(inbuff >> 18)];
+      destination[destoffset + 1] = alphabet[(inbuff >> 12) & 0x3f];
+      destination[destoffset + 2] = alphabet[(inbuff >> 6) & 0x3f];
+      destination[destoffset + 3] = alphabet[(inbuff) & 0x3f];
       return destination;
     case 2:
-      destination[destoffset] = alphabet[(inbuff>>18)];
-      destination[destoffset+1] = alphabet[(inbuff>>12) & 0x3f];
-      destination[destoffset+2] = alphabet[(inbuff>>6) & 0x3f];
-      destination[destoffset+3] = '=';
+      destination[destoffset] = alphabet[(inbuff >> 18)];
+      destination[destoffset + 1] = alphabet[(inbuff >> 12) & 0x3f];
+      destination[destoffset + 2] = alphabet[(inbuff >> 6) & 0x3f];
+      destination[destoffset + 3] = '=';
       return destination;
     case 1:
-      destination[destoffset] = alphabet[(inbuff>>18)];
-      destination[destoffset+1] = alphabet[(inbuff>>12) & 0x3f];
-      destination[destoffset+2] = '=';
-      destination[destoffset+3] = '=';
+      destination[destoffset] = alphabet[(inbuff >> 18)];
+      destination[destoffset + 1] = alphabet[(inbuff >> 12) & 0x3f];
+      destination[destoffset + 2] = '=';
+      destination[destoffset + 3] = '=';
       return destination;
     default:
       return destination;
   }
 }
-

@@ -45,4 +45,3 @@ void show_small_help_exit(main_data *data);
 
 #define PRINT_UTILS_H
 #endif
-

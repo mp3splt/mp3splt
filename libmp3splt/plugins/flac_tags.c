@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -48,7 +48,11 @@ static unsigned char *splt_flac_t_read_vector(unsigned char *ptr, FLAC__uint32 l
 splt_flac_vorbis_tags *splt_flac_vorbis_tags_new(splt_code *error)
 {
   splt_flac_vorbis_tags *vorbis_tags = malloc(sizeof(splt_flac_vorbis_tags));
-  if (vorbis_tags == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return NULL; }
+  if (vorbis_tags == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
 
   vorbis_tags->number_of_tags = 0;
   vorbis_tags->total_bytes = 0;
@@ -59,18 +63,12 @@ splt_flac_vorbis_tags *splt_flac_vorbis_tags_new(splt_code *error)
 
 void splt_flac_vorbis_tags_free(splt_flac_vorbis_tags **vorbis_tags)
 {
-  if (!vorbis_tags || !*vorbis_tags)
-  {
-    return;
-  }
+  if (!vorbis_tags || !*vorbis_tags) { return; }
 
   if ((*vorbis_tags)->tags)
   {
     FLAC__uint32 i = 0;
-    for (;i < (*vorbis_tags)->number_of_tags; i++)
-    {
-      free((*vorbis_tags)->tags[i]);
-    }
+    for (; i < (*vorbis_tags)->number_of_tags; i++) { free((*vorbis_tags)->tags[i]); }
 
     free((*vorbis_tags)->tags);
   }
@@ -79,46 +77,55 @@ void splt_flac_vorbis_tags_free(splt_flac_vorbis_tags **vorbis_tags)
   *vorbis_tags = NULL;
 }
 
-void splt_flac_vorbis_tags_append_with_prefix(splt_flac_vorbis_tags *vorbis_tags,
-    char *prefix, char *comment, splt_code *error)
+void splt_flac_vorbis_tags_append_with_prefix(
+  splt_flac_vorbis_tags *vorbis_tags, char *prefix, char *comment, splt_code *error)
 {
   if (comment == NULL || strlen(comment) == 0 || comment[0] == '\0') { return; }
 
   char *all_comment = NULL;
   int err = splt_su_append_str(&all_comment, prefix, comment, NULL);
-  if (err < 0) { *error = err; return; }
+  if (err < 0)
+  {
+    *error = err;
+    return;
+  }
 
   splt_flac_vorbis_tags_append(vorbis_tags, all_comment, error);
 
   free(all_comment);
 }
 
-void splt_flac_vorbis_tags_append(splt_flac_vorbis_tags *vorbis_tags,
-    char *comment, splt_code *error)
+void splt_flac_vorbis_tags_append(
+  splt_flac_vorbis_tags *vorbis_tags, char *comment, splt_code *error)
 {
-  if (vorbis_tags->tags == NULL)
-  {
-    vorbis_tags->tags = malloc(sizeof(char *));
-  }
+  if (vorbis_tags->tags == NULL) { vorbis_tags->tags = malloc(sizeof(char *)); }
   else
   {
     size_t realloc_size = sizeof(char *) * (vorbis_tags->number_of_tags + 1);
     vorbis_tags->tags = realloc(vorbis_tags->tags, realloc_size);
   }
 
-  if (vorbis_tags->tags == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
+  if (vorbis_tags->tags == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
   vorbis_tags->tags[vorbis_tags->number_of_tags] = NULL;
 
   int err = splt_su_copy(comment, &vorbis_tags->tags[vorbis_tags->number_of_tags]);
-  if (err < 0) { *error = err; return; }
+  if (err < 0)
+  {
+    *error = err;
+    return;
+  }
 
   vorbis_tags->number_of_tags++;
 
   vorbis_tags->total_bytes += 4 + strlen(comment);
 }
 
-static void splt_flac_t_parse_and_store_comment(char *comment,
-    splt_flac_tags *flac_tags, int index, splt_code *error)
+static void splt_flac_t_parse_and_store_comment(
+  char *comment, splt_flac_tags *flac_tags, int index, splt_code *error)
 {
   if (comment == NULL) { return; }
 
@@ -186,8 +193,8 @@ static void splt_flac_t_parse_and_store_comment(char *comment,
   splt_flac_vorbis_tags_append(flac_tags->other_tags, comment, error);
 }
 
-static void splt_flac_t_parse_comments(unsigned char *comments,
-    FLAC__uint32 total_block_length, splt_flac_tags *flac_tags, splt_code *error)
+static void splt_flac_t_parse_comments(unsigned char *comments, FLAC__uint32 total_block_length,
+  splt_flac_tags *flac_tags, splt_code *error)
 {
   int counter = 0;
   unsigned char *ptr = comments;
@@ -197,10 +204,15 @@ static void splt_flac_t_parse_comments(unsigned char *comments,
   if (counter > total_block_length) { goto error; }
 
   unsigned char *vendor_string = splt_flac_t_read_vector(ptr, vendor_length);
-  if (vendor_string == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
-  int err = splt_su_copy((char *) vendor_string, &flac_tags->vendor_string);
+  if (vendor_string == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
+  int err = splt_su_copy((char *)vendor_string, &flac_tags->vendor_string);
   flac_tags->vendor_length = vendor_length;
-  if (err < 0) {
+  if (err < 0)
+  {
     *error = err;
     free(vendor_string);
     return;
@@ -220,7 +232,7 @@ static void splt_flac_t_parse_comments(unsigned char *comments,
   if (*error < 0) { return; }
 
   FLAC__uint32 i = 0;
-  for (;i < number_of_comments;i++)
+  for (; i < number_of_comments; i++)
   {
     FLAC__uint32 comment_length = splt_flac_t_read_unsigned_integer_of_32_bits(ptr);
     ptr += 4;
@@ -228,10 +240,18 @@ static void splt_flac_t_parse_comments(unsigned char *comments,
     if (counter > total_block_length) { goto error; }
 
     unsigned char *comment = splt_flac_t_read_vector(ptr, comment_length);
-    if (comment == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
+    if (comment == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return;
+    }
 
     splt_flac_t_parse_and_store_comment((char *)comment, flac_tags, i, error);
-    if (*error < 0) { free(comment); return; }
+    if (*error < 0)
+    {
+      free(comment);
+      return;
+    }
 
     free(comment);
     ptr += comment_length;
@@ -245,10 +265,12 @@ error:
   *error = SPLT_ERROR_INVALID;
 }
 
-splt_flac_tags *splt_flac_t_new(unsigned char *comments, FLAC__uint32 total_block_length,
-    splt_code *error) {
+splt_flac_tags *splt_flac_t_new(
+  unsigned char *comments, FLAC__uint32 total_block_length, splt_code *error)
+{
   splt_flac_tags *flac_tags = malloc(sizeof(splt_flac_tags));
-  if (flac_tags == NULL) {
+  if (flac_tags == NULL)
+  {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
   }
@@ -268,11 +290,9 @@ error:
   return NULL;
 }
 
-void splt_flac_t_free(splt_flac_tags **flac_tags) {
-  if (!flac_tags || !(*flac_tags))
-  {
-    return;
-  }
+void splt_flac_t_free(splt_flac_tags **flac_tags)
+{
+  if (!flac_tags || !(*flac_tags)) { return; }
 
   if ((*flac_tags)->vendor_string)
   {
@@ -288,4 +308,3 @@ void splt_flac_t_free(splt_flac_tags **flac_tags) {
   free(*flac_tags);
   *flac_tags = NULL;
 }
-

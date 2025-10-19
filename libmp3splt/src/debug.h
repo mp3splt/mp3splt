@@ -37,4 +37,3 @@ void splt_d_send_memory_error_message(splt_state *state);
 #define SPLT_DEBUG_H
 
 #endif
-

@@ -57,15 +57,14 @@
 
 void remove_status_message(gui_state *gui);
 void put_status_message(const gchar *text, ui_state *ui);
-void put_status_message_with_type(const gchar *text, splt_message_type mess_type, 
-    ui_state *ui);
+void put_status_message_with_type(const gchar *text, splt_message_type mess_type, ui_state *ui);
 void put_status_message_in_idle(const gchar *text, ui_state *ui);
 
 void create_application(ui_state *ui);
 void print_status_bar_confirmation(gint error, ui_state *ui);
 void cancel_button_event(GtkWidget *widget, ui_state *ui);
 
-gchar* get_input_filename(gui_state *gui);
+gchar *get_input_filename(gui_state *gui);
 void set_input_filename(const gchar *filename, ui_state *ui);
 void add_filters_to_file_chooser(GtkWidget *file_chooser);
 
@@ -86,4 +85,3 @@ void set_process_in_progress_safe(gboolean value, ui_state *ui);
 gint get_process_in_progress_safe(ui_state *ui);
 
 #endif
-

@@ -33,17 +33,20 @@ in common.
 
 #include "splt.h"
 
-/*! Convert the tags to sensible filenames. 
+/*! Convert the tags to sensible filenames.
 
   What we deem to be a sensible file name can be controlled by the
   user using the format that is handled by oformat_parser.c
  */
-void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error, 
-    const splt_tags *all_tags, int only_set_name_if_null,
-    int force_splitnumber_as_filenumber)
+void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error,
+  const splt_tags *all_tags, int only_set_name_if_null, int force_splitnumber_as_filenumber)
 {
   int err = splt_tu_copy_tags_on_all_tracks(state, tracks, all_tags);
-  if (err < 0) { *error = err; return; }
+  if (err < 0)
+  {
+    *error = err;
+    return;
+  }
 
   if (splt_o_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
   {
@@ -52,11 +55,19 @@ void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error,
   }
 
   err = splt_of_reparse_oformat(state);
-  if (err < 0) { *error = err; return; }
+  if (err < 0)
+  {
+    *error = err;
+    return;
+  }
 
   splt_of_set_oformat_digits_tracks(state, tracks);
 
-  if (err < 0) { *error = err; return; }
+  if (err < 0)
+  {
+    *error = err;
+    return;
+  }
 
   splt_t_set_current_split(state, 0);
   int current_split = 0;
@@ -66,17 +77,16 @@ void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error,
     if (!only_set_name_if_null || (splitpoint_name == NULL))
     {
       int split_number = current_split;
-      if (force_splitnumber_as_filenumber)
-      {
-        split_number = -1;
-      }
+      if (force_splitnumber_as_filenumber) { split_number = -1; }
       err = splt_u_finish_tags_and_put_output_format_filename(state, split_number);
-      if (err != SPLT_OK) { *error = err; return; }
+      if (err != SPLT_OK)
+      {
+        *error = err;
+        return;
+      }
     }
 
     splt_t_current_split_next(state);
     current_split = splt_t_get_current_split(state);
   } while (current_split < tracks);
 }
-
-

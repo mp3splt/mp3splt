@@ -31,7 +31,7 @@
 
 /*! \file
 
-Automatically split mp3 files created with mp3wrap into the original 
+Automatically split mp3 files created with mp3wrap into the original
 tracks
 */
 #include <string.h>
@@ -47,14 +47,13 @@ void splt_w_set_wrap_default_values(splt_state *state)
 }
 
 //! \todo document this function.
-int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
-    const char *filename)
+int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index, const char *filename)
 {
   splt_wrap *wrap = state->wrap;
 
   if (index == 0)
   {
-    if ((wrap->wrap_files = malloc(wrapfiles * sizeof(char*))) == NULL)
+    if ((wrap->wrap_files = malloc(wrapfiles * sizeof(char *))) == NULL)
     {
       return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
@@ -98,11 +97,7 @@ static void splt_w_free_files(char **files, int number)
 void splt_w_wrap_free(splt_state *state)
 {
   splt_wrap *wrap = state->wrap;
-  if (!wrap)
-  {
-    return;
-  }
+  if (!wrap) { return; }
   splt_w_free_files(wrap->wrap_files, wrap->wrap_files_num);
   wrap->wrap_files_num = 0;
 }
-

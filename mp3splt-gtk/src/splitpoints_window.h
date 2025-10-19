@@ -41,7 +41,8 @@
 #include "all_includes.h"
 
 //!The enum telling which item is kept in which column of the splitpoint tree
-enum {
+enum
+{
   COL_CHECK = 0,
   COL_DESCRIPTION = 1,
   COL_MINUTES = 2,
@@ -65,7 +66,7 @@ gchar *get_splitpoint_name(gint index, ui_state *ui);
 gint get_first_splitpoint_selected(gui_state *gui);
 void select_splitpoint(gint index, gui_state *gui);
 gint get_splitpoint_time(gint this_splitpoint, ui_state *ui);
-void remove_splitpoint(gint index,gint stop_preview, ui_state *ui);
+void remove_splitpoint(gint index, gint stop_preview, ui_state *ui);
 void update_splitpoint(gint index, Split_point new_point, ui_state *ui);
 void update_splitpoint_from_time(gint index, gdouble time, ui_state *ui);
 void update_splitpoint_check(gint index, ui_state *ui);
@@ -84,4 +85,3 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
 void create_trim_silence_window(GtkWidget *button, ui_state *ui);
 
 #endif
-

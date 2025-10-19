@@ -38,7 +38,7 @@ similar information there. But there is a mechanism that makes MP3
 players skip broken packets that are detected by "sync errors".
 
 And it is rather easy to fill broken packets with information about
-the current track - which is exactly what id3 tags do. 
+the current track - which is exactly what id3 tags do.
 
 So this file handles deliberately broken audio packets - that contain
 plain text and images instead.
@@ -69,20 +69,16 @@ int splt_se_serrors_append_point(splt_state *state, off_t point)
   {
     if (serrors->serrors_points == NULL)
     {
-      if((serrors->serrors_points = 
-            malloc(sizeof(off_t) * (serrors_num + 1))) == NULL)
+      if ((serrors->serrors_points = malloc(sizeof(off_t) * (serrors_num + 1))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       }
-      else
-      {
-        serrors->serrors_points[0] = 0;
-      }
+      else { serrors->serrors_points[0] = 0; }
     }
     else
     {
-      if((serrors->serrors_points = realloc(serrors->serrors_points,
-              sizeof(off_t) * (serrors_num + 1))) == NULL)
+      if ((serrors->serrors_points =
+              realloc(serrors->serrors_points, sizeof(off_t) * (serrors_num + 1))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       }
@@ -92,16 +88,10 @@ int splt_se_serrors_append_point(splt_state *state, off_t point)
     {
       serrors->serrors_points[serrors_num] = point;
 
-      if (point == -1)
-      {
-        error = SPLT_ERR_SYNC;
-      }
+      if (point == -1) { error = SPLT_ERR_SYNC; }
     }
   }
-  else
-  {
-    splt_e_error(SPLT_IERROR_INT, __func__, point, NULL);
-  }
+  else { splt_e_error(SPLT_IERROR_INT, __func__, point, NULL); }
 
   return error;
 }
@@ -110,10 +100,7 @@ void splt_se_serrors_free(splt_state *state)
 {
   splt_syncerrors *serrors = state->serrors;
 
-  if (!serrors)
-  {
-    return;
-  }
+  if (!serrors) { return; }
 
   if (serrors->serrors_points)
   {
@@ -122,4 +109,3 @@ void splt_se_serrors_free(splt_state *state)
     serrors->serrors_points_num = 0;
   }
 }
-

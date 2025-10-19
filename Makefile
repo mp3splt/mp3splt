@@ -1,6 +1,9 @@
-LIBMP3SPLT_DIR=libmp3splt
-MP3SPLT_DIR=newmp3splt
-MP3SPLT_GTK_DIR=mp3splt-gtk
+MP3SPLIT_TOP:=$(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+LIBMP3SPLT_DIR:=$(MP3SPLIT_TOP)/libmp3splt
+MP3SPLT_DIR:=$(MP3SPLIT_TOP)/newmp3splt
+MP3SPLT_GTK_DIR:=$(MP3SPLIT_TOP)/mp3splt-gtk
+
+COMMON_CONFIG_FLAGS:=--enable-c-debug --prefix=$(MP3SPLIT_TOP)/dist
 
 usage: help
 
@@ -20,6 +23,10 @@ help:
 	@echo
 	@echo "make windows_cross_installers : generates windows installers with a cross compilation"
 	@echo
+
+format:
+	find . -name *.c | xargs clang-format -i
+	find . -name *.h | xargs clang-format -i
 
 #source distribution creation
 source_packages: clean_tmp
@@ -48,16 +55,17 @@ windows_cross_installers:
 root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
 root_libmp3splt:
 	cd ${LIBMP3SPLT_DIR} && ./autogen.sh && \
-	./configure && make clean && make && make install
-# \
+	./configure ${COMMON_CONFIG_FLAGS} \
+	&& make clean && make -j8 && make install
+#
 #	&& if [ -z `grep '/usr/local/lib' /etc/ld.so.conf` ];\
 #	then `echo '/usr/local/lib' >> /etc/ld.so.conf` && ldconfig;fi
 root_newmp3splt:
-	cd ${MP3SPLT_DIR} && ./autogen.sh && ./configure \
-	&& make clean && make && make install
+	cd ${MP3SPLT_DIR} && ./autogen.sh && PKG_CONFIG_PATH=$(MP3SPLIT_TOP)/dist/lib/pkgconfig ./configure ${COMMON_CONFIG_FLAGS} \
+	&& make clean && make -j8 && make install
 root_mp3splt-gtk:
-	cd ${MP3SPLT_GTK_DIR} && ./autogen.sh && ./configure --enable-audacious --enable-gstreamer \
-	&& make clean && make && make install
+	cd ${MP3SPLT_GTK_DIR} && ./autogen.sh && PKG_CONFIG_PATH=$(MP3SPLIT_TOP)/dist/lib/pkgconfig ./configure ${COMMON_CONFIG_FLAGS} --enable-audacious --disable-gstreamer \
+	&& make clean && make -j8 && make install
 #uninstalls libmp3splt, mp3splt and mp3splt-gtk as root
 root_uninstall:
 	cd ${LIBMP3SPLT_DIR} && make uninstall

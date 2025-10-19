@@ -32,7 +32,7 @@
  *********************************************************/
 
 /*!********************************************************
- * \file 
+ * \file
  * audacious control
  *
  * this file contains the functions that control the audacious
@@ -58,24 +58,18 @@ void myaudacious_get_song_infos(gchar *total_infos, ui_state *ui)
   gchar freq_str[32] = { '\0' };
   gchar nch_str[32] = { '\0' };
 
-  g_snprintf(rate_str,32, "%d", rate/1000);
-  g_snprintf(freq_str,32, "%d", freq/1000);
-  
-  if (nch == 2)
-  {
-    snprintf(nch_str, 32, "%s", _("stereo"));
-  }
-  else
-  {
-    snprintf(nch_str, 32, "%s", _("mono"));
-  }
+  g_snprintf(rate_str, 32, "%d", rate / 1000);
+  g_snprintf(freq_str, 32, "%d", freq / 1000);
+
+  if (nch == 2) { snprintf(nch_str, 32, "%s", _("stereo")); }
+  else { snprintf(nch_str, 32, "%s", _("mono")); }
 
   gchar *_Kbps = _("Kbps");
   gchar *_Khz = _("Khz");
 
   if (rate != 0)
   {
-    g_snprintf(total_infos, 512, "%s %s     %s %s    %s", rate_str,_Kbps,freq_str, _Khz,nch_str);
+    g_snprintf(total_infos, 512, "%s %s     %s %s    %s", rate_str, _Kbps, freq_str, _Khz, nch_str);
     return;
   }
 
@@ -91,10 +85,7 @@ gchar *myaudacious_get_filename(ui_state *ui)
   gint playlist_position = audacious_remote_get_playlist_pos(ui->pi->dbus_proxy);
   gchar *fname = audacious_remote_get_playlist_file(ui->pi->dbus_proxy, playlist_position);
 
-  if (fname == NULL)
-  {
-    return NULL;
-  }
+  if (fname == NULL) { return NULL; }
 
   gchar *fname2 = g_filename_from_uri(fname, NULL, NULL);
   g_free(fname);
@@ -162,12 +153,12 @@ void myaudacious_add_files(GList *list, ui_state *ui)
   while (list_pos)
   {
     gchar *dup_filename = strdup(list_pos->data);
-    list_pos->data = g_filename_to_uri(dup_filename,NULL,NULL);
+    list_pos->data = g_filename_to_uri(dup_filename, NULL, NULL);
     g_free(dup_filename);
     list_pos = g_list_next(list_pos);
   }
 
-  audacious_remote_playlist_add(ui->pi->dbus_proxy, list); 
+  audacious_remote_playlist_add(ui->pi->dbus_proxy, list);
 }
 
 //!sets the volume level
@@ -192,7 +183,7 @@ void myaudacious_start_with_songs(GList *list, ui_state *ui)
   myaudacious_add_files(list, ui);
 }
 
-//!returns TRUE if audacious is running; if not, FALSE 
+//!returns TRUE if audacious is running; if not, FALSE
 gint myaudacious_is_running(ui_state *ui)
 {
   if (!ui->pi->dbus_connection)
@@ -203,59 +194,38 @@ gint myaudacious_is_running(ui_state *ui)
   if (!ui->pi->dbus_proxy)
   {
     ui->pi->dbus_proxy = dbus_g_proxy_new_for_name(ui->pi->dbus_connection,
-        AUDACIOUS_DBUS_SERVICE,
-        AUDACIOUS_DBUS_PATH,
-        AUDACIOUS_DBUS_INTERFACE);
+      AUDACIOUS_DBUS_SERVICE,
+      AUDACIOUS_DBUS_PATH,
+      AUDACIOUS_DBUS_INTERFACE);
   }
 
-  if (!audacious_remote_is_running(ui->pi->dbus_proxy))
-  {
-    return FALSE;
-  }
+  if (!audacious_remote_is_running(ui->pi->dbus_proxy)) { return FALSE; }
 
   return TRUE;
 }
 
-//!returns TRUE if audacious is paused, if not, FALSE 
+//!returns TRUE if audacious is paused, if not, FALSE
 gint myaudacious_is_paused(ui_state *ui)
 {
-  if (!audacious_remote_is_paused(ui->pi->dbus_proxy))
-  {
-    return FALSE;
-  }
+  if (!audacious_remote_is_paused(ui->pi->dbus_proxy)) { return FALSE; }
 
   return TRUE;
 }
 
 //!Start playing the current song
-void myaudacious_play(ui_state *ui)
-{
-  audacious_remote_play(ui->pi->dbus_proxy);
-}
+void myaudacious_play(ui_state *ui) { audacious_remote_play(ui->pi->dbus_proxy); }
 
 //!Stop playing the current song
-void myaudacious_stop(ui_state *ui)
-{
-  audacious_remote_stop(ui->pi->dbus_proxy);
-}
+void myaudacious_stop(ui_state *ui) { audacious_remote_stop(ui->pi->dbus_proxy); }
 
 //!Pause playing the current song
-void myaudacious_pause(ui_state *ui)
-{
-  audacious_remote_pause(ui->pi->dbus_proxy);
-}
+void myaudacious_pause(ui_state *ui) { audacious_remote_pause(ui->pi->dbus_proxy); }
 
 //!Switch to the next song
-void myaudacious_next(ui_state *ui)
-{
-  audacious_remote_playlist_next(ui->pi->dbus_proxy);
-}
+void myaudacious_next(ui_state *ui) { audacious_remote_playlist_next(ui->pi->dbus_proxy); }
 
 //!Switch to the previous song
-void myaudacious_prev(ui_state *ui)
-{
-  audacious_remote_playlist_prev(ui->pi->dbus_proxy);
-}
+void myaudacious_prev(ui_state *ui) { audacious_remote_playlist_prev(ui->pi->dbus_proxy); }
 
 //!jump to time
 void myaudacious_jump(gint position, ui_state *ui)
@@ -273,13 +243,9 @@ gint myaudacious_get_total_time(ui_state *ui)
 //!returns TRUE if audacious is playing, else FALSE
 gint myaudacious_is_playing(ui_state *ui)
 {
-  if (audacious_remote_is_playing(ui->pi->dbus_proxy))
-  {
-    return TRUE;
-  }
+  if (audacious_remote_is_playing(ui->pi->dbus_proxy)) { return TRUE; }
 
   return FALSE;
 }
 
 #endif
-

@@ -33,7 +33,8 @@
 
 #define SPLT_ARRAY_H
 
-typedef struct {
+typedef struct
+{
   void **elements;
   long number_of_elements;
 } splt_array;
@@ -49,4 +50,3 @@ void **splt_array_get_elements(splt_array *array);
 long splt_array_get_number_of_elements(splt_array *array);
 
 #endif
-

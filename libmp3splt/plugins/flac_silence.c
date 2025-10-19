@@ -30,15 +30,15 @@
 #include "flac_silence.h"
 
 static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_offset,
-    float max_threshold, unsigned long length, 
-    short process_silence(double time, float level, int silence_was_found, short must_flush,
-      splt_scan_silence_data *ssd, int *found, int *error),
-    splt_scan_silence_data *ssd, int *error);
+  float max_threshold, unsigned long length,
+  short process_silence(double time, float level, int silence_was_found, short must_flush,
+    splt_scan_silence_data *ssd, int *found, int *error),
+  splt_scan_silence_data *ssd, int *error);
 
 int splt_flac_scan_silence(splt_state *state, off_t start_offset, unsigned long length,
-    float threshold, float min, int shots, short output, int *error,
-    short silence_processor(double time, float level, int silence_was_found, short must_flush,
-      splt_scan_silence_data *ssd, int *found, int *error))
+  float threshold, float min, int shots, short output, int *error,
+  short silence_processor(double time, float level, int silence_was_found, short must_flush,
+    splt_scan_silence_data *ssd, int *found, int *error))
 {
   splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, shots, SPLT_TRUE);
   if (ssd == NULL)
@@ -47,22 +47,21 @@ int splt_flac_scan_silence(splt_state *state, off_t start_offset, unsigned long 
     return -1;
   }
 
-  splt_flac_scan_silence_and_process(state, start_offset, threshold, length, silence_processor, ssd, error);
+  splt_flac_scan_silence_and_process(
+    state, start_offset, threshold, length, silence_processor, ssd, error);
 
   int found = ssd->found;
 
   splt_free_scan_silence_data(&ssd);
 
-  if (*error < 0)
-  {
-    found = -1;
-  }
+  if (*error < 0) { found = -1; }
 
   return found;
 }
 
-static splt_flac_silence_data *splt_flac_silence_data_new(splt_state *state, 
-    splt_flac_state *flacstate) {
+static splt_flac_silence_data *splt_flac_silence_data_new(
+  splt_state *state, splt_flac_state *flacstate)
+{
   splt_flac_silence_data *silence_data = malloc(sizeof(splt_flac_silence_data));
   if (silence_data == NULL) { return NULL; }
 
@@ -82,62 +81,56 @@ static void splt_flac_silence_data_free(splt_flac_silence_data *silence_data)
   free(silence_data);
 }
 
-static FLAC__StreamDecoderWriteStatus splt_flac_write_callback(const FLAC__StreamDecoder *decoder, 
-    const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data)
+static FLAC__StreamDecoderWriteStatus splt_flac_write_callback(const FLAC__StreamDecoder *decoder,
+  const FLAC__Frame *frame, const FLAC__int32 *const buffer[], void *client_data)
 {
-  splt_flac_silence_data *silence_data = (splt_flac_silence_data *) client_data;
+  splt_flac_silence_data *silence_data = (splt_flac_silence_data *)client_data;
   splt_flac_state *flacstate = silence_data->flacstate;
 
   double number;
   if (frame->header.number_type == FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER)
   {
-    number = (double) frame->header.number.sample_number;
+    number = (double)frame->header.number.sample_number;
   }
-  else
-  {
-    number = (double) frame->header.number.frame_number;
-  }
+  else { number = (double)frame->header.number.frame_number; }
 
-  double time = (double) number / (double) frame->header.sample_rate;
+  double time = (double)number / (double)frame->header.sample_rate;
   silence_data->time = time;
 
   silence_data->silence_found = 1;
 
   size_t i, j;
-  for (i = 0;i < frame->header.channels; i++)
+  for (i = 0; i < frame->header.channels; i++)
   {
-    for (j = 0;j < frame->header.blocksize; j++)
+    for (j = 0; j < frame->header.blocksize; j++)
     {
       float normalizer_coeff = 1.0 / ((1 << (frame->header.bits_per_sample - 1)));
       float sample = fabs(buffer[i][j] * normalizer_coeff);
       flacstate->temp_level = flacstate->temp_level * 0.999 + sample * 0.001;
-      if (sample > silence_data->threshold)
-      {
-        silence_data->silence_found = 0;
-      }
+      if (sample > silence_data->threshold) { silence_data->silence_found = 0; }
     }
   }
 
   return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-static void splt_flac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, 
-    void *client_data)
+static void splt_flac_error_callback(
+  const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data)
 {
-  splt_flac_silence_data *silence_data = (splt_flac_silence_data *) client_data;
+  splt_flac_silence_data *silence_data = (splt_flac_silence_data *)client_data;
 
   splt_e_set_error_data(silence_data->state, splt_t_get_filename_to_split(silence_data->state));
   silence_data->error = SPLT_ERROR_INVALID;
 
-  splt_d_print_debug(silence_data->state, "Error while decoding flac file: %s\n", 
-      FLAC__StreamDecoderErrorStatusString[status]);
+  splt_d_print_debug(silence_data->state, "Error while decoding flac file: %s\n",
+    FLAC__StreamDecoderErrorStatusString[status]);
 }
 
 static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_offset,
-    float max_threshold, unsigned long length,
-    short process_silence(double time, float level, int silence_was_found, short must_flush,
-      splt_scan_silence_data *ssd, int *found, int *error),
-    splt_scan_silence_data *ssd, int *error)
+  float max_threshold, unsigned long length,
+  short process_silence(double time, float level, int silence_was_found, short must_flush,
+    splt_scan_silence_data *ssd, int *found, int *error),
+  splt_scan_silence_data *ssd, int *error)
 {
   splt_c_put_progress_text(state, SPLT_PROGRESS_SCAN_SILENCE);
 
@@ -184,8 +177,8 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
     }
   }
 
-  status = FLAC__stream_decoder_init_FILE(decoder, file,
-      splt_flac_write_callback, NULL, splt_flac_error_callback, silence_data);
+  status = FLAC__stream_decoder_init_FILE(
+    decoder, file, splt_flac_write_callback, NULL, splt_flac_error_callback, silence_data);
   if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK)
   {
     splt_d_print_debug(state, "Failed to initialize flac decoder with error %d", status);
@@ -205,15 +198,9 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
   int found = 0;
   while (FLAC__STREAM_DECODER_END_OF_STREAM != FLAC__stream_decoder_get_state(decoder))
   {
-    if (!FLAC__stream_decoder_process_single(decoder))
-    {
-      break;
-    }
+    if (!FLAC__stream_decoder_process_single(decoder)) { break; }
 
-    if (first_time)
-    {
-      time0 = silence_data->time;
-    }
+    if (first_time) { time0 = silence_data->time; }
 
     first_time = SPLT_FALSE;
 
@@ -221,21 +208,26 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
     if (level < -96.0) { level = -96.0; }
     if (level > 0) { level = 0; }
 
-    long current_time = (long) ((silence_data->time - time0) * 100);
+    long current_time = (long)((silence_data->time - time0) * 100);
 
     short must_flush = length > 0 && current_time >= length;
     int err = SPLT_OK;
-    short stop = process_silence(silence_data->time, level, 
-        silence_data->silence_found, must_flush, ssd, &found, &err);
+    short stop = process_silence(
+      silence_data->time, level, silence_data->silence_found, must_flush, ssd, &found, &err);
     if (stop || stop == -1)
     {
-      if (err < 0) { *error = err; goto end; }
+      if (err < 0)
+      {
+        *error = err;
+        goto end;
+      }
       break;
     }
 
     if (state->split.get_silence_level)
     {
-      state->split.get_silence_level((long) (silence_data->time * 100.0), level, state->split.silence_level_client_data);
+      state->split.get_silence_level(
+        (long)(silence_data->time * 100.0), level, state->split.silence_level_client_data);
     }
     state->split.p_bar->silence_db_level = level;
     state->split.p_bar->silence_found_tracks = found;
@@ -243,21 +235,19 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
     if (option_silence_mode)
     {
       if (splt_t_split_is_canceled(state)) { break; }
-      splt_c_update_progress(state, silence_data->time * 100.0, (double)total_time, 1, 0, SPLT_DEFAULT_PROGRESS_RATE2);
+      splt_c_update_progress(
+        state, silence_data->time * 100.0, (double)total_time, 1, 0, SPLT_DEFAULT_PROGRESS_RATE2);
     }
     else
     {
-      splt_c_update_progress(state, (double) current_time, (double)length, 4, 0.5, SPLT_DEFAULT_PROGRESS_RATE2);
+      splt_c_update_progress(
+        state, (double)current_time, (double)length, 4, 0.5, SPLT_DEFAULT_PROGRESS_RATE2);
     }
   }
 
-  if (silence_data->error < 0)
-  {
-    *error = silence_data->error;
-  }
+  if (silence_data->error < 0) { *error = silence_data->error; }
 
 end:
   FLAC__stream_decoder_delete(decoder);
   splt_flac_silence_data_free(silence_data);
 }
-

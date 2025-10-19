@@ -29,7 +29,7 @@ char **rmopt(char **argv, int offset, int tot)
 {
 #ifdef __WIN32__
   int i = 0;
-  for (i = 0; i < offset;i++)
+  for (i = 0; i < offset; i++)
   {
     if (argv[i])
     {
@@ -127,17 +127,26 @@ options *new_options()
 
   opt->T_option = SPLT_FALSE;
   opt->T_option_value = 0;
-  opt->w_option = SPLT_FALSE; opt->l_option = SPLT_FALSE;
-  opt->e_option = SPLT_FALSE; opt->f_option = SPLT_FALSE;
-  opt->c_option = SPLT_FALSE; opt->t_option = SPLT_FALSE;
-  opt->s_option = SPLT_FALSE; opt->a_option = SPLT_FALSE;
+  opt->w_option = SPLT_FALSE;
+  opt->l_option = SPLT_FALSE;
+  opt->e_option = SPLT_FALSE;
+  opt->f_option = SPLT_FALSE;
+  opt->c_option = SPLT_FALSE;
+  opt->t_option = SPLT_FALSE;
+  opt->s_option = SPLT_FALSE;
+  opt->a_option = SPLT_FALSE;
   opt->r_option = SPLT_FALSE;
-  opt->p_option = SPLT_FALSE; opt->o_option = SPLT_FALSE;
-  opt->d_option = SPLT_FALSE; opt->k_option = SPLT_FALSE;
+  opt->p_option = SPLT_FALSE;
+  opt->o_option = SPLT_FALSE;
+  opt->d_option = SPLT_FALSE;
+  opt->k_option = SPLT_FALSE;
   opt->K_option = SPLT_FALSE;
-  opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
-  opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
-  opt->N_option = SPLT_FALSE; opt->O_option = SPLT_FALSE;
+  opt->g_option = SPLT_FALSE;
+  opt->n_option = SPLT_FALSE;
+  opt->q_option = SPLT_FALSE;
+  opt->i_option = SPLT_FALSE;
+  opt->N_option = SPLT_FALSE;
+  opt->O_option = SPLT_FALSE;
   opt->G_option = SPLT_FALSE;
   opt->E_option = SPLT_FALSE;
   opt->P_option = SPLT_FALSE;
@@ -164,12 +173,12 @@ options *new_options()
   //we put the default values for freedb search
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
   opt->freedb_search_type = SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI;
-  snprintf(opt->freedb_search_server,255, "%s", SPLT_FREEDB2_CGI_SITE);
+  snprintf(opt->freedb_search_server, 255, "%s", SPLT_FREEDB2_CGI_SITE);
   opt->freedb_search_port = SPLT_FREEDB_CDDB_CGI_PORT;
   //we put the default values for the freedb cddb file get
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
   opt->freedb_get_type = SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI;
-  snprintf(opt->freedb_get_server,255, "%s", SPLT_FREEDB2_CGI_SITE);
+  snprintf(opt->freedb_get_server, 255, "%s", SPLT_FREEDB2_CGI_SITE);
   opt->freedb_get_port = SPLT_FREEDB_CDDB_CGI_PORT;
 
   opt->freedb_arg_search_string[0] = '\0';
@@ -197,10 +206,7 @@ regex_options *new_regex_options()
 
 void free_regex_options(regex_options **regex_opt)
 {
-  if (!regex_opt || !*regex_opt)
-  {
-    return;
-  }
+  if (!regex_opt || !*regex_opt) { return; }
 
   if ((*regex_opt)->default_comment)
   {
@@ -217,4 +223,3 @@ void free_regex_options(regex_options **regex_opt)
   free(*regex_opt);
   *regex_opt = NULL;
 }
-

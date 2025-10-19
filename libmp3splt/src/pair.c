@@ -38,10 +38,7 @@
 splt_int_pair *splt_int_pair_new(int first, int second)
 {
   splt_int_pair *pair = malloc(sizeof(splt_int_pair));
-  if (pair == NULL)
-  {
-    return NULL;
-  }
+  if (pair == NULL) { return NULL; }
 
   pair->first = first;
   pair->second = second;
@@ -51,37 +48,22 @@ splt_int_pair *splt_int_pair_new(int first, int second)
 
 void splt_int_pair_free(splt_int_pair **pair)
 {
-  if (!pair)
-  {
-    return;
-  }
+  if (!pair) { return; }
 
-  if (!*pair)
-  {
-    return;
-  }
+  if (!*pair) { return; }
 
   free(*pair);
   *pair = NULL;
 }
 
-int splt_int_pair_first(splt_int_pair *pair)
-{
-  return pair->first;
-}
+int splt_int_pair_first(splt_int_pair *pair) { return pair->first; }
 
-int splt_int_pair_second(splt_int_pair *pair)
-{
-  return pair->second;
-}
+int splt_int_pair_second(splt_int_pair *pair) { return pair->second; }
 
 splt_il_pair *splt_il_pair_new(int first, long second)
 {
   splt_il_pair *pair = malloc(sizeof(splt_il_pair));
-  if (pair == NULL)
-  {
-    return NULL;
-  }
+  if (pair == NULL) { return NULL; }
 
   pair->first = first;
   pair->second = second;
@@ -91,27 +73,14 @@ splt_il_pair *splt_il_pair_new(int first, long second)
 
 void splt_il_pair_free(splt_il_pair **pair)
 {
-  if (!pair)
-  {
-    return;
-  }
+  if (!pair) { return; }
 
-  if (!*pair)
-  {
-    return;
-  }
+  if (!*pair) { return; }
 
   free(*pair);
   *pair = NULL;
 }
 
-int splt_il_pair_first(splt_il_pair *pair)
-{
-  return pair->first;
-}
+int splt_il_pair_first(splt_il_pair *pair) { return pair->first; }
 
-long splt_il_pair_second(splt_il_pair *pair)
-{
-  return pair->second;
-}
-
+long splt_il_pair_second(splt_il_pair *pair) { return pair->second; }

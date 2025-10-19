@@ -29,17 +29,17 @@
 # *********************************************************/
 
 #################################################
-# Basic initialisations 
+# Basic initialisations
 #################################################
 
 m4_define([minimum_libmp3splt_version],[0.9.3.1518])
 
-AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.9.3.1518, mp3splt.sf.net)
+AC_PREREQ([2.71])
+AC_INIT([mp3splt-gtk],[0.9.3.1518],[mp3splt.sf.net])
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
-# One of this files is gnome-doc-utils.make, which is needed to 
+# One of this files is gnome-doc-utils.make, which is needed to
 # compile the help files.
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -51,7 +51,7 @@ AM_INIT_AUTOMAKE
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
 
 #################################################
@@ -62,7 +62,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 # Include all m4 macros that have to do with the language C
-AC_LANG_C
+AC_LANG([C])
 
 #gettext
 AC_CHECK_HEADERS([unistd.h])
@@ -81,9 +81,9 @@ ifdef([LT_CONFIG_LTDL_DIR],
 
 ifdef([LT_INIT],
       [ LT_INIT([win32-dll]) ],
-      [ AC_PROG_LIBTOOL ])
+      [ LT_INIT ])
 
-AC_WITH_LTDL
+LTDL_INIT([])
 
 #################################################################
 # Check for the type of the host
@@ -131,7 +131,7 @@ AC_MSG_RESULT($HOST)
 AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 
 #check for -ltld
-AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not found - check libtool installation !]) ] ) 
+AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not found - check libtool installation !]) ] )
 
 
 #################################################
@@ -155,7 +155,7 @@ AM_CONDITIONAL(GNOME, false)
 AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
 gnome="no"
 
-AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
+AC_ARG_ENABLE(gnome, AS_HELP_STRING([--disable-gnome],[Disable gnome support. ]),
     [enable_gnome=$enableval],[enable_gnome="yes"])
 
 AM_CONDITIONAL(ENABLE_SK, true)
@@ -170,10 +170,10 @@ if test "x$enable_gnome" = xyes;then
                      gnome="yes"
                    ],
                    [AC_MSG_ERROR([gnome-doc-utils not found.
-  
+
       Install it or configure with "--disable-gnome".])])
   ],
-  [ 
+  [
     AC_MSG_NOTICE([No GNOME_DOC_INIT found.])
   ])
 fi
@@ -195,7 +195,7 @@ Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 AM_CONDITIONAL(AUDACIOUS,false)
 audacious="no"
 #checking for --disable-audacious & audacious library
-AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audacious player support. ]),
+AC_ARG_ENABLE(audacious, AS_HELP_STRING([--disable-audacious],[Disable audacious player support. ]),
     [enable_audacious=$enableval],[enable_audacious="yes"])
 
 if test "x$enable_audacious" = xyes;then
@@ -216,7 +216,7 @@ fi
 AM_CONDITIONAL(GSTREAMER,false)
 gstreamer="no"
 #checking for --disable-gstreamer & gstreamer library
-AC_ARG_ENABLE(gstreamer, AC_HELP_STRING([--disable-gstreamer], [Disable gstreamer 'internal' player support. ]),
+AC_ARG_ENABLE(gstreamer, AS_HELP_STRING([--disable-gstreamer],[Disable gstreamer 'internal' player support. ]),
     [enable_gstreamer=$enableval],[enable_gstreamer="yes"])
 
 if test "x$enable_gstreamer" = xyes;then
@@ -233,9 +233,9 @@ fi
 # (but only if doxygen is installed)
 #################################################
 
-doxygen_doc="no" 
+doxygen_doc="no"
 with_graphviz="no"
-AC_ARG_ENABLE(doxygen_doc, [AC_HELP_STRING([--disable-doxygen_doc],[ Disable doxygen code documentation. ]) ], 
+AC_ARG_ENABLE(doxygen_doc, [AS_HELP_STRING([--disable-doxygen_doc],[ Disable doxygen code documentation. ]) ],
     [enable_doxygen_doc=$enableval],[enable_doxygen_doc="yes"])
 
 AM_CONDITIONAL(HAVE_DOXYGEN, false)
@@ -244,7 +244,7 @@ if test "x$enable_doxygen_doc" = xyes;then
   AC_PATH_PROG([DOXYGEN],[doxygen])
   AC_ARG_VAR(DOXYGEN,
              [Location of the 'doxygen' program; if found we can generate documentation for the C code])
-  
+
   if test "x$DOXYGEN" != "x"; then
    AM_CONDITIONAL(HAVE_DOXYGEN, true)
    doxygen_doc="yes"
@@ -264,7 +264,7 @@ fi
 
 
 #################################################
-# 
+#
 #################################################
 
 AM_CONDITIONAL(NO_IMAGES_DIR, false)
@@ -279,19 +279,19 @@ AC_ARG_WITH([no_images_dir],
 # Check for some debugging, warnings and optimise options
 #################################################################
 
-AC_ARG_ENABLE(c-debug, [AC_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
+AC_ARG_ENABLE(c-debug, [AS_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
     [enable_c_debug=$enableval],[enable_c_debug="no"])
 if test "x$enable_c_debug" = xyes;then
   CFLAGS="$CFLAGS -g -Wall"
 fi
 
-AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--enable-optimise],[ Enable O3 optimise. ]) ],
+AC_ARG_ENABLE(optimise, [AS_HELP_STRING([--enable-optimise],[ Enable O3 optimise. ]) ],
     [enable_optimise=$enableval],[enable_optimise="no"])
 if test "x$enable_optimise" = xyes;then
   CFLAGS="$CFLAGS -O3"
 fi
 
-AC_ARG_ENABLE(extra-warnings, [AC_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
+AC_ARG_ENABLE(extra-warnings, [AS_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
     [enable_extra_warnings=$enableval],[enable_extra_warnings="no"])
 if test "x$enable_extra_warnings" = xyes;then
   CFLAGS="$CFLAGS -Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
@@ -304,7 +304,7 @@ fi
 
 AM_CONDITIONAL(HAS_CUTTER, false)
 
-AC_ARG_ENABLE(cutter, [AC_HELP_STRING([--disable-cutter],[ Disable Cutter unit testing. ]) ],
+AC_ARG_ENABLE(cutter, [AS_HELP_STRING([--disable-cutter],[ Disable Cutter unit testing. ]) ],
     [enable_cutter=$enableval],[enable_cutter="yes"])
 
 if test "x$enable_cutter" = xyes;then

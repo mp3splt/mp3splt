@@ -34,4 +34,3 @@ void get_silence_level(long time, float level, void *user_data);
 
 #define UTILS_H
 #endif
-

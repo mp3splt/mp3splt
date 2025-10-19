@@ -43,7 +43,8 @@
 #include "ogg.h"
 #include "ogg_utils.h"
 
-typedef struct {
+typedef struct
+{
   int header_packet_counter;
   splt_state *state;
   splt_ogg_state *oggstate;
@@ -53,18 +54,18 @@ typedef struct {
   ogg_stream_state *optional_stream_in;
 } splt_ogg_new_stream_handler;
 
-splt_ogg_new_stream_handler *splt_ogg_nsh_new(splt_state *state, 
-    splt_ogg_state *oggstate, ogg_stream_state *stream_out, const char *output_fname,
-    int write_header_packets, ogg_stream_state *optional_stream_in);
+splt_ogg_new_stream_handler *splt_ogg_nsh_new(splt_state *state, splt_ogg_state *oggstate,
+  ogg_stream_state *stream_out, const char *output_fname, int write_header_packets,
+  ogg_stream_state *optional_stream_in);
 
 void splt_ogg_nsh_free(splt_ogg_new_stream_handler **nsh);
 
-void splt_ogg_initialise_for_new_stream(splt_ogg_new_stream_handler *nsh, 
-    ogg_page *page, ogg_int64_t *cutpoint, ogg_int64_t previous_granulepos);
+void splt_ogg_initialise_for_new_stream(splt_ogg_new_stream_handler *nsh, ogg_page *page,
+  ogg_int64_t *cutpoint, ogg_int64_t previous_granulepos);
 int splt_ogg_new_stream_needs_header_packet();
-void splt_ogg_new_stream_handle_header_packet(splt_ogg_new_stream_handler *nsh, ogg_packet *packet, int *error);
+void splt_ogg_new_stream_handle_header_packet(
+  splt_ogg_new_stream_handler *nsh, ogg_packet *packet, int *error);
 
 #define MP3SPLT_OGG_NEW_STREAM_HANDLER_H
 
 #endif
-

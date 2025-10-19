@@ -1,5 +1,5 @@
 /**
- * libmp3splt 
+ * libmp3splt
  *
  *        Utility for mp3/ogg splitting without decoding
  *
@@ -30,15 +30,16 @@
 
 #ifndef _MP3SPLT_SOCKET_MANAGER_H
 
-#if defined(__BEOS__) && (IPPROTO_UDP==1)
+#if defined(__BEOS__) && (IPPROTO_UDP == 1)
 // net_server has a weird order for IPPROTO_
 #else
- #ifndef __WIN32__
-  #define closesocket close
- #endif
+#ifndef __WIN32__
+#define closesocket close
+#endif
 #endif
 
-typedef struct {
+typedef struct
+{
   int error;
 #ifdef __WIN32__
   SOCKET fd;
@@ -48,7 +49,8 @@ typedef struct {
   char *hostname;
 } splt_socket_handler;
 
-typedef struct {
+typedef struct
+{
   int (*functor)(const char *received_line, int line_number, void *user_data);
   void *user_data;
   int processing_headers;
@@ -60,32 +62,28 @@ typedef struct {
 splt_socket_handler *splt_sm_socket_handler_new(int *error);
 void splt_sm_socket_handler_free(splt_socket_handler **sh);
 
-void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port,
-    splt_state *state);
-void splt_sm_send_http_message(splt_socket_handler *sh, const char *message,
-    splt_state *state);
+void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port, splt_state *state);
+void splt_sm_send_http_message(splt_socket_handler *sh, const char *message, splt_state *state);
 
 void splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, splt_state *state,
-    int (*process_functor)(const char *received_line, int line_number, void *user_data),
-    void *user_data, int number_of_lines_to_skip_after_headers);
+  int (*process_functor)(const char *received_line, int line_number, void *user_data),
+  void *user_data, int number_of_lines_to_skip_after_headers);
 
-char *splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler *sh, 
-    splt_state *state,
-    ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
-    int (*process_functor)(const char *received_line, int line_number, void *user_data),
-    void *user_data, int number_of_lines_to_skip_after_headers);
+char *splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler *sh,
+  splt_state *state, ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
+  int (*process_functor)(const char *received_line, int line_number, void *user_data),
+  void *user_data, int number_of_lines_to_skip_after_headers);
 
 void splt_sm_receive_and_process(splt_socket_handler *sh, splt_state *state,
-    int (*process_functor)(const char *received_line, int line_number, void *user_data),
-    void *user_data);
+  int (*process_functor)(const char *received_line, int line_number, void *user_data),
+  void *user_data);
 
 char *splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *state,
-    ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
-    int (*process_functor)(const char *received_line, int line_number, void *user_data),
-    void *user_data);
+  ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
+  int (*process_functor)(const char *received_line, int line_number, void *user_data),
+  void *user_data);
 
 void splt_sm_close(splt_socket_handler *sh, splt_state *state);
 
 #define _MP3SPLT_SOCKET_MANAGER_H
 #endif
-

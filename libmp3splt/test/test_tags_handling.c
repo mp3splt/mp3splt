@@ -11,10 +11,7 @@ void cut_setup()
   error = SPLT_OK;
 }
 
-void cut_teardown()
-{
-  mp3splt_free_state(state);
-}
+void cut_teardown() { mp3splt_free_state(state); }
 
 void test_initial_tags()
 {
@@ -44,30 +41,22 @@ void test_append_and_return_tags()
   //first tags
   splt_tags *tags1 = mp3splt_tags_new(&error);
   cut_assert_equal_int(SPLT_OK, error);
-  error = mp3splt_tags_set(tags1,
-      SPLT_TAGS_ARTIST, "artist1",
-      SPLT_TAGS_ALBUM, "album1",
-      SPLT_TAGS_GENRE, "other1",
-      SPLT_TAGS_TRACK, "10",
-      0);
+  error = mp3splt_tags_set(tags1, SPLT_TAGS_ARTIST, "artist1", SPLT_TAGS_ALBUM, "album1",
+    SPLT_TAGS_GENRE, "other1", SPLT_TAGS_TRACK, "10", 0);
   cut_assert_equal_int(SPLT_OK, error);
- 
-  //append first tags 
+
+  //append first tags
   error = mp3splt_append_tags(state, tags1);
   cut_assert_equal_int(SPLT_OK, error);
 
   //second tags
   splt_tags *tags2 = mp3splt_tags_new(&error);
   cut_assert_equal_int(SPLT_OK, error);
-  error = mp3splt_tags_set(tags2,
-      SPLT_TAGS_ARTIST, "artist2",
-      SPLT_TAGS_ALBUM, "album2",
-      SPLT_TAGS_GENRE, "other2",
-      SPLT_TAGS_TRACK, "20",
-      0);
+  error = mp3splt_tags_set(tags2, SPLT_TAGS_ARTIST, "artist2", SPLT_TAGS_ALBUM, "album2",
+    SPLT_TAGS_GENRE, "other2", SPLT_TAGS_TRACK, "20", 0);
   cut_assert_equal_int(SPLT_OK, error);
 
-  //append second tags 
+  //append second tags
   error = mp3splt_append_tags(state, tags2);
   cut_assert_equal_int(SPLT_OK, error);
 
@@ -116,15 +105,11 @@ void test_append_and_erase_all_tags()
 {
   splt_tags *tags1 = mp3splt_tags_new(&error);
   cut_assert_equal_int(SPLT_OK, error);
-  error = mp3splt_tags_set(tags1,
-      SPLT_TAGS_ARTIST, "artist1",
-      SPLT_TAGS_ALBUM, "album1",
-      SPLT_TAGS_GENRE, "other1",
-      SPLT_TAGS_TRACK, "10",
-      0);
+  error = mp3splt_tags_set(tags1, SPLT_TAGS_ARTIST, "artist1", SPLT_TAGS_ALBUM, "album1",
+    SPLT_TAGS_GENRE, "other1", SPLT_TAGS_TRACK, "10", 0);
   cut_assert_equal_int(SPLT_OK, error);
 
-  //append tags 
+  //append tags
   error = mp3splt_append_tags(state, tags1);
   cut_assert_equal_int(SPLT_OK, error);
 
@@ -134,4 +119,3 @@ void test_append_and_erase_all_tags()
   splt_tags_group *tags_group = mp3splt_get_tags_group(state, &error);
   cut_assert_null(tags_group);
 }
-

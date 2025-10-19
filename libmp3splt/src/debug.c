@@ -67,15 +67,10 @@ void splt_d_send_memory_error_message(splt_state *state)
 
 static void splt_d_send_message(splt_state *state, const char *mess)
 {
-  if (state)
-  {
-    splt_c_put_debug_message_to_client(state, mess);
-  }
+  if (state) { splt_c_put_message_to_client(state, mess, SPLT_MESSAGE_DEBUG); }
   else
   {
-    fprintf(stdout,"%s\n",mess);
+    fprintf(stdout, "%s\n", mess);
     fflush(stdout);
   }
-
 }
-

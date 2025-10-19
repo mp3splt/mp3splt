@@ -43,30 +43,18 @@ long splt_co_convert_cue_line_to_hundreths(const char *s)
 {
   long minutes = 0, seconds = 0, frames = 0, i = 0;
 
-  for(i=0; i< strlen(s); i++)
+  for (i = 0; i < strlen(s); i++)
   {
-    if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!=':'))
-    {
-      return -1;
-    }
+    if ((s[i] < 0x30 || s[i] > 0x39) && (s[i] != ':')) { return -1; }
   }
 
-  if (sscanf(s, "%ld:%ld:%ld", &minutes, &seconds, &frames) < 2)
-  {
-    return -1;
-  }
+  if (sscanf(s, "%ld:%ld:%ld", &minutes, &seconds, &frames) < 2) { return -1; }
 
-  if ((minutes < 0) || (seconds < 0) || (frames < 0))
-  {
-    return -1;
-  }
+  if ((minutes < 0) || (seconds < 0) || (frames < 0)) { return -1; }
 
-  if ((seconds > 59) || (frames > 99))
-  {
-    return -1;
-  }
+  if ((seconds > 59) || (frames > 99)) { return -1; }
 
-  long hun = (long) round((double) frames * 100.0 / 75.0);
+  long hun = (long)round((double)frames * 100.0 / 75.0);
   hun += (minutes * 60 + seconds) * 100;
 
   return hun;
@@ -76,14 +64,8 @@ long splt_co_convert_cue_line_to_hundreths(const char *s)
 float splt_co_convert_to_db(double input)
 {
   float level;
-  if (input <= 0.0)
-  {
-    level = -96.0;
-  }
-  else 
-  {
-    level = 20 * log10(input);
-  }
+  if (input <= 0.0) { level = -96.0; }
+  else { level = 20 * log10(input); }
 
   return level;
 }
@@ -92,14 +74,8 @@ float splt_co_convert_to_db(double input)
 double splt_co_convert_from_db(float input)
 {
   double amp;
-  if (input <- 96.0)
-  {
-    amp = 0.0;
-  }
-  else 
-  {
-    amp = pow(10.0, input / 20.0);
-  }
+  if (input < -96.0) { amp = 0.0; }
+  else { amp = pow(10.0, input / 20.0); }
 
   return amp;
 }
@@ -111,29 +87,13 @@ void splt_co_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long 
   long split_hundr_without_h = split_hundr / 100;
   long m = split_hundr_without_h / 60;
   long s = split_hundr_without_h % 60;
-  if (mins)
-  {
-    *mins = m;
-  }
-  if (secs)
-  {
-    *secs = s;
-  }
-  if (hundr)
-  {
-    *hundr = h;
-  }
+  if (mins) { *mins = m; }
+  if (secs) { *secs = s; }
+  if (hundr) { *hundr = h; }
 }
 
 //! Convert float time in fractions of a second to a 1/100 seconds int
-long splt_co_time_to_long(double time)
-{
-  return (long) (time * 100.0);
-}
+long splt_co_time_to_long(double time) { return (long)(time * 100.0); }
 
 //! Convert float time in fractions of a second to a 1/100 seconds int rounding upwards
-long splt_co_time_to_long_ceil(double time)
-{
-  return (long) ceil(time * 100);
-}
-
+long splt_co_time_to_long_ceil(double time) { return (long)ceil(time * 100); }

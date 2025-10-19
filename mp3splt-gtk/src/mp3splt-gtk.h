@@ -47,9 +47,8 @@ GThread *create_thread(GThreadFunc func, gpointer data, ui_state *ui, const char
 
 void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify);
 
-gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data);
+gboolean exit_application(GtkWidget *widget, GdkEvent *event, gpointer data);
 
 #define MP3SPLT_GTK_DATE "13/03/15"
 
 #endif
-

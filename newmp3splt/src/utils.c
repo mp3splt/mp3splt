@@ -31,15 +31,12 @@ extern FILE *console_out;
 void *my_malloc(size_t size)
 {
   void *allocated = malloc(size);
-  if (! allocated)
+  if (!allocated)
   {
     print_error(_("cannot allocate memory !"));
     exit(1);
   }
-  else
-  {
-    return allocated;
-  }
+  else { return allocated; }
 
   return NULL;
 }
@@ -47,16 +44,13 @@ void *my_malloc(size_t size)
 void *my_realloc(void *ptr, size_t size)
 {
   void *allocated = realloc(ptr, size);
-  if (! allocated)
+  if (!allocated)
   {
     print_error(_("cannot allocate memory !"));
     exit(1);
   }
-  else
-  {
-    return allocated;
-  }
-  
+  else { return allocated; }
+
   return NULL;
 }
 
@@ -64,57 +58,39 @@ void *my_realloc(void *ptr, size_t size)
 //returns -1 if it cannot convert
 long c_hundreths(const char *s)
 {
-  long minutes=0, seconds=0, hundredths=0, i;
+  long minutes = 0, seconds = 0, hundredths = 0, i;
   long hun = -1;
 
-  if (!s)
-  {
-    return -LONG_MAX;
-  }
+  if (!s) { return -LONG_MAX; }
 
-  if (strcmp(s,"EOF") == 0)
-  {
-    return LONG_MAX;
-  }
+  if (strcmp(s, "EOF") == 0) { return LONG_MAX; }
 
   short negative = SPLT_FALSE;
   const char *scan_start = s;
   if (strlen(s) > 4 && strncmp(s, "EOF-", 4) == 0)
   {
     negative = SPLT_TRUE;
-    scan_start = s+4;
+    scan_start = s + 4;
   }
 
-  for(i=0; i<strlen(scan_start); i++)
+  for (i = 0; i < strlen(scan_start); i++)
   {
-    if ((scan_start[i]<0x30 || scan_start[i] > 0x39) && (scan_start[i]!='.'))
+    if ((scan_start[i] < 0x30 || scan_start[i] > 0x39) && (scan_start[i] != '.'))
     {
       return -LONG_MAX;
     }
   }
 
-  if (sscanf(scan_start, "%ld.%ld.%ld", &minutes, &seconds, &hundredths) < 2)
-  {
-    return -LONG_MAX;
-  }
+  if (sscanf(scan_start, "%ld.%ld.%ld", &minutes, &seconds, &hundredths) < 2) { return -LONG_MAX; }
 
-  if ((seconds > 59) || (hundredths > 99))
-  {
-    return -LONG_MAX;
-  }
+  if ((seconds > 59) || (hundredths > 99)) { return -LONG_MAX; }
 
-  if (scan_start[strlen(scan_start)-2] == '.')
-  {
-    hundredths *= 10;
-  }
+  if (scan_start[strlen(scan_start) - 2] == '.') { hundredths *= 10; }
 
   hun = hundredths;
-  hun += (minutes*60 + seconds) * 100;
+  hun += (minutes * 60 + seconds) * 100;
 
-  if (negative)
-  {
-    return -hun;
-  }
+  if (negative) { return -hun; }
 
   return hun;
 }
@@ -126,11 +102,11 @@ void show_files_and_ask_for_confirmation(main_data *data)
   char junk[18] = { '\0' };
   print_message(_("List of found files:\n"));
 
-  for (j = 0;j < data->number_of_filenames; j++)
+  for (j = 0; j < data->number_of_filenames; j++)
   {
     fprintf(console_out, "  %s\n", data->filenames[j]);
 
-    if (((j+1) % 22 == 0) && (j+1 < data->number_of_filenames))
+    if (((j + 1) % 22 == 0) && (j + 1 < data->number_of_filenames))
     {
       fprintf(console_out, _("\n-- 'Enter' for more, 's' to split, 'c' to cancel:"));
       fflush(console_out);
@@ -139,14 +115,8 @@ void show_files_and_ask_for_confirmation(main_data *data)
 
       if (junk[1] == '\n')
       {
-        if (junk[0] == 'c')
-        {
-          print_message_exit(_("\n split aborted."), data);
-        }
-        if (junk[0] == 's')
-        {
-          goto split;
-        }
+        if (junk[0] == 'c') { print_message_exit(_("\n split aborted."), data); }
+        if (junk[0] == 's') { goto split; }
       }
 
       print_message("\n");
@@ -162,14 +132,8 @@ void show_files_and_ask_for_confirmation(main_data *data)
 
     if (junk[1] == '\n')
     {
-      if (junk[0] == 'c')
-      {
-        print_message_exit(_("\n split aborted."), data);
-      }
-      if (junk[0] == 's')
-      {
-        answer_is_correct = SPLT_TRUE;
-      }
+      if (junk[0] == 'c') { print_message_exit(_("\n split aborted."), data); }
+      if (junk[0] == 's') { answer_is_correct = SPLT_TRUE; }
     }
 
   } while (!answer_is_correct);
@@ -177,25 +141,17 @@ void show_files_and_ask_for_confirmation(main_data *data)
   fprintf(console_out, "\n");
   fflush(console_out);
 
-split:
-  ;
+split:;
 }
 
 void get_silence_level(long time, float level, void *user_data)
 {
   silence_level *sl = user_data;
-  if (level == INT_MIN)
-  {
-    sl->print_silence_level = SPLT_FALSE;
-  }
-  else if (level == INT_MAX)
-  {
-    sl->print_silence_level = SPLT_TRUE;
-  }
+  if (level == INT_MIN) { sl->print_silence_level = SPLT_FALSE; }
+  else if (level == INT_MAX) { sl->print_silence_level = SPLT_TRUE; }
   else
   {
     sl->level_sum += level;
     sl->number_of_levels++;
   }
 }
-

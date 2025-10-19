@@ -30,7 +30,7 @@
  *********************************************************/
 
 /*!********************************************************
- * \file 
+ * \file
  *
  * this file contains the code for the radio button helpers.
  ********************************************************/
@@ -39,9 +39,8 @@
 
 static GtkRadioButton *rh_get_radio_from_value(GtkWidget *radio_button, gint value);
 
-GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
-    gint value, void (*callback)(GtkToggleButton *, gpointer), gpointer callback_data, 
-    GtkWidget *vbox)
+GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text, gint value,
+  void (*callback)(GtkToggleButton *, gpointer), gpointer callback_data, GtkWidget *vbox)
 {
   GtkWidget *new_radio_button =
     gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(radio_button), text);
@@ -49,8 +48,8 @@ GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
 
   if (callback)
   {
-    g_signal_connect(GTK_TOGGLE_BUTTON(new_radio_button), "toggled", G_CALLBACK(callback),
-        callback_data);
+    g_signal_connect(
+      GTK_TOGGLE_BUTTON(new_radio_button), "toggled", G_CALLBACK(callback), callback_data);
   }
 
   g_object_set_data(G_OBJECT(new_radio_button), "value", GINT_TO_POINTER(value));
@@ -64,16 +63,16 @@ gint rh_get_active_value(GtkWidget *radio_button)
   GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
 
   gint i = 0;
-  for(i = 0; i < g_slist_length(radio_button_list);i++)
+  for (i = 0; i < g_slist_length(radio_button_list); i++)
   {
-    GtkRadioButton *current_radio = (GtkRadioButton *) g_slist_nth_data(radio_button_list, i);
+    GtkRadioButton *current_radio = (GtkRadioButton *)g_slist_nth_data(radio_button_list, i);
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(current_radio)))
     {
       active_value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(current_radio), "value"));
       break;
     }
   }
-  
+
   return active_value;
 }
 
@@ -89,9 +88,9 @@ static GtkRadioButton *rh_get_radio_from_value(GtkWidget *radio_button, gint val
 
   gint i = 0;
   gint list_length = g_slist_length(radio_button_list);
-  for(i = 0; i < list_length;i++)
+  for (i = 0; i < list_length; i++)
   {
-    GtkRadioButton *current_radio = (GtkRadioButton *) g_slist_nth_data(radio_button_list, i);
+    GtkRadioButton *current_radio = (GtkRadioButton *)g_slist_nth_data(radio_button_list, i);
     gint current_value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(current_radio), "value"));
     if (current_value == value)
     {
@@ -102,4 +101,3 @@ static GtkRadioButton *rh_get_radio_from_value(GtkWidget *radio_button, gint val
 
   return NULL;
 }
-

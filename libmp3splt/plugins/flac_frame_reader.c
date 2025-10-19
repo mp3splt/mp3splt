@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -41,9 +41,8 @@
 #include "silence_processors.h"
 #include "flac_silence.h"
 
-static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
-    unsigned min_blocksize, unsigned max_blocksize, unsigned metadata_bits_per_sample, 
-    splt_state *state, splt_code *error)
+static void splt_flac_fr_read_header(splt_flac_frame_reader *fr, unsigned min_blocksize,
+  unsigned max_blocksize, unsigned metadata_bits_per_sample, splt_state *state, splt_code *error)
 {
   fr->crc8 = 0;
   fr->bytes_between_frame_number_and_crc8 = 0;
@@ -105,8 +104,9 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
         break;
     }
   }
-  else {
-    fr->channels = (unsigned) channel_assignment + 1;
+  else
+  {
+    fr->channels = (unsigned)channel_assignment + 1;
     fr->channel_assignment = SPLT_FLAC_INDEPENDENT;
   }
 
@@ -180,20 +180,20 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   }
 }
 
-static void splt_flac_fr_read_constant_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
-    splt_code *error)
+static void splt_flac_fr_read_constant_subframe(
+  splt_flac_frame_reader *fr, unsigned bits_per_sample, splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample, error);
 }
 
-static void splt_flac_fr_read_verbatim_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
-    splt_code *error)
+static void splt_flac_fr_read_verbatim_subframe(
+  splt_flac_frame_reader *fr, unsigned bits_per_sample, splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * fr->blocksize, error);
 }
 
-static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned order,
-    splt_code *error)
+static void splt_flac_fr_read_rice_residual(
+  splt_flac_frame_reader *fr, unsigned order, splt_code *error)
 {
   unsigned char rice_method = 4;
 
@@ -201,10 +201,7 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
   if (*error < 0) { return; }
   unsigned char second_bit = splt_flac_u_read_bit(fr, error);
   if (*error < 0) { return; }
-  if (first_bit == 0 && second_bit == 1)
-  {
-    rice_method = 5;
-  }
+  if (first_bit == 0 && second_bit == 1) { rice_method = 5; }
 
   unsigned char rice_partition_order = splt_flac_u_read_bits(fr, 4, error);
   if (*error < 0) { return; }
@@ -212,7 +209,7 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
   unsigned order_partition_number = pow(2, rice_partition_order);
 
   unsigned partition_number;
-  for (partition_number = 1;partition_number <= order_partition_number; partition_number++)
+  for (partition_number = 1; partition_number <= order_partition_number; partition_number++)
   {
     unsigned char rice_parameter_or_escape_code = splt_flac_u_read_bits(fr, rice_method, error);
     if (*error < 0) { return; }
@@ -226,21 +223,12 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
     }
 
     unsigned number_of_samples = 0;
-    if (rice_partition_order == 0)
-    {
-      number_of_samples = fr->blocksize - order;
-    }
-    else if (partition_number > 1)
-    {
-      number_of_samples = fr->blocksize / order_partition_number;
-    }
-    else
-    {
-      number_of_samples = (fr->blocksize / order_partition_number) - order;
-    }
+    if (rice_partition_order == 0) { number_of_samples = fr->blocksize - order; }
+    else if (partition_number > 1) { number_of_samples = fr->blocksize / order_partition_number; }
+    else { number_of_samples = (fr->blocksize / order_partition_number) - order; }
 
     unsigned i;
-    for (i = 0;i < number_of_samples;i++)
+    for (i = 0; i < number_of_samples; i++)
     {
       splt_flac_u_read_zeroes_and_the_next_one(fr, error);
       if (*error < 0) { return; }
@@ -254,8 +242,8 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
   }
 }
 
-static void splt_flac_fr_read_fixed_subframe(splt_flac_frame_reader *fr, unsigned order, 
-    unsigned bits_per_sample, splt_code *error)
+static void splt_flac_fr_read_fixed_subframe(
+  splt_flac_frame_reader *fr, unsigned order, unsigned bits_per_sample, splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * order, error);
   if (*error < 0) { return; }
@@ -263,8 +251,8 @@ static void splt_flac_fr_read_fixed_subframe(splt_flac_frame_reader *fr, unsigne
   splt_flac_fr_read_rice_residual(fr, order, error);
 }
 
-static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned order, 
-    unsigned bits_per_sample, splt_state *state, splt_code *error)
+static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned order,
+  unsigned bits_per_sample, splt_state *state, splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * order, error);
   if (*error < 0) { return; }
@@ -282,15 +270,15 @@ static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned 
   splt_flac_u_read_bits(fr, 5, error);
   if (*error < 0) { return; }
 
-  char qlp_coeff_precision = ((char) quantized_linear_predictor) + 1;
+  char qlp_coeff_precision = ((char)quantized_linear_predictor) + 1;
   splt_flac_u_read_up_to_total_bits(fr, qlp_coeff_precision * order, error);
   if (*error < 0) { return; }
 
   splt_flac_fr_read_rice_residual(fr, order, error);
 }
 
-static void splt_flac_fr_read_subframe_content(splt_flac_frame_reader *fr, int sf_type, unsigned order,
-    unsigned bits_per_sample, splt_state *state, splt_code *error)
+static void splt_flac_fr_read_subframe_content(splt_flac_frame_reader *fr, int sf_type,
+  unsigned order, unsigned bits_per_sample, splt_state *state, splt_code *error)
 {
   switch (sf_type)
   {
@@ -312,8 +300,8 @@ static void splt_flac_fr_read_subframe_content(splt_flac_frame_reader *fr, int s
   *error = SPLT_ERROR_INVALID;
 }
 
-static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
-    splt_state *state, splt_code *error)
+static void splt_flac_fr_read_subframe(
+  splt_flac_frame_reader *fr, unsigned bits_per_sample, splt_state *state, splt_code *error)
 {
   unsigned char bit_padding_subframe_type_and_wasted_bit = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
@@ -353,14 +341,8 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
     return;
   }
 
-  if (subframe_type == 0)
-  {
-    sf_type = SPLT_FLAC_SUBFRAME_CONSTANT;
-  }
-  else if (subframe_type == 2)
-  {
-    sf_type = SPLT_FLAC_SUBFRAME_VERBATIM;
-  }
+  if (subframe_type == 0) { sf_type = SPLT_FLAC_SUBFRAME_CONSTANT; }
+  else if (subframe_type == 2) { sf_type = SPLT_FLAC_SUBFRAME_VERBATIM; }
   else if (subframe_type < 16)
   {
     splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
@@ -384,17 +366,17 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
     order = ((bit_padding_subframe_type_and_wasted_bit >> 1) & 31) + 1;
   }
 
-  splt_flac_fr_read_subframe_content(fr, sf_type, order, bits_per_sample - wasted_bits_per_sample,
-      state, error);
+  splt_flac_fr_read_subframe_content(
+    fr, sf_type, order, bits_per_sample - wasted_bits_per_sample, state, error);
 }
 
-static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
-    unsigned min_blocksize, unsigned max_blocksize, unsigned metadata_bits_per_sample,
-    splt_state *state, splt_code *error)
+static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr, unsigned min_blocksize,
+  unsigned max_blocksize, unsigned metadata_bits_per_sample, splt_state *state, splt_code *error)
 {
   fr->crc16 = 0;
 
-  splt_flac_fr_read_header(fr, min_blocksize, max_blocksize, metadata_bits_per_sample, state, error);
+  splt_flac_fr_read_header(
+    fr, min_blocksize, max_blocksize, metadata_bits_per_sample, state, error);
   if (*error < 0) { return; }
 
   unsigned channel = 0;
@@ -424,26 +406,35 @@ static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
   }
 }
 
-static void splt_flac_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reader *fr, splt_code *error)
+static void splt_flac_fr_set_next_frame_and_sample_numbers(
+  splt_flac_frame_reader *fr, splt_code *error)
 {
   fr->frame_number++;
   fr->sample_number = fr->sample_number + fr->blocksize;
 
   if (fr->frame_number_as_utf8) { free(fr->frame_number_as_utf8); }
   fr->frame_number_as_utf8 =
-    splt_flac_l_convert_to_utf8((FLAC__uint64) fr->frame_number, &fr->frame_number_as_utf8_length);
-  if (fr->frame_number_as_utf8 == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
+    splt_flac_l_convert_to_utf8((FLAC__uint64)fr->frame_number, &fr->frame_number_as_utf8_length);
+  if (fr->frame_number_as_utf8 == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
 
   if (fr->sample_number_as_utf8) { free(fr->sample_number_as_utf8); }
   fr->sample_number_as_utf8 =
-    splt_flac_l_convert_to_utf8((FLAC__uint64) fr->sample_number, &fr->sample_number_as_utf8_length);
-  if (fr->sample_number_as_utf8 == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
+    splt_flac_l_convert_to_utf8((FLAC__uint64)fr->sample_number, &fr->sample_number_as_utf8_length);
+  if (fr->sample_number_as_utf8 == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
 }
 
-static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t frame_length,
-    splt_state *state, splt_code *error, void *user_data)
+static void splt_flac_fr_write_frame_processor(
+  unsigned char *frame, size_t frame_length, splt_state *state, splt_code *error, void *user_data)
 {
-  splt_flac_frame_reader *fr = (splt_flac_frame_reader *) user_data;
+  splt_flac_frame_reader *fr = (splt_flac_frame_reader *)user_data;
 
   unsigned char *frame_or_sample_utf8_bytes;
   unsigned char frame_or_sample_utf8_length;
@@ -497,7 +488,7 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
 
   //frame or sample utf8 number
   int i = 0;
-  for (;i < frame_or_sample_utf8_length;i++)
+  for (; i < frame_or_sample_utf8_length; i++)
   {
     modified_frame[4 + i] = frame_or_sample_utf8_bytes[i];
     ptr = modified_frame + 4 + i;
@@ -507,30 +498,27 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
   size_t length_up_to_including_frame_number = 4 + frame_or_sample_read_length;
 
   memcpy(ptr + 1,
-      frame + length_up_to_including_frame_number,
-      frame_length - length_up_to_including_frame_number);
+    frame + length_up_to_including_frame_number,
+    frame_length - length_up_to_including_frame_number);
 
   //compute and set new crc8
   size_t j = 0;
-  size_t before_crc8_length = 
+  size_t before_crc8_length =
     4 + frame_or_sample_utf8_length + fr->bytes_between_frame_number_and_crc8;
   unsigned char new_crc8 = 0;
-  for (;j < before_crc8_length;j++)
-  {
-    SPLT_FLAC_UPDATE_CRC8(new_crc8, modified_frame[j]);
-  }
+  for (; j < before_crc8_length; j++) { SPLT_FLAC_UPDATE_CRC8(new_crc8, modified_frame[j]); }
   modified_frame[j] = new_crc8;
 
   //compute and set new crc16
   unsigned new_crc16 = 0;
-  for (j = 0;j < modified_frame_length - 2;j++)
+  for (j = 0; j < modified_frame_length - 2; j++)
   {
     SPLT_FLAC_UPDATE_CRC16(new_crc16, modified_frame[j]);
   }
-  unsigned char first_byte_of_new_crc16 = (unsigned char) (new_crc16 >> 8);
-  unsigned char last_byte_of_new_crc16 = (unsigned char) ((new_crc16 << 8) >> 8);
+  unsigned char first_byte_of_new_crc16 = (unsigned char)(new_crc16 >> 8);
+  unsigned char last_byte_of_new_crc16 = (unsigned char)((new_crc16 << 8) >> 8);
   modified_frame[j] = first_byte_of_new_crc16;
-  modified_frame[j+1] = last_byte_of_new_crc16;
+  modified_frame[j + 1] = last_byte_of_new_crc16;
 
   splt_flac_md5_decode_frame(modified_frame, modified_frame_length, fr->flac_md5_d, error, state);
   if (*error < 0) { goto end; }
@@ -545,10 +533,10 @@ end:
   free(modified_frame);
 }
 
-static void splt_flac_fr_backup_frame_processor(unsigned char *frame, size_t frame_length,
-    splt_state *state, splt_code *error, void *user_data)
+static void splt_flac_fr_backup_frame_processor(
+  unsigned char *frame, size_t frame_length, splt_state *state, splt_code *error, void *user_data)
 {
-  splt_flac_frame_reader *fr = (splt_flac_frame_reader *) user_data;
+  splt_flac_frame_reader *fr = (splt_flac_frame_reader *)user_data;
 
   if (fr->previous_frame) { free(fr->previous_frame); }
   fr->previous_frame = malloc(sizeof(unsigned char) * frame_length);
@@ -556,10 +544,9 @@ static void splt_flac_fr_backup_frame_processor(unsigned char *frame, size_t fra
   fr->previous_frame_length = frame_length;
 }
 
-static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
-    unsigned min_blocksize, unsigned max_blocksize,
-    unsigned min_framesize, unsigned max_framesize,
-    const splt_flac_metadatas *metadatas, splt_flac_frame_reader *fr, splt_code *error)
+static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state, unsigned min_blocksize,
+  unsigned max_blocksize, unsigned min_framesize, unsigned max_framesize,
+  const splt_flac_metadatas *metadatas, splt_flac_frame_reader *fr, splt_code *error)
 {
   if (min_framesize == 0) { fr->out_streaminfo.min_framesize = 0; }
   if (max_framesize == 0) { fr->out_streaminfo.max_framesize = 0; }
@@ -575,10 +562,7 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   if (md5sum)
   {
     int i;
-    for (i = 0; i < 16; i++)
-    {
-      fr->out_streaminfo.md5sum[i] = md5sum[i];
-    }
+    for (i = 0; i < 16; i++) { fr->out_streaminfo.md5sum[i] = md5sum[i]; }
     free(md5sum);
   }
 
@@ -592,8 +576,8 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   int last = 1;
   if (metadatas->number_of_datas > 0) { last = 0; }
 
-  unsigned char *metadata_header =
-    splt_flac_mu_build_metadata_header(SPLT_FLAC_METADATA_STREAMINFO, last, SPLT_FLAC_STREAMINFO_LENGTH);
+  unsigned char *metadata_header = splt_flac_mu_build_metadata_header(
+    SPLT_FLAC_METADATA_STREAMINFO, last, SPLT_FLAC_STREAMINFO_LENGTH);
   if (metadata_header == NULL)
   {
     free(streaminfo_bytes);
@@ -602,10 +586,7 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   }
 
   //TODO: remove fseek for stdout; how to ?
-  if (fr->out != NULL)
-  {
-    rewind(fr->out);
-  }
+  if (fr->out != NULL) { rewind(fr->out); }
 
   unsigned char flac_word[4] = { 0x66, 0x4C, 0x61, 0x43 };
   if (splt_io_fwrite(state, flac_word, 4, 1, fr->out) != 1)
@@ -644,10 +625,7 @@ static splt_flac_frame_reader *splt_flac_fr_reset_for_new_file(splt_flac_frame_r
   fr->out_streaminfo.total_samples = 0;
 
   int i = 0;
-  for (i = 0;i < 16; i++)
-  {
-    fr->out_streaminfo.md5sum[i] = 0;
-  }
+  for (i = 0; i < 16; i++) { fr->out_streaminfo.md5sum[i] = 0; }
 
   fr->out_streaminfo.sample_rate = 0;
   fr->out_streaminfo.channels = 0;
@@ -657,11 +635,15 @@ static splt_flac_frame_reader *splt_flac_fr_reset_for_new_file(splt_flac_frame_r
   if (fr->frame_number_as_utf8) { free(fr->frame_number_as_utf8); }
   fr->frame_number_as_utf8 =
     splt_flac_l_convert_to_utf8(fr->frame_number, &fr->frame_number_as_utf8_length);
-  if (fr->frame_number_as_utf8 == NULL) { free(fr); return NULL; }
+  if (fr->frame_number_as_utf8 == NULL)
+  {
+    free(fr);
+    return NULL;
+  }
 
   fr->sample_number = 0;
   if (fr->sample_number_as_utf8) { free(fr->sample_number_as_utf8); }
-  fr->sample_number_as_utf8 = 
+  fr->sample_number_as_utf8 =
     splt_flac_l_convert_to_utf8(fr->sample_number, &fr->sample_number_as_utf8_length);
   if (fr->sample_number_as_utf8 == NULL)
   {
@@ -704,10 +686,7 @@ splt_flac_frame_reader *splt_flac_fr_new(FILE *in, const char *input_filename)
   fr->output_buffer = NULL;
   fr->output_buffer_times = 0;
 
-  if (splt_flac_fr_reset_for_new_file(fr) == NULL)
-  {
-    return NULL;
-  }
+  if (splt_flac_fr_reset_for_new_file(fr) == NULL) { return NULL; }
 
   fr->previous_frame = NULL;
   fr->previous_frame_length = 0;
@@ -737,11 +716,11 @@ void splt_flac_fr_free(splt_flac_frame_reader *fr)
 }
 
 static void splt_flac_fr_write_metadatas(splt_flac_frame_reader *fr,
-    const splt_flac_metadatas *metadatas, const int set_last_as_last,
-    const char *output_fname, splt_state *state, splt_code *error)
+  const splt_flac_metadatas *metadatas, const int set_last_as_last, const char *output_fname,
+  splt_state *state, splt_code *error)
 {
   int i = 0;
-  for (;i < metadatas->number_of_datas; i++)
+  for (; i < metadatas->number_of_datas; i++)
   {
     splt_flac_one_metadata *one_metadata = &metadatas->datas[i];
 
@@ -768,7 +747,7 @@ error:
 }
 
 static void splt_flac_fr_write_tags(splt_flac_frame_reader *fr, const splt_flac_tags *flac_tags,
-    const splt_tags *tags, const char *output_fname, splt_state *state, splt_code *error)
+  const splt_tags *tags, const char *output_fname, splt_state *state, splt_code *error)
 {
   splt_flac_vorbis_tags *vorbis_tags = splt_flac_vorbis_tags_new(error);
   if (*error < 0) { return; }
@@ -794,7 +773,7 @@ static void splt_flac_fr_write_tags(splt_flac_frame_reader *fr, const splt_flac_
   if (tags->set_original_tags && flac_tags->other_tags)
   {
     FLAC__uint32 j = 0;
-    for (;j < flac_tags->other_tags->number_of_tags; j++)
+    for (; j < flac_tags->other_tags->number_of_tags; j++)
     {
       splt_flac_vorbis_tags_append(vorbis_tags, flac_tags->other_tags->tags[j], error);
       if (*error < 0) { goto end; }
@@ -831,37 +810,37 @@ static void splt_flac_fr_write_tags(splt_flac_frame_reader *fr, const splt_flac_
   if (splt_io_fwrite(state, uint32_bytes, 4, 1, fr->out) != 1) { goto error; }
 
   FLAC__uint32 i = 0;
-  for (;i < vorbis_tags->number_of_tags;i++)
+  for (; i < vorbis_tags->number_of_tags; i++)
   {
-    FLAC__uint32 comment_length = (FLAC__uint32) strlen(vorbis_tags->tags[i]);
+    FLAC__uint32 comment_length = (FLAC__uint32)strlen(vorbis_tags->tags[i]);
     splt_flac_l_pack_uint32_little_endian(comment_length, uint32_bytes, 4);
     //comment length and value
     if (splt_io_fwrite(state, uint32_bytes, 4, 1, fr->out) != 1) { goto error; }
-    if (splt_io_fwrite(state, vorbis_tags->tags[i], comment_length, 1, fr->out) != 1) { goto error; }
+    if (splt_io_fwrite(state, vorbis_tags->tags[i], comment_length, 1, fr->out) != 1)
+    {
+      goto error;
+    }
   }
 
 end:
-  splt_flac_vorbis_tags_free(&vorbis_tags); 
+  splt_flac_vorbis_tags_free(&vorbis_tags);
   return;
 
 error:
   splt_e_set_error_data(state, fr->output_fname);
   *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-  splt_flac_vorbis_tags_free(&vorbis_tags); 
+  splt_flac_vorbis_tags_free(&vorbis_tags);
 }
 
 static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_frame_reader *fr,
-    const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags, 
-    const splt_tags *tags_to_write, const char *output_fname, splt_state *state, splt_code *error)
+  const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags,
+  const splt_tags *tags_to_write, const char *output_fname, splt_state *state, splt_code *error)
 {
-  if (fr->out_streaminfo.total_samples != 0)
-  {
-    return;
-  }
+  if (fr->out_streaminfo.total_samples != 0) { return; }
 
   splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
 
-  if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  if (!splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
   {
     fr->out = splt_io_fopen(output_fname, "wb+");
     if (fr->out == NULL)
@@ -872,8 +851,10 @@ static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_fr
     }
   }
 
-  unsigned char space[4+SPLT_FLAC_METADATA_HEADER_LENGTH+SPLT_FLAC_STREAMINFO_LENGTH] = {'\0'};
-  int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
+  unsigned char space[4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH] = {
+    '\0'
+  };
+  int space_size = 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
   if (splt_io_fwrite(state, space, space_size, 1, fr->out) != 1)
   {
     splt_e_set_error_data(state, fr->output_fname);
@@ -881,10 +862,7 @@ static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_fr
   }
 
   int need_to_write_tags = SPLT_TRUE;
-  if (flac_tags == NULL || tags_to_write == NULL)
-  {
-    need_to_write_tags = SPLT_FALSE;
-  }
+  if (flac_tags == NULL || tags_to_write == NULL) { need_to_write_tags = SPLT_FALSE; }
 
   splt_flac_fr_write_metadatas(fr, metadatas, !need_to_write_tags, output_fname, state, error);
   if (*error < 0) { return; }
@@ -895,38 +873,29 @@ static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_fr
   }
 }
 
-static double splt_flac_fr_back_end_point_according_to_auto_adjust(splt_state *state, 
-    double begin_point, double end_point, int *adjust_gap_secs)
+static double splt_flac_fr_back_end_point_according_to_auto_adjust(
+  splt_state *state, double begin_point, double end_point, int *adjust_gap_secs)
 {
-  if (!*adjust_gap_secs)
-  {
-    return end_point;
-  }
+  if (!*adjust_gap_secs) { return end_point; }
 
   double new_end_point = end_point;
 
-  double adj = (double) (*adjust_gap_secs);
+  double adj = (double)(*adjust_gap_secs);
   double len = (end_point - begin_point);
-  if (adj > len)
-  {
-    adj = len;
-  }
+  if (adj > len) { adj = len; }
 
   if (end_point > adj)
   {
     new_end_point -= adj;
-    *adjust_gap_secs = (int) adj;
+    *adjust_gap_secs = (int)adj;
   }
-  else
-  {
-    *adjust_gap_secs = 0;
-  }
+  else { *adjust_gap_secs = 0; }
 
   return new_end_point;
 }
 
-static void update_progress(splt_state *state, double first_time, double time, double end_point,
-    short before_adjust)
+static void update_progress(
+  splt_state *state, double first_time, double time, double end_point, short before_adjust)
 {
   double current = time - first_time;
   double total = end_point - first_time;
@@ -943,23 +912,16 @@ static void update_progress(splt_state *state, double first_time, double time, d
     {
       splt_c_update_progress(state, current, total, 2, 0, SPLT_DEFAULT_PROGRESS_RATE2);
     }
-    else
-    {
-      splt_c_update_progress(state, current, total, 4, 0.75, SPLT_DEFAULT_PROGRESS_RATE2);
-    }
+    else { splt_c_update_progress(state, current, total, 4, 0.75, SPLT_DEFAULT_PROGRESS_RATE2); }
   }
 }
 
 void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,
-    const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags,
-    const splt_tags *tags_to_write,
-    const char *output_fname,
-    double begin_point, double end_point, int save_end_point,
-    unsigned min_blocksize, unsigned max_blocksize, 
-    unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
-    unsigned min_framesize, unsigned max_framesize,
-    float offset,
-    splt_code *error)
+  const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags,
+  const splt_tags *tags_to_write, const char *output_fname, double begin_point, double end_point,
+  int save_end_point, unsigned min_blocksize, unsigned max_blocksize, unsigned bits_per_sample,
+  unsigned sample_rate, unsigned channels, unsigned min_framesize, unsigned max_framesize,
+  float offset, splt_code *error)
 {
   if (splt_flac_fr_reset_for_new_file(fr) == NULL)
   {
@@ -975,10 +937,11 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
 
   if (save_end_point && fr->previous_frame)
   {
-    splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, flac_tags,
-        tags_to_write, output_fname, state, error);
+    splt_flac_fr_open_file_and_write_metadata_if_first_time(
+      fr, metadatas, flac_tags, tags_to_write, output_fname, state, error);
 
-    splt_flac_fr_write_frame_processor(fr->previous_frame, fr->previous_frame_length, state, error, fr);
+    splt_flac_fr_write_frame_processor(
+      fr->previous_frame, fr->previous_frame_length, state, error, fr);
     free(fr->previous_frame);
     fr->previous_frame = NULL;
     fr->previous_frame_length = 0;
@@ -989,10 +952,7 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     fr->out_streaminfo.total_samples += fr->blocksize;
   }
 
-  if (save_end_point && fr->end_point > 0)
-  {
-    begin_point = fr->end_point;
-  }
+  if (save_end_point && fr->end_point > 0) { begin_point = fr->end_point; }
 
   unsigned long adjust_gap_hundr = 0;
   int adjust_gap_secs = splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP);
@@ -1001,9 +961,9 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
   double total_time = splt_t_get_total_time_as_double_secs(state);
   if (!end_point_is_eof && end_point < total_time)
   {
-    end_point = splt_flac_fr_back_end_point_according_to_auto_adjust(state,
-        begin_point, end_point, &adjust_gap_secs);
-    adjust_gap_hundr = (unsigned long) adjust_gap_secs * 100;
+    end_point = splt_flac_fr_back_end_point_according_to_auto_adjust(
+      state, begin_point, end_point, &adjust_gap_secs);
+    adjust_gap_hundr = (unsigned long)adjust_gap_secs * 100;
   }
 
   off_t previous_offset = 0;
@@ -1020,18 +980,18 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     splt_flac_fr_read_frame(fr, min_blocksize, max_blocksize, bits_per_sample, state, error);
     if (*error < 0) { goto end; }
 
-    double time = (double) fr->current_sample_number / (double) sample_rate;
+    double time = (double)fr->current_sample_number / (double)sample_rate;
     if (first_time < 0) { first_time = time; }
 
     update_progress(state, first_time, time, end_point, before_adjust);
 
     if (time >= begin_point && (time < end_point || end_point < 0))
     {
-      splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, flac_tags,
-          tags_to_write, output_fname, state, error);
+      splt_flac_fr_open_file_and_write_metadata_if_first_time(
+        fr, metadatas, flac_tags, tags_to_write, output_fname, state, error);
 
-      splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
-          splt_flac_fr_write_frame_processor, fr);
+      splt_flac_u_process_frame(
+        fr, frame_byte_buffer_start, state, error, splt_flac_fr_write_frame_processor, fr);
       if (*error < 0) { goto end; }
 
       splt_flac_fr_set_next_frame_and_sample_numbers(fr, error);
@@ -1049,16 +1009,16 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
 
         unsigned long length = 2 * adjust_gap_hundr;
 
-        int silence_points_found = splt_flac_scan_silence(state, previous_offset, length,
-            threshold, min_length, shots, 0, error, splt_scan_silence_processor);
+        int silence_points_found = splt_flac_scan_silence(state, previous_offset, length, threshold,
+          min_length, shots, 0, error, splt_scan_silence_processor);
 
         if (silence_points_found > 0)
         {
-          end_point = (double) splt_siu_silence_position(state->silence_list, offset);
+          end_point = (double)splt_siu_silence_position(state->silence_list, offset);
         }
         else
         {
-          end_point += (double) adjust_gap_secs;
+          end_point += (double)adjust_gap_secs;
 
           *error = splt_u_process_no_auto_adjust_found(state, end_point);
           if (*error < 0) { goto end; }
@@ -1074,15 +1034,15 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
 
       if (end_point > 0 && time >= end_point)
       {
-        splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
-            splt_flac_fr_backup_frame_processor, fr);
+        splt_flac_u_process_frame(
+          fr, frame_byte_buffer_start, state, error, splt_flac_fr_backup_frame_processor, fr);
         we_continue = 0;
       }
       else
       {
         //process frame if auto adjust changed the end point
-        splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
-            splt_flac_fr_write_frame_processor, fr);
+        splt_flac_u_process_frame(
+          fr, frame_byte_buffer_start, state, error, splt_flac_fr_write_frame_processor, fr);
         if (*error < 0) { goto end; }
 
         splt_flac_fr_set_next_frame_and_sample_numbers(fr, error);
@@ -1108,25 +1068,15 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
 
   if (fr->out_streaminfo.total_samples != 0)
   {
-    splt_flac_fr_finish_and_write_streaminfo(state, min_blocksize, max_blocksize,
-        min_framesize, max_framesize, metadatas, fr, error);
+    splt_flac_fr_finish_and_write_streaminfo(
+      state, min_blocksize, max_blocksize, min_framesize, max_framesize, metadatas, fr, error);
   }
-  else
-  {
-    *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
-  }
+  else { *error = SPLT_ERROR_BEGIN_OUT_OF_FILE; }
 
-  if (save_end_point)
-  {
-    fr->end_point = end_point;
-  }
-  else
-  {
-    fr->end_point = 0;
-  }
+  if (save_end_point) { fr->end_point = end_point; }
+  else { fr->end_point = 0; }
 
-end:
-  ;
+end:;
 
   if (fr->out)
   {
@@ -1138,4 +1088,3 @@ end:
     }
   }
 }
-

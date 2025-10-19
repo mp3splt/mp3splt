@@ -33,7 +33,7 @@
  * \file
  *  Get the current state of all GUI buttons
  *
- * The code contained in this file reads out the current 
+ * The code contained in this file reads out the current
  * state of all GUI buttons and saves it into the structure
  * ui->mp3splt_state.
  ********************************************************/
@@ -74,37 +74,38 @@ ui_for_split *build_ui_for_split(ui_state *ui)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->bit_reservoir_mode));
 
   ui_fs->adjust_mode = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->adjust_mode));
-  ui_fs->adjust_offset = (float) gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_offset));
+  ui_fs->adjust_offset =
+    (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_offset));
   ui_fs->adjust_gap = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_adjust_gap));
-  ui_fs->adjust_threshold = (float)
-    gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_threshold));
-  ui_fs->adjust_min = (float) gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_min));
+  ui_fs->adjust_threshold =
+    (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_threshold));
+  ui_fs->adjust_min = (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_min));
 
   ui_fs->split_file_mode = get_split_file_mode(ui);
 
   ui_fs->selected_split_mode = get_selected_split_mode(ui);
 
   ui_fs->time_split_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_time));
-  ui_fs->equal_tracks_value = 
+  ui_fs->equal_tracks_value =
     gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_equal_tracks));
 
-  ui_fs->silence_threshold = (float)
-    gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_threshold));
+  ui_fs->silence_threshold =
+    (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_threshold));
   ui_fs->silence_shots =
     gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->all_spinner_silence_shots));
-  ui_fs->silence_offset = (float)
-    gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_offset));
+  ui_fs->silence_offset =
+    (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_offset));
   ui_fs->silence_number =
     gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->all_spinner_silence_number_tracks));
-  ui_fs->silence_minimum_length = (float)
-    gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_minimum));
-  ui_fs->silence_minimum_track_length = (float)
-    gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_track_minimum));
+  ui_fs->silence_minimum_length =
+    (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_minimum));
+  ui_fs->silence_minimum_track_length =
+    (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_track_minimum));
   ui_fs->silence_remove =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->all_silence_remove_silence));
 
-  ui_fs->trim_silence_threshold = (float)
-    gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_trim_silence_threshold));
+  ui_fs->trim_silence_threshold =
+    (float)gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_trim_silence_threshold));
 
   ui_fs->single_silence_threshold = ui->infos->silence_threshold_value;
   ui_fs->single_silence_shots = ui->infos->silence_shots_value;
@@ -128,10 +129,7 @@ ui_for_split *build_ui_for_split(ui_state *ui)
   ui_fs->regex_comment_tag_format = ch_get_active_value(gui->comment_text_properties_combo);
 
   const gchar *regex = gtk_entry_get_text(GTK_ENTRY(gui->regex_entry));
-  if (regex != NULL)
-  {
-    ui_fs->regex = g_strdup(regex);
-  }
+  if (regex != NULL) { ui_fs->regex = g_strdup(regex); }
 
   const gchar *regex_default_comment = gtk_entry_get_text(GTK_ENTRY(gui->comment_tag_entry));
   if (regex_default_comment != NULL)
@@ -140,22 +138,13 @@ ui_for_split *build_ui_for_split(ui_state *ui)
   }
 
   const gchar *regex_default_genre = ch_get_active_str_value(gui->genre_combo);
-  if (regex_default_genre != NULL)
-  {
-    ui_fs->regex_default_genre = g_strdup(regex_default_genre);
-  }
+  if (regex_default_genre != NULL) { ui_fs->regex_default_genre = g_strdup(regex_default_genre); }
 
   const gchar *output_format = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-  if (output_format != NULL)
-  {
-    ui_fs->output_format = g_strdup(output_format);
-  }
+  if (output_format != NULL) { ui_fs->output_format = g_strdup(output_format); }
 
   const gchar *output_directory = get_output_directory(ui);
-  if (output_directory != NULL)
-  {
-    ui_fs->output_directory = g_strdup(output_directory);
-  }
+  if (output_directory != NULL) { ui_fs->output_directory = g_strdup(output_directory); }
 
   ui_fs->is_checked_output_radio_box = get_checked_output_radio_box(ui);
 
@@ -164,10 +153,7 @@ ui_for_split *build_ui_for_split(ui_state *ui)
 
 void free_ui_for_split(ui_for_split *ui_fs)
 {
-  if (ui_fs->pat)
-  {
-    free_points_and_tags(&ui_fs->pat);
-  }
+  if (ui_fs->pat) { free_points_and_tags(&ui_fs->pat); }
 
   if (ui_fs->regex) { g_free(ui_fs->regex); }
   if (ui_fs->regex_default_comment) { g_free(ui_fs->regex_default_comment); }
@@ -194,26 +180,20 @@ void put_options_from_preferences(ui_for_split *ui_fs)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_FRAME_MODE, SPLT_TRUE);
   }
-  else
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_FRAME_MODE, SPLT_FALSE);
-  }
+  else { mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_FRAME_MODE, SPLT_FALSE); }
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_HANDLE_BIT_RESERVOIR,
-      ui_fs->bit_reservoir_mode);
+  mp3splt_set_int_option(
+    ui->mp3splt_state, SPLT_OPT_HANDLE_BIT_RESERVOIR, ui_fs->bit_reservoir_mode);
 
   if (ui_fs->adjust_mode)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_AUTO_ADJUST, SPLT_TRUE);
     mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, ui_fs->adjust_offset);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_GAP, ui_fs->adjust_gap); 
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_GAP, ui_fs->adjust_gap);
     mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->adjust_threshold);
     mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, ui_fs->adjust_min);
   }
-  else
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_AUTO_ADJUST, SPLT_FALSE);
-  }
+  else { mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_AUTO_ADJUST, SPLT_FALSE); }
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_FALSE);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
@@ -234,26 +214,26 @@ void put_options_from_preferences(ui_for_split *ui_fs)
         break;
       case SELECTED_SPLIT_TIME:
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
-        mp3splt_set_long_option(ui->mp3splt_state, SPLT_OPT_SPLIT_TIME,
-            ui_fs->time_split_value * 100);
+        mp3splt_set_long_option(
+          ui->mp3splt_state, SPLT_OPT_SPLIT_TIME, ui_fs->time_split_value * 100);
         break;
       case SELECTED_SPLIT_EQUAL_TIME_TRACKS:
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_LENGTH_MODE);
-        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER,
-            ui_fs->equal_tracks_value);
+        mp3splt_set_int_option(
+          ui->mp3splt_state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER, ui_fs->equal_tracks_value);
         break;
       case SELECTED_SPLIT_SILENCE:
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
-        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
-            ui_fs->silence_threshold);
+        mp3splt_set_float_option(
+          ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->silence_threshold);
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_SHOTS, ui_fs->silence_shots);
         mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, ui_fs->silence_offset);
-        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS,
-            ui_fs->silence_number);
-        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH,
-            ui_fs->silence_minimum_length);
-        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
-            ui_fs->silence_minimum_track_length);
+        mp3splt_set_int_option(
+          ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, ui_fs->silence_number);
+        mp3splt_set_float_option(
+          ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, ui_fs->silence_minimum_length);
+        mp3splt_set_float_option(
+          ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH, ui_fs->silence_minimum_track_length);
         if (ui_fs->silence_remove)
         {
           mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_TRUE);
@@ -264,8 +244,10 @@ void put_options_from_preferences(ui_for_split *ui_fs)
         }
         break;
       case SELECTED_SPLIT_TRIM_SILENCE:
-        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
-        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->trim_silence_threshold);
+        mp3splt_set_int_option(
+          ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
+        mp3splt_set_float_option(
+          ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->trim_silence_threshold);
         break;
       case SELECTED_SPLIT_ERROR:
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_ERROR_MODE);
@@ -275,7 +257,8 @@ void put_options_from_preferences(ui_for_split *ui_fs)
     }
   }
 
-  int selected_tags_value = ui_fs->selected_tags_value;;
+  int selected_tags_value = ui_fs->selected_tags_value;
+  ;
   if (selected_tags_value == NO_TAGS)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, SPLT_NO_TAGS);
@@ -311,8 +294,8 @@ void put_options_from_preferences(ui_for_split *ui_fs)
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_FORCE_TAGS_VERSION, 12);
   }
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES,
-      ui_fs->create_dirs_from_filenames);
+  mp3splt_set_int_option(
+    ui->mp3splt_state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, ui_fs->create_dirs_from_filenames);
 }
 
 void put_tags_from_filename_regex_options(ui_for_split *ui_fs)
@@ -324,24 +307,20 @@ void put_tags_from_filename_regex_options(ui_for_split *ui_fs)
   int underscores = ui_fs->regex_replace_underscores;
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT, underscores);
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_ARTIST_TAG_FORMAT, 
-      ui_fs->regex_artist_tag_format);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_ALBUM_TAG_FORMAT, 
-      ui_fs->regex_album_tag_format);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TITLE_TAG_FORMAT,
-      ui_fs->regex_title_tag_format);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_COMMENT_TAG_FORMAT, 
-      ui_fs->regex_comment_tag_format);
+  mp3splt_set_int_option(
+    ui->mp3splt_state, SPLT_OPT_ARTIST_TAG_FORMAT, ui_fs->regex_artist_tag_format);
+  mp3splt_set_int_option(
+    ui->mp3splt_state, SPLT_OPT_ALBUM_TAG_FORMAT, ui_fs->regex_album_tag_format);
+  mp3splt_set_int_option(
+    ui->mp3splt_state, SPLT_OPT_TITLE_TAG_FORMAT, ui_fs->regex_title_tag_format);
+  mp3splt_set_int_option(
+    ui->mp3splt_state, SPLT_OPT_COMMENT_TAG_FORMAT, ui_fs->regex_comment_tag_format);
 
   mp3splt_set_input_filename_regex(ui->mp3splt_state, ui_fs->regex);
 
   const gchar *default_comment = ui_fs->regex_default_comment;
-  if (strlen(default_comment) == 0)
-  {
-    default_comment = NULL;
-  }
+  if (strlen(default_comment) == 0) { default_comment = NULL; }
   mp3splt_set_default_comment_tag(ui->mp3splt_state, default_comment);
 
   mp3splt_set_default_genre_tag(ui->mp3splt_state, ui_fs->regex_default_genre);
 }
-

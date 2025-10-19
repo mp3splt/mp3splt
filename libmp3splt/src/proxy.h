@@ -35,7 +35,8 @@ void splt_pr_set_default_values(splt_state *state);
 void splt_pr_free(splt_state *state);
 
 splt_code splt_pr_use_proxy(splt_state *state, const char *proxy_address, int proxy_port);
-splt_code splt_pr_use_base64_authentification(splt_state *state, const char *base64_authentification);
+splt_code splt_pr_use_base64_authentification(
+  splt_state *state, const char *base64_authentification);
 char *splt_pr_base64(const unsigned char *source);
 
 int splt_pr_has_proxy(splt_state *state);
@@ -48,4 +49,3 @@ const char *splt_pr_get_proxy_authentification(splt_state *state);
 #define MP3SPLT_PROXY_H
 
 #endif
-

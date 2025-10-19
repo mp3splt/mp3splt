@@ -33,7 +33,8 @@
 #define SPLT_CUE_H
 
 //! Internal structure that bundles all variables the cue utils need
-typedef struct {
+typedef struct
+{
   int tracks;
   int time_for_track;
   int error;
@@ -57,8 +58,8 @@ typedef struct {
 
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error);
 
-void splt_cue_export_to_file(splt_state *state, const char *out_file,
-    short stop_at_total_time, int *error);
+void splt_cue_export_to_file(
+  splt_state *state, const char *out_file, short stop_at_total_time, int *error);
 
 #define SPLT_CUE_NOTHING 0
 #define SPLT_CUE_TRACK 1
@@ -67,4 +68,3 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 #define SPLT_CUE_INDEX 4
 
 #endif
-

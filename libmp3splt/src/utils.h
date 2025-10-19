@@ -39,4 +39,3 @@ splt_code splt_u_process_no_auto_adjust_found(splt_state *state, double point);
 #define SPLT_UTILS_H
 
 #endif
-

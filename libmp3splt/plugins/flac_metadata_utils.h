@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -37,8 +37,8 @@
 #include "flac_metadata.h"
 
 void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, splt_code *error);
-unsigned char *splt_flac_mu_build_metadata_header(unsigned char type, unsigned char is_last,
-    unsigned length);
+unsigned char *splt_flac_mu_build_metadata_header(
+  unsigned char type, unsigned char is_last, unsigned length);
 
 #define SPLT_FLAC_METADATA_STREAMINFO 0
 #define SPLT_FLAC_METADATA_PADDING 1
@@ -53,4 +53,3 @@ unsigned char *splt_flac_mu_build_metadata_header(unsigned char type, unsigned c
 #define MP3SPLT_FLAC_METADATA_UTILS_H
 
 #endif
-

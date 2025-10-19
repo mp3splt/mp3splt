@@ -16,14 +16,11 @@ void cut_setup()
   error = SPLT_OK;
 }
 
-void cut_teardown()
-{
-  mp3splt_free_state(state);
-}
+void cut_teardown() { mp3splt_free_state(state); }
 
 void test_find_intervals_with_no_splitpoint()
 {
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -38,7 +35,7 @@ void test_find_intervals_with_only_one_splitpoint_should_not_be_possible()
 {
   splt_sp_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -54,7 +51,7 @@ void test_find_intervals_with_one_segment_greater_than_minimum()
   splt_sp_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 6, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -70,7 +67,7 @@ void test_find_intervals_with_one_segment_lesser_than_minimum()
   splt_sp_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 4, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -99,7 +96,7 @@ void test_find_intervals_with_no_segment_lesser_than_minimum()
   splt_sp_append_splitpoint(state, 24, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 30, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -118,7 +115,7 @@ void test_find_intervals_with_all_segments_lesser_than_minimum()
   splt_sp_append_splitpoint(state, 9, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 12, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -147,7 +144,7 @@ void test_find_intervals_with_no_segment_lesser_than_minimum_at_beginning()
   splt_sp_append_splitpoint(state, 20, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 22, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -176,7 +173,7 @@ void test_find_intervals_with_no_segment_lesser_than_minimum_at_end()
   splt_sp_append_splitpoint(state, 30, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 40, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -207,7 +204,7 @@ void test_find_intervals_with_no_segment_lesser_than_minimum_in_the_middle()
   splt_sp_append_splitpoint(state, 42, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 44, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -246,7 +243,7 @@ void test_find_intervals_with_only_one_small_segment_in_the_middle_of_big_segmen
   splt_sp_append_splitpoint(state, 40, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 50, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -276,7 +273,7 @@ void test_find_intervals_with_single_big_distance_in_interval()
   splt_sp_append_splitpoint(state, 31, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 40, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -326,7 +323,7 @@ void test_find_intervals_complex_with_several_intervals()
   splt_sp_append_splitpoint(state, 203, "", SPLT_SPLITPOINT);
   splt_sp_append_splitpoint(state, 303, "", SPLT_SPLITPOINT);
 
-  splt_array *intervals = 
+  splt_array *intervals =
     splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
@@ -727,4 +724,3 @@ void test_join_tracks_with_three_splitpoints()
 
   cut_assert_null(mp3splt_points_next(points));
 }
-

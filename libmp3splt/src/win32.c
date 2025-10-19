@@ -37,9 +37,8 @@
 
 #include "splt.h"
 
-int scandir(const char *dir, struct dirent ***namelist,
-		int(*filter)(const struct dirent *),
-		int(*compar)(const struct dirent **, const struct dirent **))
+int scandir(const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *),
+  int (*compar)(const struct dirent **, const struct dirent **))
 {
   struct dirent **files = NULL;
   struct dirent *file = NULL;
@@ -47,10 +46,7 @@ int scandir(const char *dir, struct dirent ***namelist,
   int number_of_files = 0;
 
   directory = opendir(dir);
-  if (directory == NULL)
-  {
-    return -2;
-  }
+  if (directory == NULL) { return -2; }
 
   int free_memory = 0;
   int we_have_error = 0;
@@ -59,14 +55,8 @@ int scandir(const char *dir, struct dirent ***namelist,
   {
     if ((filter == NULL) || (filter(file)))
     {
-      if (files == NULL)
-      {
-        files = malloc((sizeof *files));
-      }
-      else
-      {
-        files = realloc(files, (sizeof *files) * (number_of_files + 1));
-      }
+      if (files == NULL) { files = malloc((sizeof *files)); }
+      else { files = realloc(files, (sizeof *files) * (number_of_files + 1)); }
       if (files == NULL)
       {
         free_memory = 1;
@@ -87,14 +77,8 @@ int scandir(const char *dir, struct dirent ***namelist,
     }
   }
 
-  if (namelist)
-  {
-    *namelist = files;
-  }
-  else
-  {
-    free_memory = 1;
-  }
+  if (namelist) { *namelist = files; }
+  else { free_memory = 1; }
 
   if (free_memory)
   {
@@ -110,13 +94,9 @@ int scandir(const char *dir, struct dirent ***namelist,
     files = NULL;
   }
 
-  if (closedir(directory) == -1)
-  {
-    return -2;
-  }
+  if (closedir(directory) == -1) { return -2; }
 
-  qsort(*namelist, number_of_files, sizeof **namelist,
-      (int (*)(const void *, const void *)) compar);
+  qsort(*namelist, number_of_files, sizeof **namelist, (int (*)(const void *, const void *))compar);
 
   if (we_have_error)
   {
@@ -127,9 +107,8 @@ int scandir(const char *dir, struct dirent ***namelist,
   return number_of_files;
 }
 
-int wscandir(const char *dir, struct _wdirent ***namelist,
-		int(*filter)(const struct _wdirent *),
-		int(*compar)(const struct _wdirent **, const struct _wdirent **))
+int wscandir(const char *dir, struct _wdirent ***namelist, int (*filter)(const struct _wdirent *),
+  int (*compar)(const struct _wdirent **, const struct _wdirent **))
 {
   struct _wdirent **files = NULL;
   struct _wdirent *file = NULL;
@@ -138,11 +117,12 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
 
   wchar_t *wdir = splt_w32_utf8_to_utf16(dir);
   directory = _wopendir(wdir);
-  if (wdir) { free(wdir); wdir = NULL; }
-  if (directory == NULL)
+  if (wdir)
   {
-    return -2;
+    free(wdir);
+    wdir = NULL;
   }
+  if (directory == NULL) { return -2; }
 
   int free_memory = 0;
   int we_have_error = 0;
@@ -151,14 +131,8 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
   {
     if ((filter == NULL) || (filter(file)))
     {
-      if (files == NULL)
-      {
-        files = malloc((sizeof *files));
-      }
-      else
-      {
-        files = realloc(files, (sizeof *files) * (number_of_files + 1));
-      }
+      if (files == NULL) { files = malloc((sizeof *files)); }
+      else { files = realloc(files, (sizeof *files) * (number_of_files + 1)); }
       if (files == NULL)
       {
         free_memory = 1;
@@ -179,14 +153,8 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
     }
   }
 
-  if (namelist)
-  {
-    *namelist = files;
-  }
-  else
-  {
-    free_memory = 1;
-  }
+  if (namelist) { *namelist = files; }
+  else { free_memory = 1; }
 
   if (free_memory)
   {
@@ -202,13 +170,9 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
     files = NULL;
   }
 
-  if (_wclosedir(directory) == -1)
-  {
-    return -2;
-  }
+  if (_wclosedir(directory) == -1) { return -2; }
 
-  qsort(*namelist, number_of_files, sizeof **namelist,
-      (int (*)(const void *, const void *)) compar);
+  qsort(*namelist, number_of_files, sizeof **namelist, (int (*)(const void *, const void *))compar);
 
   if (we_have_error)
   {
@@ -257,10 +221,7 @@ static wchar_t *splt_w32_encoding_to_utf16(UINT encoding, const char *source)
   if (converted_size > 0)
   {
     dest = malloc(sizeof(wchar_t) * converted_size);
-    if (dest)
-    {
-      MultiByteToWideChar(encoding, 0, source, -1, dest, converted_size);
-    }
+    if (dest) { MultiByteToWideChar(encoding, 0, source, -1, dest, converted_size); }
   }
 
   return dest;
@@ -280,10 +241,7 @@ static char *splt_w32_utf16_to_encoding(UINT encoding, const wchar_t *source)
   if (converted_size > 0)
   {
     dest = malloc(sizeof(char *) * converted_size);
-    if (dest)
-    {
-      WideCharToMultiByte(encoding, 0, source, -1, dest, converted_size, NULL, NULL);
-    }
+    if (dest) { WideCharToMultiByte(encoding, 0, source, -1, dest, converted_size, NULL, NULL); }
   }
 
   return dest;
@@ -306,10 +264,7 @@ int splt_w32_check_if_encoding_is_utf8(const char *source)
       char *source2 = splt_w32_utf16_to_utf8(source_wchar);
       if (source2)
       {
-        if (strcmp(source, source2) == 0)
-        {
-          is_utf8 = SPLT_TRUE;
-        }
+        if (strcmp(source, source2) == 0) { is_utf8 = SPLT_TRUE; }
 
         free(source2);
         source2 = NULL;
@@ -325,21 +280,14 @@ int splt_w32_check_if_encoding_is_utf8(const char *source)
 
 int splt_w32_str_starts_with_drive_root_directory(const char *str)
 {
-  if (strlen(str) > 2 &&
-      str[1] == ':' &&
-      str[2] == SPLT_DIRCHAR)
-  {
-    return SPLT_TRUE;
-  }
+  if (strlen(str) > 2 && str[1] == ':' && str[2] == SPLT_DIRCHAR) { return SPLT_TRUE; }
 
   return SPLT_FALSE;
 }
 
 int splt_w32_str_is_drive_root_directory(const char *str)
 {
-  return strlen(str) == 3 &&
-    splt_w32_str_starts_with_drive_root_directory(str);
+  return strlen(str) == 3 && splt_w32_str_starts_with_drive_root_directory(str);
 }
 
 #endif
-

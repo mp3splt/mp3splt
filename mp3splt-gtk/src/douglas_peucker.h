@@ -34,26 +34,27 @@
 #include "external_includes.h"
 #include "ui_types.h"
 
-typedef struct {
+typedef struct
+{
   gdouble distance;
   gint index;
 } distance_and_index;
 
-typedef struct {
+typedef struct
+{
   GdkPoint point;
   gint index;
 } douglas_point;
 
-GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(ui_state *ui),
-    ui_state *ui, gdouble threshold_to_discard_points, ...);
+GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(ui_state *ui), ui_state *ui,
+  gdouble threshold_to_discard_points, ...);
 void splt_douglas_peucker_free(GPtrArray *douglas_peucker_ptr_array);
 
 //for unit tests
 gdouble splt_find_distance(GdkPoint first, GdkPoint second);
-gdouble splt_find_perpendicular_distance(GdkPoint point,
-    GdkPoint segment_begin_point, GdkPoint segment_end_point);
-distance_and_index *splt_find_point_with_maximum_distance(GArray *douglas_points,
-    GdkPoint first_point, GdkPoint last_point);
+gdouble splt_find_perpendicular_distance(
+  GdkPoint point, GdkPoint segment_begin_point, GdkPoint segment_end_point);
+distance_and_index *splt_find_point_with_maximum_distance(
+  GArray *douglas_points, GdkPoint first_point, GdkPoint last_point);
 
 #endif
-

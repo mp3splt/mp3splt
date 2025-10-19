@@ -40,4 +40,3 @@ void import_cue_file_from_the_configuration_directory(ui_state *ui);
 void import_files_to_batch_and_free(GSList *files, ui_state *ui);
 
 #endif
-

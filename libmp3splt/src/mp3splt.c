@@ -29,7 +29,7 @@
  *
  *********************************************************/
 
-/*! \file 
+/*! \file
 
 All user-accessible functions
 
@@ -50,46 +50,140 @@ should therefore not be too hard a task...
 #include "splt.h"
 
 const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
-  {"Blues"},
-  {"Classic Rock"}, {"Country"}, {"Dance"}, 
-  {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
-  {"Metal"},{"New Age"},{"Oldies"}, {"Other"}, {"Pop"},
-  {"R&B"}, {"Rap"}, {"Reggae"}, {"Rock"}, {"Techno"},
-  {"Industrial"}, {"Alternative"}, {"Ska"}, {"Death metal"},
-  {"Pranks"}, {"Soundtrack"}, {"Euro-Techno"},
-  {"Ambient"}, {"Trip-hop"}, {"Vocal"}, {"Jazz+Funk"},
-  {"Fusion"}, {"Trance"}, {"Classical"}, {"Instrumental"},
-  {"Acid"}, {"House"}, {"Game"}, {"Sound clip"}, {"Gospel"},
-  {"Noise"}, {"Alt. Rock"}, {"Bass"}, {"Soul"}, {"Punk"}, 
-  {"Space"}, {"Meditative"}, {"Instrumental pop"}, 
-  {"Instrumental rock"}, {"Ethnic"}, {"Gothic"},{"Darkwave"},
-  {"Techno-Industrial"},{"Electronic"},{"Pop-Folk"},{"Eurodance"},
-  {"Dream"},{"Southern Rock"},{"Comedy"}, {"Cult"},{"Gangsta"},
-  {"Top 40"},{"Christian Rap"},{"Pop/Funk"}, {"Jungle"},
-  {"Native American"},{"Cabaret"},{"New Wave"}, {"Psychedelic"},
-  {"Rave"},{"Showtunes"},{"Trailer"}, {"Lo-Fi"},{"Tribal"},
-  {"Acid Punk"},{"Acid Jazz"}, {"Polka"}, {"Retro"},
-  {"Musical"},{"Rock & Roll"},{"Hard Rock"},
+  { "Blues" },
+  { "Classic Rock" },
+  { "Country" },
+  { "Dance" },
+  { "Disco" },
+  { "Funk" },
+  { "Grunge" },
+  { "Hip-Hop" },
+  { "Jazz" },
+  { "Metal" },
+  { "New Age" },
+  { "Oldies" },
+  { "Other" },
+  { "Pop" },
+  { "R&B" },
+  { "Rap" },
+  { "Reggae" },
+  { "Rock" },
+  { "Techno" },
+  { "Industrial" },
+  { "Alternative" },
+  { "Ska" },
+  { "Death metal" },
+  { "Pranks" },
+  { "Soundtrack" },
+  { "Euro-Techno" },
+  { "Ambient" },
+  { "Trip-hop" },
+  { "Vocal" },
+  { "Jazz+Funk" },
+  { "Fusion" },
+  { "Trance" },
+  { "Classical" },
+  { "Instrumental" },
+  { "Acid" },
+  { "House" },
+  { "Game" },
+  { "Sound clip" },
+  { "Gospel" },
+  { "Noise" },
+  { "Alt. Rock" },
+  { "Bass" },
+  { "Soul" },
+  { "Punk" },
+  { "Space" },
+  { "Meditative" },
+  { "Instrumental pop" },
+  { "Instrumental rock" },
+  { "Ethnic" },
+  { "Gothic" },
+  { "Darkwave" },
+  { "Techno-Industrial" },
+  { "Electronic" },
+  { "Pop-Folk" },
+  { "Eurodance" },
+  { "Dream" },
+  { "Southern Rock" },
+  { "Comedy" },
+  { "Cult" },
+  { "Gangsta" },
+  { "Top 40" },
+  { "Christian Rap" },
+  { "Pop/Funk" },
+  { "Jungle" },
+  { "Native American" },
+  { "Cabaret" },
+  { "New Wave" },
+  { "Psychedelic" },
+  { "Rave" },
+  { "Showtunes" },
+  { "Trailer" },
+  { "Lo-Fi" },
+  { "Tribal" },
+  { "Acid Punk" },
+  { "Acid Jazz" },
+  { "Polka" },
+  { "Retro" },
+  { "Musical" },
+  { "Rock & Roll" },
+  { "Hard Rock" },
 
-  {"Folk"}, {"Folk-Rock"}, {"National Folk"}, {"Swing"},
-  {"Fast Fusion"}, {"Bebob"}, {"Latin"}, {"Revival"},
-  {"Celtic"}, {"Bluegrass"}, {"Avantgarde"}, {"Gothic Rock"},
-  {"Progressive Rock"}, {"Psychedelic Rock"}, {"Symphonic Rock"},
-  {"Slow Rock"}, {"Big Band"}, {"Chorus"}, {"Easy Listening"},
-  {"Acoustic"}, {"Humour"}, {"Speech"}, {"Chanson"}, {"Opera"},
-  {"Chamber Music"}, {"Sonata"}, {"Symphony"}, {"Booty Bass"},
-  {"Primus"}, {"Porn Groove"}, {"Satire"}, {"Slow Jam"},
-  {"Club"}, {"Tango"}, {"Samba"}, {"Folklore"}, {"Ballad"},
-  {"Power Ballad"}, {"Rhythmic Soul"}, {"Freestyle"}, {"Duet"},
-  {"Punk Rock"}, {"Drum Solo"}, {"A capella"}, {"Euro-House"},
-  {"Dance Hall"},
+  { "Folk" },
+  { "Folk-Rock" },
+  { "National Folk" },
+  { "Swing" },
+  { "Fast Fusion" },
+  { "Bebob" },
+  { "Latin" },
+  { "Revival" },
+  { "Celtic" },
+  { "Bluegrass" },
+  { "Avantgarde" },
+  { "Gothic Rock" },
+  { "Progressive Rock" },
+  { "Psychedelic Rock" },
+  { "Symphonic Rock" },
+  { "Slow Rock" },
+  { "Big Band" },
+  { "Chorus" },
+  { "Easy Listening" },
+  { "Acoustic" },
+  { "Humour" },
+  { "Speech" },
+  { "Chanson" },
+  { "Opera" },
+  { "Chamber Music" },
+  { "Sonata" },
+  { "Symphony" },
+  { "Booty Bass" },
+  { "Primus" },
+  { "Porn Groove" },
+  { "Satire" },
+  { "Slow Jam" },
+  { "Club" },
+  { "Tango" },
+  { "Samba" },
+  { "Folklore" },
+  { "Ballad" },
+  { "Power Ballad" },
+  { "Rhythmic Soul" },
+  { "Freestyle" },
+  { "Duet" },
+  { "Punk Rock" },
+  { "Drum Solo" },
+  { "A capella" },
+  { "Euro-House" },
+  { "Dance Hall" },
 
-  {"misc"},
+  { "misc" },
 };
 
 int global_debug = SPLT_FALSE;
 
-/*! 
+/*!
 \defgroup API The API of libmp3splt
 
 This group contains all functions of libmp3splt that are meant to be
@@ -101,7 +195,7 @@ accessed by the user
 /*! Initialisation
 
  creates and returns the new central splt_state structure this
- library keeps all its data in. 
+ library keeps all its data in.
 
  The next step after initialization is to do a
  mp3splt_find_plugins() to find any plugins;
@@ -119,20 +213,17 @@ splt_state *mp3splt_new_state(splt_code *error)
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  if (lt_dlinit() != 0)
-  {
-    *err = SPLT_ERROR_CANNOT_INIT_LIBLTDL;
-  }
+  if (lt_dlinit() != 0) { *err = SPLT_ERROR_CANNOT_INIT_LIBLTDL; }
   else
   {
 
 #ifdef ENABLE_NLS
- #ifndef __WIN32__
+#ifndef __WIN32__
     bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, LOCALEDIR);
     bind_textdomain_codeset(MP3SPLT_LIB_GETTEXT_DOMAIN, nl_langinfo(CODESET));
- #else
+#else
     bind_textdomain_codeset(MP3SPLT_LIB_GETTEXT_DOMAIN, "UTF-8");
- #endif
+#endif
 #endif
 
     state = splt_t_new_state(state, err);
@@ -145,36 +236,27 @@ splt_state *mp3splt_new_state(splt_code *error)
 
 \return The error code if necessary
 */
-splt_code mp3splt_find_plugins(splt_state *state)
-{
-  return splt_p_find_get_plugins_data(state);
-}
+splt_code mp3splt_find_plugins(splt_state *state) { return splt_p_find_get_plugins_data(state); }
 
 /*! this function frees all variables malloc'ed by the library
 
 call this function ONLY at the end of the program
 and don't forget to call it.
 
-\param error The code of any error that might have occoured 
-\param state the splt_state structure that keeps all data for 
+\param error The code of any error that might have occoured
+\param state the splt_state structure that keeps all data for
  our library
 */
 splt_code mp3splt_free_state(splt_state *state)
 {
-  if (!state)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (!state) { return SPLT_ERROR_STATE_NULL; }
 
   if (!splt_o_library_locked(state))
   {
     splt_o_lock_library(state);
     splt_t_free_state(state);
   }
-  else
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  else { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   return SPLT_OK;
 }
@@ -194,15 +276,9 @@ splt_code mp3splt_set_path_of_split(splt_state *state, const char *path)
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -226,30 +302,18 @@ splt_code mp3splt_set_m3u_filename(splt_state *state, const char *filename)
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
 
 splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
 
@@ -262,15 +326,9 @@ splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filena
 
 splt_code mp3splt_set_silence_full_log_filename(splt_state *state, const char *filename)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
 
@@ -283,11 +341,11 @@ splt_code mp3splt_set_silence_full_log_filename(splt_state *state, const char *f
 
 /*! \brief Reads out the name of the file that is about to be split
 
-  
+
  */
 const char *mp3splt_get_filename_to_split(splt_state *state)
 {
-  return splt_t_get_filename_to_split(state); 
+  return splt_t_get_filename_to_split(state);
 }
 
 /*! \brief Sets the name of the file that is about to be split
@@ -309,15 +367,9 @@ splt_code mp3splt_set_filename_to_split(splt_state *state, const char *filename)
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -336,15 +388,9 @@ splt_code mp3splt_set_input_filename_regex(splt_state *state, const char *regex)
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -363,15 +409,9 @@ splt_code mp3splt_set_default_comment_tag(splt_state *state, const char *default
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -390,15 +430,9 @@ splt_code mp3splt_set_default_genre_tag(splt_state *state, const char *default_g
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -413,9 +447,8 @@ splt_code mp3splt_set_default_genre_tag(splt_state *state, const char *default_g
 \param message_cb The callback function
 \return The error code if any error occours
 */
-splt_code mp3splt_set_message_function(splt_state *state, 
-    void (*message_cb)(const char *, splt_message_type, void *), 
-    void *cb_data)
+splt_code mp3splt_set_message_function(
+  splt_state *state, void (*message_cb)(const char *, splt_message_type, void *), void *cb_data)
 {
   int error = SPLT_OK;
 
@@ -424,10 +457,7 @@ splt_code mp3splt_set_message_function(splt_state *state,
     state->split.put_message = message_cb;
     state->split.put_message_cb_data = cb_data;
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -438,8 +468,8 @@ splt_code mp3splt_set_message_function(splt_state *state,
 \param file_cb The callback function
 \return The error code if any error occours
 */
-splt_code mp3splt_set_split_filename_function(splt_state *state,
-    void (*file_cb)(const char *, void *), void *cb_data)
+splt_code mp3splt_set_split_filename_function(
+  splt_state *state, void (*file_cb)(const char *, void *), void *cb_data)
 {
   int error = SPLT_OK;
 
@@ -448,22 +478,16 @@ splt_code mp3splt_set_split_filename_function(splt_state *state,
     state->split.file_split = file_cb;
     state->split.file_split_cb_data = cb_data;
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
 
 splt_code mp3splt_set_pretend_to_split_write_function(splt_state *state,
-   void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void *cb_data),
-   void *cb_data)
+  void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void *cb_data),
+  void *cb_data)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
   state->split.write_cb = write_cb;
   state->split.write_cb_data = cb_data;
@@ -477,8 +501,8 @@ splt_code mp3splt_set_pretend_to_split_write_function(splt_state *state,
 \param progress_cb The callback function
 \return The error code if any error occours
 */
-splt_code mp3splt_set_progress_function(splt_state *state,
-    void (*progress_cb)(splt_progress *p_bar, void *), void *cb_data)
+splt_code mp3splt_set_progress_function(
+  splt_state *state, void (*progress_cb)(splt_progress *p_bar, void *), void *cb_data)
 {
   int error = SPLT_OK;
 
@@ -487,38 +511,21 @@ splt_code mp3splt_set_progress_function(splt_state *state,
     state->split.p_bar->progress = progress_cb;
     state->split.p_bar->progress_cb_data = cb_data;
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
 
-int mp3splt_progress_get_type(const splt_progress *p_bar)
-{
-  return p_bar->progress_type;
-}
+int mp3splt_progress_get_type(const splt_progress *p_bar) { return p_bar->progress_type; }
 
 char *mp3splt_progress_get_filename_shorted(const splt_progress *p_bar)
 {
-  if (p_bar->filename_shorted)
-  {
-    return strdup(p_bar->filename_shorted);
-  }
-
-  return NULL;
+  return strdup(p_bar->filename_shorted);
 }
 
-int mp3splt_progress_get_current_split(const splt_progress *p_bar)
-{
-  return p_bar->current_split;
-}
+int mp3splt_progress_get_current_split(const splt_progress *p_bar) { return p_bar->current_split; }
 
-int mp3splt_progress_get_max_splits(const splt_progress *p_bar)
-{
-  return p_bar->max_splits;
-}
+int mp3splt_progress_get_max_splits(const splt_progress *p_bar) { return p_bar->max_splits; }
 
 int mp3splt_progress_get_silence_found_tracks(const splt_progress *p_bar)
 {
@@ -536,15 +543,14 @@ float mp3splt_progress_get_percent_progress(const splt_progress *p_bar)
 }
 
 /*! Register the callback for the function that calculates silence
-    levels 
+    levels
 
 \param state The central structure this library keeps all its data in
 \param get_silence_cb The callback function
 \return The error code if any error occours
 */
-splt_code mp3splt_set_silence_level_function(splt_state *state,
-    void (*get_silence_cb)(long time, float level, void *user_data),
-    void *data)
+splt_code mp3splt_set_silence_level_function(
+  splt_state *state, void (*get_silence_cb)(long time, float level, void *user_data), void *data)
 {
   int error = SPLT_OK;
 
@@ -553,10 +559,7 @@ splt_code mp3splt_set_silence_level_function(splt_state *state,
     state->split.get_silence_level = get_silence_cb;
     state->split.silence_level_client_data = data;
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -586,38 +589,26 @@ splt_point *mp3splt_point_new(long splitpoint_value, splt_code *error)
 
 splt_code mp3splt_point_set_name(splt_point *splitpoint, const char *name)
 {
-  if (splitpoint == NULL || name == NULL)
-  {
-    return SPLT_OK;
-  }
+  if (splitpoint == NULL || name == NULL) { return SPLT_OK; }
 
-  if (splitpoint->name)
-  {
-    free(splitpoint->name);
-  }
+  if (splitpoint->name) { free(splitpoint->name); }
 
   splitpoint->name = strdup(name);
-  if (splitpoint->name == NULL)
-  {
-    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
+  if (splitpoint->name == NULL) { return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
 
   return SPLT_OK;
 }
 
 splt_code mp3splt_point_set_type(splt_point *splitpoint, splt_type_of_splitpoint type)
 {
-  if (splitpoint == NULL)
-  {
-    return SPLT_OK;
-  }
+  if (splitpoint == NULL) { return SPLT_OK; }
 
   splitpoint->type = type;
 
   return SPLT_OK;
 }
 
-/*! puts a splitpoint in the state 
+/*! puts a splitpoint in the state
 
 \param state The central data structure this library keeps all its
 data in
@@ -636,22 +627,16 @@ splt_code mp3splt_append_splitpoint(splt_state *state, splt_point *splitpoint)
     {
       splt_o_lock_library(state);
 
-      error = splt_sp_append_splitpoint(state, 
-          splitpoint->value, splitpoint->name, splitpoint->type);
+      error =
+        splt_sp_append_splitpoint(state, splitpoint->value, splitpoint->name, splitpoint->type);
 
       splt_sp_free_one_splitpoint(splitpoint);
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -680,22 +665,16 @@ splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error)
 
 void mp3splt_points_init_iterator(splt_points *splitpoints)
 {
-  if (splitpoints == NULL)
-  {
-    return;
-  }
+  if (splitpoints == NULL) { return; }
 
   splitpoints->iterator_counter = 0;
 }
 
 const splt_point *mp3splt_points_next(splt_points *splitpoints)
 {
-  if (splitpoints == NULL)
-  {
-    return NULL;
-  }
+  if (splitpoints == NULL) { return NULL; }
 
-  if (splitpoints->iterator_counter < 0 || 
+  if (splitpoints->iterator_counter < 0 ||
       splitpoints->iterator_counter >= splitpoints->real_splitnumber)
   {
     splitpoints->iterator_counter++;
@@ -709,22 +688,13 @@ const splt_point *mp3splt_points_next(splt_points *splitpoints)
   return point;
 }
 
-long mp3splt_point_get_value(const splt_point *point)
-{
-  return point->value;
-}
+long mp3splt_point_get_value(const splt_point *point) { return point->value; }
 
-splt_type_of_splitpoint mp3splt_point_get_type(const splt_point *point)
-{
-  return point->type;
-}
+splt_type_of_splitpoint mp3splt_point_get_type(const splt_point *point) { return point->type; }
 
 char *mp3splt_point_get_name(const splt_point *point)
 {
-  if (point->name)
-  {
-    return strdup(point->name);
-  }
+  if (point->name) { return strdup(point->name); }
 
   return NULL;
 }
@@ -736,15 +706,9 @@ char *mp3splt_point_get_name(const splt_point *point)
 */
 splt_code mp3splt_erase_all_splitpoints(splt_state *state)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
   splt_sp_free_splitpoints(state);
@@ -767,10 +731,7 @@ splt_tags *mp3splt_tags_new(splt_code *error)
 
 splt_code mp3splt_tags_set(splt_tags *tags, ...)
 {
-  if (tags == NULL)
-  {
-    return SPLT_OK;
-  }
+  if (tags == NULL) { return SPLT_OK; }
 
   int error = SPLT_OK;
 
@@ -802,10 +763,7 @@ char *mp3splt_tags_get(splt_tags *tags, splt_tag_key key)
   }
 
   const char *value = splt_tu_get_tags_value(tags, key);
-  if (value == NULL)
-  {
-    return NULL;
-  }
+  if (value == NULL) { return NULL; }
 
   return strdup(value);
 }
@@ -814,15 +772,9 @@ splt_code mp3splt_append_tags(splt_state *state, splt_tags *tags)
 {
   int error = SPLT_OK;
 
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
 
@@ -841,10 +793,7 @@ splt_tags_group *mp3splt_get_tags_group(splt_state *state, splt_code *error)
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  if (state != NULL)
-  {
-    return splt_tu_get_tags_group(state);
-  }
+  if (state != NULL) { return splt_tu_get_tags_group(state); }
   else
   {
     *err = SPLT_ERROR_STATE_NULL;
@@ -859,22 +808,16 @@ splt_code mp3splt_remove_tags_of_skippoints(splt_state *state)
 
 void mp3splt_tags_group_init_iterator(splt_tags_group *tags_group)
 {
-  if (tags_group == NULL)
-  {
-    return;
-  }
+  if (tags_group == NULL) { return; }
 
   tags_group->iterator_counter = 0;
 }
 
 splt_tags *mp3splt_tags_group_next(splt_tags_group *tags_group)
 {
-  if (tags_group == NULL)
-  {
-    return NULL;
-  }
+  if (tags_group == NULL) { return NULL; }
 
-  if (tags_group->iterator_counter < 0 || 
+  if (tags_group->iterator_counter < 0 ||
       tags_group->iterator_counter >= tags_group->real_tagsnumber)
   {
     tags_group->iterator_counter++;
@@ -888,15 +831,9 @@ splt_code mp3splt_read_original_tags(splt_state *state)
 {
   int error = SPLT_OK;
 
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
 
@@ -939,15 +876,9 @@ int mp3splt_put_tags_from_string(splt_state *state, const char *tags, splt_code 
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { *err = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    *err = SPLT_ERROR_STATE_NULL;
-  }
+  else { *err = SPLT_ERROR_STATE_NULL; }
 
   return ambigous;
 }
@@ -955,15 +886,9 @@ int mp3splt_put_tags_from_string(splt_state *state, const char *tags, splt_code 
 //!erase all the tags
 splt_code mp3splt_erase_all_tags(splt_state *state)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
   splt_tu_free_tags(state);
@@ -989,15 +914,9 @@ static int mp3splt_set_option(splt_state *state, splt_options option_name, void 
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -1023,10 +942,7 @@ int mp3splt_get_int_option(splt_state *state, splt_options option_name, splt_cod
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  if (state != NULL)
-  {
-    return splt_o_get_int_option(state, option_name);
-  }
+  if (state != NULL) { return splt_o_get_int_option(state, option_name); }
   else
   {
     *err = SPLT_ERROR_STATE_NULL;
@@ -1040,10 +956,7 @@ long mp3splt_get_long_option(splt_state *state, splt_options option_name, splt_c
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  if (state != NULL)
-  {
-    return splt_o_get_long_option(state, option_name);
-  }
+  if (state != NULL) { return splt_o_get_long_option(state, option_name); }
   else
   {
     *err = SPLT_ERROR_STATE_NULL;
@@ -1057,10 +970,7 @@ float mp3splt_get_float_option(splt_state *state, splt_options option_name, splt
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  if (state != NULL)
-  {
-    return splt_o_get_float_option(state, option_name);
-  }
+  if (state != NULL) { return splt_o_get_float_option(state, option_name); }
   else
   {
     *err = SPLT_ERROR_STATE_NULL;
@@ -1086,63 +996,64 @@ splt_code mp3splt_split(splt_state *state)
     {
       splt_o_lock_library(state);
 
-      splt_d_print_debug(state,"Starting to split file ...\n");
+      splt_d_print_debug(state, "Starting to split file ...\n");
 
       if (splt_o_get_int_option(state, SPLT_OPT_HANDLE_BIT_RESERVOIR))
       {
         splt_c_put_warning_message_to_client(state,
-            _(" warning: bit reservoir handling for gapless playback is still experimental\n"));
+          _(" warning: bit reservoir handling for gapless playback is still experimental\n"));
 
         if (splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
         {
-          splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with overlap option\n"));
+          splt_c_put_warning_message_to_client(
+            state, _(" warning: bit reservoir is not compatible with overlap option\n"));
         }
 
         if (splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST))
         {
-          splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with auto adjust option\n"));
+          splt_c_put_warning_message_to_client(
+            state, _(" warning: bit reservoir is not compatible with auto adjust option\n"));
         }
 
         if (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
         {
-          splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with input not seekable\n"));
+          splt_c_put_warning_message_to_client(
+            state, _(" warning: bit reservoir is not compatible with input not seekable\n"));
         }
 
         int supported_split_mode = SPLT_TRUE;
         int split_mode = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
-        if ((split_mode == SPLT_OPTION_SILENCE_MODE) || (split_mode == SPLT_OPTION_TRIM_SILENCE_MODE))
+        if ((split_mode == SPLT_OPTION_SILENCE_MODE) ||
+            (split_mode == SPLT_OPTION_TRIM_SILENCE_MODE))
         {
           supported_split_mode = SPLT_FALSE;
         }
 
         if (!supported_split_mode)
         {
-          splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with silence detection or trimming\n"));
+          splt_c_put_warning_message_to_client(state,
+            _(" warning: bit reservoir is not compatible with silence detection or trimming\n"));
         }
 
         int with_xing = splt_o_get_int_option(state, SPLT_OPT_XING);
         if (!with_xing)
         {
-          splt_c_put_warning_message_to_client(state, 
-              _(" warning: bit reservoir is not compatible with 'no xing'\n"));
+          splt_c_put_warning_message_to_client(
+            state, _(" warning: bit reservoir is not compatible with 'no xing'\n"));
         }
 
         int with_frame_mode = splt_o_get_int_option(state, SPLT_OPT_FRAME_MODE);
         if (!with_frame_mode)
         {
-          splt_c_put_warning_message_to_client(state, 
-              _(" warning: please enable frame mode to make bit reservoir work\n"));
+          splt_c_put_warning_message_to_client(
+            state, _(" warning: please enable frame mode to make bit reservoir work\n"));
         }
       }
 
       char *new_filename_path = NULL;
       char *fname_to_split = splt_t_get_filename_to_split(state);
 
-      splt_d_print_debug(state,"Original filename/path to split is _%s_\n", fname_to_split);
+      splt_d_print_debug(state, "Original filename/path to split is _%s_\n", fname_to_split);
 
       if (splt_io_input_is_stdin(state))
       {
@@ -1155,16 +1066,10 @@ splt_code mp3splt_split(splt_state *state)
 
       //we put the real splitnumber in the splitnumber variable
       //that could be changed (see splitnumber in mp3splt.h)
-      if (!state->split.points)
-      {
-        state->split.splitnumber = 0;
-      }
-      else
-      {
-        state->split.splitnumber = state->split.points->real_splitnumber;
-      }
+      if (!state->split.points) { state->split.splitnumber = 0; }
+      else { state->split.splitnumber = state->split.points->real_splitnumber; }
 
-      splt_t_set_current_split(state,0);
+      splt_t_set_current_split(state, 0);
 
       if (!splt_io_check_if_file(state, fname_to_split))
       {
@@ -1175,8 +1080,8 @@ splt_code mp3splt_split(splt_state *state)
 
       //if the new_filename_path is "", we put the directory of
       //the current song
-      new_filename_path = splt_check_put_dir_of_cur_song(fname_to_split,
-          splt_t_get_path_of_split(state), &error);
+      new_filename_path =
+        splt_check_put_dir_of_cur_song(fname_to_split, splt_t_get_path_of_split(state), &error);
       if (error < 0)
       {
         splt_o_unlock_library(state);
@@ -1187,8 +1092,8 @@ splt_code mp3splt_split(splt_state *state)
       char *linked_fname = splt_io_get_linked_fname(fname_to_split, NULL);
       if (linked_fname)
       {
-        splt_c_put_info_message_to_client(state, 
-            _(" info: resolving linked filename to '%s'\n"), linked_fname);
+        splt_c_put_info_message_to_client(
+          state, _(" info: resolving linked filename to '%s'\n"), linked_fname);
 
         splt_t_set_filename_to_split(state, linked_fname);
         fname_to_split = splt_t_get_filename_to_split(state);
@@ -1203,7 +1108,7 @@ splt_code mp3splt_split(splt_state *state)
 
       //if we have compatible options
       //this function is optional,
-      if (! splt_check_compatible_options(state))
+      if (!splt_check_compatible_options(state))
       {
         error = SPLT_ERROR_INCOMPATIBLE_OPTIONS;
         goto function_end;
@@ -1214,7 +1119,7 @@ splt_code mp3splt_split(splt_state *state)
       splt_t_set_new_filename_path(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
-      splt_d_print_debug(state, "new fname path = _%s_\n", new_filename_path); 
+      splt_d_print_debug(state, "new fname path = _%s_\n", new_filename_path);
 
       error = splt_io_create_directories(state, new_filename_path);
       if (error < 0) { goto function_end; }
@@ -1236,22 +1141,26 @@ splt_code mp3splt_split(splt_state *state)
       {
         int regex_error = SPLT_OK;
         splt_tp_put_tags_from_filename(state, &regex_error);
-        if (regex_error < 0) { error = regex_error; goto function_end; }
+        if (regex_error < 0)
+        {
+          error = regex_error;
+          goto function_end;
+        }
       }
 
-      const char *plugin_name = splt_p_get_name(state,&error);
+      const char *plugin_name = splt_p_get_name(state, &error);
       if (error < 0) { goto function_end; }
 
-      splt_c_put_info_message_to_client(state, 
-          _(" info: file matches the plugin '%s'\n"), plugin_name);
+      splt_c_put_info_message_to_client(
+        state, _(" info: file matches the plugin '%s'\n"), plugin_name);
 
       //print the new m3u fname
       char *m3u_fname_with_path = splt_t_get_m3u_file_with_path(state, &error);
       if (error < 0) { goto function_end; }
       if (m3u_fname_with_path)
       {
-        splt_c_put_info_message_to_client(state, 
-            _(" M3U file '%s' will be created.\n"), m3u_fname_with_path);
+        splt_c_put_info_message_to_client(
+          state, _(" M3U file '%s' will be created.\n"), m3u_fname_with_path);
 
         free(m3u_fname_with_path);
         m3u_fname_with_path = NULL;
@@ -1261,23 +1170,21 @@ splt_code mp3splt_split(splt_state *state)
       splt_p_init(state, &error);
       if (error < 0) { goto function_end; }
 
-      splt_d_print_debug(state,"Parse type of split ...\n");
+      splt_d_print_debug(state, "Parse type of split ...\n");
 
-      if (splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST)
-          && !splt_o_get_int_option(state, SPLT_OPT_QUIET_MODE))
+      if (splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST) &&
+          !splt_o_get_int_option(state, SPLT_OPT_QUIET_MODE))
       {
-        if ((split_type != SPLT_OPTION_WRAP_MODE)
-            && (split_type != SPLT_OPTION_SILENCE_MODE)
-            && (split_type != SPLT_OPTION_TRIM_SILENCE_MODE)
-            && (split_type != SPLT_OPTION_ERROR_MODE))
+        if ((split_type != SPLT_OPTION_WRAP_MODE) && (split_type != SPLT_OPTION_SILENCE_MODE) &&
+            (split_type != SPLT_OPTION_TRIM_SILENCE_MODE) && (split_type != SPLT_OPTION_ERROR_MODE))
         {
-          splt_c_put_info_message_to_client(state, 
-              _(" Working with SILENCE AUTO-ADJUST (Threshold:"
-                " %.1f dB Gap: %d sec Offset: %.2f Min: %.2f sec)\n"),
-              splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
-              splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP),
-              splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
-              splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
+          splt_c_put_info_message_to_client(state,
+            _(" Working with SILENCE AUTO-ADJUST (Threshold:"
+              " %.1f dB Gap: %d sec Offset: %.2f Min: %.2f sec)\n"),
+            splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+            splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP),
+            splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
+            splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
         }
       }
 
@@ -1288,7 +1195,7 @@ splt_code mp3splt_split(splt_state *state)
           break;
         case SPLT_OPTION_SILENCE_MODE:
           splt_s_silence_split(state, &error);
-          break; 
+          break;
         case SPLT_OPTION_TRIM_SILENCE_MODE:
           splt_s_trim_silence_split(state, &error);
           break;
@@ -1304,7 +1211,7 @@ splt_code mp3splt_split(splt_state *state)
         default:
           if (split_type == SPLT_OPTION_NORMAL_MODE)
           {
-            if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+            if (!splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
             {
               //check if we have at least 2 splitpoints
               if (splt_t_get_splitnumber(state) < 2)
@@ -1337,15 +1244,9 @@ function_end:
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { error = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
+  else { error = SPLT_ERROR_STATE_NULL; }
 
   return error;
 }
@@ -1355,10 +1256,7 @@ function_end:
 */
 splt_code mp3splt_stop_split(splt_state *state)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
   splt_t_set_stop_split(state, SPLT_TRUE);
 
@@ -1372,31 +1270,16 @@ splt_code mp3splt_stop_split(splt_state *state)
 */
 splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *file)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
   int err = SPLT_OK;
 
-  if (type == CUE_IMPORT)
-  {
-    splt_cue_put_splitpoints(file, state, &err);
-  }
-  else if (type == CDDB_IMPORT)
-  {
-    splt_cddb_put_splitpoints(file, state, &err);
-  }
-  else if (type == AUDACITY_LABELS_IMPORT)
-  {
-    splt_audacity_put_splitpoints(file, state, &err);
-  }
+  if (type == CUE_IMPORT) { splt_cue_put_splitpoints(file, state, &err); }
+  else if (type == CDDB_IMPORT) { splt_cddb_put_splitpoints(file, state, &err); }
+  else if (type == AUDACITY_LABELS_IMPORT) { splt_audacity_put_splitpoints(file, state, &err); }
   else if (type == PLUGIN_INTERNAL_IMPORT)
   {
     char *old_filename_to_split = strdup(mp3splt_get_filename_to_split(state));
@@ -1436,8 +1319,8 @@ splt_code mp3splt_use_proxy(splt_state *state, const char *proxy_address, int pr
   return splt_pr_use_proxy(state, proxy_address, proxy_port);
 }
 
-splt_code mp3splt_use_base64_authentification(splt_state *state, 
-    const char *base64_authentification)
+splt_code mp3splt_use_base64_authentification(
+  splt_state *state, const char *base64_authentification)
 {
   return splt_pr_use_base64_authentification(state, base64_authentification);
 }
@@ -1458,10 +1341,7 @@ char *mp3splt_encode_in_base64(splt_state *state, const char *input, int *error)
   return input_as_base64;
 }
 
-void mp3splt_clear_proxy(splt_state *state)
-{
-  splt_pr_free(state);
-}
+void mp3splt_clear_proxy(splt_state *state) { splt_pr_free(state); }
 
 /*!Do a freedb search
 
@@ -1475,14 +1355,14 @@ SPLT_SEARCH_TYPE_FREEDB2
 \param search_server The URL of the search server or NULL to select
 the default
 \param port The port on the server. -1 means default (Which should be
-80). 
+80).
  */
 splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
-    const char *search_string,
-    splt_code *error,
-    int search_type,
-    const char search_server[256],
-    int port)
+  const char *search_string,
+  splt_code *error,
+  int search_type,
+  const char *search_server,
+  int port)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1493,15 +1373,14 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     *err = SPLT_FREEDB_NO_CD_FOUND;
     return NULL;
   }
- 
+
   if (state != NULL)
   {
     //we copy the search string, in order not to modify the original one
     char *search = strdup(search_string);
     if (search != NULL)
     {
-      *err = splt_freedb_process_search(state, search, search_type,
-          search_server, port);
+      *err = splt_freedb_process_search(state, search, search_type, search_server, port);
 
       free(search);
       search = NULL;
@@ -1523,22 +1402,16 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
 
 void mp3splt_freedb_init_iterator(splt_freedb_results *freedb_results)
 {
-  if (freedb_results == NULL)
-  {
-    return;
-  }
+  if (freedb_results == NULL) { return; }
 
   freedb_results->iterator_counter = 0;
 }
 
 const splt_freedb_one_result *mp3splt_freedb_next(splt_freedb_results *freedb_results)
 {
-  if (freedb_results == NULL)
-  {
-    return NULL;
-  }
+  if (freedb_results == NULL) { return NULL; }
 
-  if (freedb_results->iterator_counter < 0 || 
+  if (freedb_results->iterator_counter < 0 ||
       freedb_results->iterator_counter >= freedb_results->number)
   {
     freedb_results->iterator_counter++;
@@ -1552,15 +1425,9 @@ const splt_freedb_one_result *mp3splt_freedb_next(splt_freedb_results *freedb_re
   return result;
 }
 
-int mp3splt_freedb_get_id(const splt_freedb_one_result *result)
-{
-  return result->id;
-}
+int mp3splt_freedb_get_id(const splt_freedb_one_result *result) { return result->id; }
 
-const char *mp3splt_freedb_get_name(const splt_freedb_one_result *result)
-{
-  return result->name;
-}
+const char *mp3splt_freedb_get_name(const splt_freedb_one_result *result) { return result->name; }
 
 int mp3splt_freedb_get_number_of_revisions(const splt_freedb_one_result *result)
 {
@@ -1572,15 +1439,14 @@ int mp3splt_freedb_get_number_of_revisions(const splt_freedb_one_result *result)
 must only be called \emph{after} running get_freedb_search
 otherwise, it will fail (seg fault!?)
 
-you need to write the cddb entry to the disk in 
+you need to write the cddb entry to the disk in
 a cddb file to use it be able to use it
 
 \attention result is malloc'ed and must be freed by the caller after
 use.
 */
-splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
-    const char *cddb_file, int cddb_get_type,
-    const char cddb_get_server[256], int port)
+splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id, const char *cddb_file,
+  int cddb_get_type, const char *cddb_get_server, int port)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1592,13 +1458,13 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
       splt_o_lock_library(state);
 
       char *freedb_file_content = NULL;
-      freedb_file_content = splt_freedb_get_file(state, disc_id, err,
-          cddb_get_type, cddb_get_server, port);
+      freedb_file_content =
+        splt_freedb_get_file(state, disc_id, err, cddb_get_type, cddb_get_server, port);
 
       //if no error, write file
       if (*err == SPLT_FREEDB_FILE_OK)
       {
-        if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+        if (!splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
           //we write the result to the file
           FILE *output = NULL;
@@ -1609,7 +1475,7 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
           }
           else
           {
-            fprintf(output,"%s",freedb_file_content);
+            fprintf(output, "%s", freedb_file_content);
             if (fclose(output) != 0)
             {
               splt_e_set_strerror_msg_with_data(state, cddb_file);
@@ -1629,41 +1495,26 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { *err = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    *err = SPLT_ERROR_STATE_NULL;
-  }
+  else { *err = SPLT_ERROR_STATE_NULL; }
 
   return *err;
 }
 
 /*! Export our split points to a cue file
 */
-splt_code mp3splt_export(splt_state *state, splt_export_type type,
-    const char *out_file, int stop_at_total_time)
+splt_code mp3splt_export(
+  splt_state *state, splt_export_type type, const char *out_file, int stop_at_total_time)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
   int err = SPLT_OK;
 
-  if (type == CUE_EXPORT)
-  {
-    splt_cue_export_to_file(state, out_file, stop_at_total_time, &err);
-  }
+  if (type == CUE_EXPORT) { splt_cue_export_to_file(state, out_file, stop_at_total_time, &err); }
 
   splt_o_unlock_library(state);
 
@@ -1673,15 +1524,9 @@ splt_code mp3splt_export(splt_state *state, splt_export_type type,
 //! Sets the output format
 splt_code mp3splt_set_oformat(splt_state *state, const char *format_string)
 {
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
+  if (state == NULL) { return SPLT_ERROR_STATE_NULL; }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
+  if (splt_o_library_locked(state)) { return SPLT_ERROR_LIBRARY_LOCKED; }
 
   splt_o_lock_library(state);
 
@@ -1728,19 +1573,13 @@ splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error)
           splt_p_dewrap(state, SPLT_TRUE, NULL, err);
           splt_p_end(state, err);
         }
-        else
-        {
-          splt_o_unlock_messages(state);
-        }
+        else { splt_o_unlock_messages(state); }
       }
       splt_o_set_int_option(state, SPLT_OPT_SPLIT_MODE, old_split_mode);
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { *err = SPLT_ERROR_LIBRARY_LOCKED; }
 
     return state->wrap;
   }
@@ -1753,29 +1592,22 @@ splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error)
 
 void mp3splt_wrap_init_iterator(splt_wrap *wrap)
 {
-  if (!wrap)
-  {
-    return;
-  }
+  if (!wrap) { return; }
 
   wrap->iterator_counter = 0;
 }
 
 const splt_one_wrap *mp3splt_wrap_next(splt_wrap *wrap)
 {
-  if (!wrap)
-  {
-    return NULL;
-  }
+  if (!wrap) { return NULL; }
 
-  if (wrap->iterator_counter < 0 || 
-      wrap->iterator_counter >= wrap->wrap_files_num)
+  if (wrap->iterator_counter < 0 || wrap->iterator_counter >= wrap->wrap_files_num)
   {
     wrap->iterator_counter++;
     return NULL;
   }
 
-  splt_one_wrap *one_wrap = (splt_one_wrap *) wrap->wrap_files[wrap->iterator_counter];
+  splt_one_wrap *one_wrap = (splt_one_wrap *)wrap->wrap_files[wrap->iterator_counter];
 
   wrap->iterator_counter++;
 
@@ -1784,10 +1616,7 @@ const splt_one_wrap *mp3splt_wrap_next(splt_wrap *wrap)
 
 char *mp3splt_wrap_get_wrapped_file(const splt_one_wrap *one_wrap)
 {
-  if (!one_wrap)
-  {
-    return NULL;
-  }
+  if (!one_wrap) { return NULL; }
 
   return strdup((const char *)one_wrap);
 }
@@ -1826,15 +1655,9 @@ int mp3splt_set_silence_points(splt_state *state, splt_code *error)
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { *err = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    *err = SPLT_ERROR_STATE_NULL;
-  }
+  else { *err = SPLT_ERROR_STATE_NULL; }
 
   return found_splitpoints;
 }
@@ -1870,24 +1693,15 @@ splt_code mp3splt_set_trim_silence_points(splt_state *state)
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { *err = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    *err = SPLT_ERROR_STATE_NULL;
-  }
+  else { *err = SPLT_ERROR_STATE_NULL; }
 
   return *err;
 }
 
 //!returns libmp3splt version; result must be freed
-char *mp3splt_get_version()
-{
-  return strdup(SPLT_PACKAGE_VERSION);
-}
+char *mp3splt_get_version() { return strdup(SPLT_PACKAGE_VERSION); }
 
 /*! Returns the error string that matches an error code
 
@@ -1918,19 +1732,16 @@ splt_code mp3splt_append_plugins_scan_dir(splt_state *state, const char *dir)
 #ifdef __WIN32__
 /*! Converts a string from win32 to utf8
 
-\param The UTF16 string from Windows 
+\param The UTF16 string from Windows
 \result The same string in UTF8
 \attention The resulting string is malloc'ed and must be freed by the
 caller after use.
 */
-char *mp3splt_win32_utf16_to_utf8(const wchar_t *source)
-{
-  return splt_w32_utf16_to_utf8(source);
-}
+char *mp3splt_win32_utf16_to_utf8(const wchar_t *source) { return splt_w32_utf16_to_utf8(source); }
 #endif
 
-char **mp3splt_find_filenames(splt_state *state, const char *filename,
-    int *num_of_files_found, splt_code *error)
+char **mp3splt_find_filenames(
+  splt_state *state, const char *filename, int *num_of_files_found, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1957,9 +1768,8 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
             return NULL;
           }
 
-          int fname_size = strlen(filename) + 1;
+          int fname_size = strnlen(filename, 1024) + 1;
           found_files[0] = malloc(sizeof(char) * fname_size);
-          memset(found_files[0], '\0', fname_size);
 
           if (!found_files[0])
           {
@@ -1967,6 +1777,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
             return NULL;
           }
 
+          memset(found_files[0], '\0', fname_size);
           strncat(found_files[0], filename, fname_size);
           *num_of_files_found = 1;
         }
@@ -1980,10 +1791,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
           return NULL;
         }
 
-        if (dir[strlen(dir)-1] == SPLT_DIRCHAR)
-        {
-          dir[strlen(dir)-1] = '\0';
-        }
+        if (dir[strlen(dir) - 1] == SPLT_DIRCHAR) { dir[strlen(dir) - 1] = '\0'; }
 
         splt_io_find_filenames(state, dir, &found_files, num_of_files_found, err);
 
@@ -1996,10 +1804,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { *err = SPLT_ERROR_LIBRARY_LOCKED; }
   }
   else
   {
@@ -2013,15 +1818,9 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 //@}
 
 //! Checks if a name points to a directory
-int mp3splt_check_if_directory(const char *fname)
-{
-  return splt_io_check_if_directory(fname);
-}
+int mp3splt_check_if_directory(const char *fname) { return splt_io_check_if_directory(fname); }
 
-void mp3splt_free_one_tag(splt_tags *tags)
-{
-  splt_tu_free_one_tags(&tags);
-}
+void mp3splt_free_one_tag(splt_tags *tags) { splt_tu_free_one_tags(&tags); }
 
 splt_tags *mp3splt_parse_filename_regex(splt_state *state, splt_code *error)
 {
@@ -2040,22 +1839,15 @@ splt_tags *mp3splt_parse_filename_regex(splt_state *state, splt_code *error)
       tags = splt_fr_parse_from_state(state, error);
 #else
       splt_c_put_warning_message_to_client(state,
-          _(" warning: cannot set tags from filename regular expression - compiled without pcre support\n"));
+        _(" warning: cannot set tags from filename regular expression - compiled without pcre support\n"));
       *error = SPLT_REGEX_UNAVAILABLE;
 #endif
 
       splt_o_unlock_library(state);
     }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    else { *err = SPLT_ERROR_LIBRARY_LOCKED; }
   }
-  else
-  {
-    *err = SPLT_ERROR_STATE_NULL;
-  }
+  else { *err = SPLT_ERROR_STATE_NULL; }
 
   return tags;
 }
-

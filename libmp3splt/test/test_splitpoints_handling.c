@@ -11,10 +11,7 @@ void cut_setup()
   error = SPLT_OK;
 }
 
-void cut_teardown()
-{
-  mp3splt_free_state(state);
-}
+void cut_teardown() { mp3splt_free_state(state); }
 
 void test_initial_splitpoints()
 {
@@ -107,4 +104,3 @@ void test_append_and_erase_all_splitpoints()
   splt_points *points = mp3splt_get_splitpoints(state, &error);
   cut_assert_null(points);
 }
-

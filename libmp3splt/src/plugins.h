@@ -40,9 +40,8 @@ void splt_p_search_syncerrors(splt_state *state, int *error);
 void splt_p_dewrap(splt_state *state, int listonly, const char *dir, int *error);
 void splt_p_import_internal_sheets(splt_state *state, splt_code *error);
 double splt_p_split(splt_state *state, const char *final_fname, double begin_point,
-    double end_point, int *error, int save_end_point);
-int splt_p_simple_split(splt_state *state, const char *output_fname, off_t begin,
-    off_t end);
+  double end_point, int *error, int save_end_point);
+int splt_p_simple_split(splt_state *state, const char *output_fname, off_t begin, off_t end);
 int splt_p_scan_silence(splt_state *state, int *error);
 int splt_p_scan_trim_silence(splt_state *state, int *error);
 void splt_p_set_original_tags(splt_state *state, int *error);
@@ -65,4 +64,3 @@ int splt_p_file_is_supported_by_plugins(splt_state *state, const char *fname);
 #define SPLT_PLUGINS_H
 
 #endif
-

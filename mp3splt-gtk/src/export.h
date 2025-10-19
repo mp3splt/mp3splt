@@ -38,4 +38,3 @@ void export_cue_file_in_configuration_directory(ui_state *ui);
 void export_menu_action(GSimpleAction *action, GVariant *parameter, gpointer data);
 
 #endif
-

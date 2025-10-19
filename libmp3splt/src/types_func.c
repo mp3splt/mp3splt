@@ -31,7 +31,7 @@
 
 /*! \file
 
-Set global parameters like the name of the file that has to be 
+Set global parameters like the name of the file that has to be
 split.
  */
 
@@ -64,7 +64,7 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->split.write_cb = NULL;
   state->split.write_cb_data = NULL;
   state->split.p_bar->progress_text_max_char = 40;
-  snprintf(state->split.p_bar->filename_shorted,512, "%s","");
+  snprintf(state->split.p_bar->filename_shorted, 512, "%s", "");
   state->split.p_bar->percent_progress = 0;
   state->split.p_bar->current_split = 0;
   state->split.p_bar->max_splits = 0;
@@ -93,7 +93,7 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
 
 splt_state *splt_t_new_state(splt_state *state, int *error)
 {
-  if ((state =malloc(sizeof(splt_state))) ==NULL)
+  if ((state = malloc(sizeof(splt_state))) == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
@@ -233,22 +233,13 @@ void splt_t_free_state(splt_state *state)
 
 void splt_t_set_total_time(splt_state *state, long value)
 {
-  splt_d_print_debug(state,"Setting total time to _%ld_\n", value);
+  splt_d_print_debug(state, "Setting total time to _%ld_\n", value);
 
-  if (value >= 0)
-  {
-    state->split.total_time = value;
-  }
-  else
-  {
-    splt_e_error(SPLT_IERROR_INT,__func__, value, NULL);
-  }
+  if (value >= 0) { state->split.total_time = value; }
+  else { splt_e_error(SPLT_IERROR_INT, __func__, value, NULL); }
 }
 
-long splt_t_get_total_time(splt_state *state)
-{
-  return state->split.total_time;
-}
+long splt_t_get_total_time(splt_state *state) { return state->split.total_time; }
 
 double splt_t_get_total_time_as_double_secs(splt_state *state)
 {
@@ -260,8 +251,7 @@ double splt_t_get_total_time_as_double_secs(splt_state *state)
   return total;
 }
 
-void splt_t_set_new_filename_path(splt_state *state, 
-    const char *new_filename_path, int *error)
+void splt_t_set_new_filename_path(splt_state *state, const char *new_filename_path, int *error)
 {
   int err = SPLT_OK;
 
@@ -270,25 +260,19 @@ void splt_t_set_new_filename_path(splt_state *state,
   if (err < 0) { *error = err; }
 }
 
-char *splt_t_get_new_filename_path(splt_state *state)
-{
-  return state->iopts.new_filename_path;
-}
+char *splt_t_get_new_filename_path(splt_state *state) { return state->iopts.new_filename_path; }
 
 int splt_t_set_path_of_split(splt_state *state, const char *path_of_split)
 {
-  splt_d_print_debug(state,"Setting path of split to _%s_\n", path_of_split);
+  splt_d_print_debug(state, "Setting path of split to _%s_\n", path_of_split);
   int err = splt_su_copy(path_of_split, &state->path_of_split);
 
-  if (state->path_of_split == NULL)
-  {
-    return err;
-  }
+  if (state->path_of_split == NULL) { return err; }
 
 #ifdef __WIN32__
-  if (state->path_of_split[strlen(state->path_of_split)-1] == SPLT_DIRCHAR)
+  if (state->path_of_split[strlen(state->path_of_split) - 1] == SPLT_DIRCHAR)
   {
-    if (! splt_w32_str_is_drive_root_directory(state->path_of_split))
+    if (!splt_w32_str_is_drive_root_directory(state->path_of_split))
     {
       splt_su_str_cut_last_char(state->path_of_split);
     }
@@ -298,21 +282,15 @@ int splt_t_set_path_of_split(splt_state *state, const char *path_of_split)
   return err;
 }
 
-char *splt_t_get_path_of_split(splt_state *state)
-{
-  return state->path_of_split;
-}
+char *splt_t_get_path_of_split(splt_state *state) { return state->path_of_split; }
 
 int splt_t_set_m3u_filename(splt_state *state, const char *filename)
 {
-  splt_d_print_debug(state,"Setting m3u filename to _%s_\n", filename);
+  splt_d_print_debug(state, "Setting m3u filename to _%s_\n", filename);
   return splt_su_copy(filename, &state->m3u_filename);
 }
 
-char *splt_t_get_m3u_filename(splt_state *state)
-{
-  return state->m3u_filename;
-}
+char *splt_t_get_m3u_filename(splt_state *state) { return state->m3u_filename; }
 
 int splt_t_set_input_filename_regex(splt_state *state, const char *regex)
 {
@@ -320,32 +298,23 @@ int splt_t_set_input_filename_regex(splt_state *state, const char *regex)
   return splt_su_copy(regex, &state->input_fname_regex);
 }
 
-char *splt_t_get_input_filename_regex(splt_state *state)
-{
-  return state->input_fname_regex;
-}
+char *splt_t_get_input_filename_regex(splt_state *state) { return state->input_fname_regex; }
 
 int splt_t_set_default_comment_tag(splt_state *state, const char *default_comment)
 {
-  splt_d_print_debug(state,"Setting default comment tag to _%s_\n", default_comment);
+  splt_d_print_debug(state, "Setting default comment tag to _%s_\n", default_comment);
   return splt_su_copy(default_comment, &state->default_comment_tag);
 }
 
 int splt_t_set_default_genre_tag(splt_state *state, const char *default_genre)
 {
-  splt_d_print_debug(state,"Setting default genre tag to _%s_\n", default_genre);
+  splt_d_print_debug(state, "Setting default genre tag to _%s_\n", default_genre);
   return splt_su_copy(default_genre, &state->default_genre_tag);
 }
 
-char *splt_t_get_default_comment_tag(splt_state *state)
-{
-  return state->default_comment_tag;
-}
+char *splt_t_get_default_comment_tag(splt_state *state) { return state->default_comment_tag; }
 
-char *splt_t_get_default_genre_tag(splt_state *state)
-{
-  return state->default_genre_tag;
-}
+char *splt_t_get_default_genre_tag(splt_state *state) { return state->default_genre_tag; }
 
 char *splt_t_get_m3u_file_with_path(splt_state *state, int *error)
 {
@@ -355,25 +324,19 @@ char *splt_t_get_m3u_file_with_path(splt_state *state, int *error)
 
 int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
 {
-  splt_d_print_debug(state,"Setting silence log fname to _%s_\n", filename);
+  splt_d_print_debug(state, "Setting silence log fname to _%s_\n", filename);
   return splt_su_copy(filename, &state->silence_log_fname);
 }
 
-char *splt_t_get_silence_log_fname(splt_state *state)
-{
-  return state->silence_log_fname;
-}
+char *splt_t_get_silence_log_fname(splt_state *state) { return state->silence_log_fname; }
 
 int splt_t_set_silence_full_log_fname(splt_state *state, const char *filename)
 {
-  splt_d_print_debug(state,"Setting silence full log fname to _%s_\n", filename);
+  splt_d_print_debug(state, "Setting silence full log fname to _%s_\n", filename);
   return splt_su_copy(filename, &state->silence_full_log_fname);
 }
 
-char *splt_t_get_silence_full_log_fname(splt_state *state)
-{
-  return state->silence_full_log_fname;
-}
+char *splt_t_get_silence_full_log_fname(splt_state *state) { return state->silence_full_log_fname; }
 
 FILE *splt_t_get_silence_full_log_file_descriptor(splt_state *state)
 {
@@ -383,15 +346,12 @@ FILE *splt_t_get_silence_full_log_file_descriptor(splt_state *state)
 //! Sets the name of the file that has to be split.
 int splt_t_set_filename_to_split(splt_state *state, const char *filename)
 {
-  splt_d_print_debug(state,"Setting filename to split to _%s_\n", filename);
+  splt_d_print_debug(state, "Setting filename to split to _%s_\n", filename);
   return splt_su_copy(filename, &state->fname_to_split);
 }
 
 //! returns the name of the file that has to be split.
-char * splt_t_get_filename_to_split(splt_state *state)
-{
-  return state->fname_to_split;
-}
+char *splt_t_get_filename_to_split(splt_state *state) { return state->fname_to_split; }
 
 static void splt_t_set_current_split_file_number(splt_state *state, int index)
 {
@@ -400,7 +360,7 @@ static void splt_t_set_current_split_file_number(splt_state *state, int index)
 
 void splt_t_set_current_split_file_number_next(splt_state *state)
 {
-  splt_t_set_current_split_file_number(state, state->split.current_split_file_number+1);
+  splt_t_set_current_split_file_number(state, state->split.current_split_file_number + 1);
 }
 
 void splt_t_set_current_split(splt_state *state, int index)
@@ -408,39 +368,30 @@ void splt_t_set_current_split(splt_state *state, int index)
   if (index >= 0)
   {
     int err = SPLT_OK;
-	  if (index == 0)
-	  {
+    if (index == 0)
+    {
       if (splt_sp_splitpoint_exists(state, index) &&
           splt_sp_get_splitpoint_type(state, index, &err) == SPLT_SKIPPOINT)
       {
         splt_t_set_current_split_file_number(state, 0);
       }
-      else
+      else { splt_t_set_current_split_file_number(state, 1); }
+    }
+    else
+    {
+      if (splt_sp_splitpoint_exists(state, index))
       {
-        splt_t_set_current_split_file_number(state, 1);
+        if (splt_sp_get_splitpoint_type(state, index, &err) != SPLT_SKIPPOINT)
+        {
+          splt_t_set_current_split_file_number_next(state);
+        }
       }
-	  }
-	  else
-	  {
-		  if (splt_sp_splitpoint_exists(state, index))
-		  {
-			  if (splt_sp_get_splitpoint_type(state, index, &err) != SPLT_SKIPPOINT)
-			  {
-				  splt_t_set_current_split_file_number_next(state);
-			  }
-		  }
-		  else
-		  {
-			  splt_t_set_current_split_file_number_next(state);
-		  }
-	  }
+      else { splt_t_set_current_split_file_number_next(state); }
+    }
 
-	  state->split.current_split = index;
+    state->split.current_split = index;
   }
-  else
-  {
-    splt_e_error(SPLT_IERROR_INT, __func__,index, NULL);
-  }
+  else { splt_e_error(SPLT_IERROR_INT, __func__, index, NULL); }
 }
 
 void splt_t_current_split_next(splt_state *state)
@@ -448,10 +399,7 @@ void splt_t_current_split_next(splt_state *state)
   splt_t_set_current_split(state, splt_t_get_current_split(state) + 1);
 }
 
-int splt_t_get_current_split(splt_state *state)
-{
-  return state->split.current_split;
-}
+int splt_t_get_current_split(splt_state *state) { return state->split.current_split; }
 
 int splt_t_get_current_split_file_number(splt_state *state)
 {
@@ -460,20 +408,11 @@ int splt_t_get_current_split_file_number(splt_state *state)
 
 void splt_t_set_splitnumber(splt_state *state, int number)
 {
-  if (number >= 0)
-  {
-    state->split.splitnumber = number;
-  }
-  else
-  {
-    splt_e_error(SPLT_IERROR_INT,__func__, number, NULL);
-  }
+  if (number >= 0) { state->split.splitnumber = number; }
+  else { splt_e_error(SPLT_IERROR_INT, __func__, number, NULL); }
 }
 
-int splt_t_get_splitnumber(splt_state *state)
-{
-  return state->split.splitnumber;
-}
+int splt_t_get_splitnumber(splt_state *state) { return state->split.splitnumber; }
 
 void splt_t_free_splitpoints_tags(splt_state *state)
 {
@@ -483,38 +422,28 @@ void splt_t_free_splitpoints_tags(splt_state *state)
 
 void splt_t_clean_one_split_data(splt_state *state, int num)
 {
-  if (splt_tu_tags_exists(state,num))
+  if (splt_tu_tags_exists(state, num))
   {
-    splt_tu_set_tags_field(state,num, SPLT_TAGS_YEAR, NULL);
-    splt_tu_set_tags_field(state,num, SPLT_TAGS_ARTIST, NULL);
-    splt_tu_set_tags_field(state,num, SPLT_TAGS_ALBUM, NULL);
-    splt_tu_set_tags_field(state,num, SPLT_TAGS_TITLE, NULL);
-    splt_tu_set_tags_field(state,num, SPLT_TAGS_COMMENT, NULL);
-    splt_tu_set_tags_field(state,num, SPLT_TAGS_PERFORMER, NULL);
+    splt_tu_set_tags_field(state, num, SPLT_TAGS_YEAR, NULL);
+    splt_tu_set_tags_field(state, num, SPLT_TAGS_ARTIST, NULL);
+    splt_tu_set_tags_field(state, num, SPLT_TAGS_ALBUM, NULL);
+    splt_tu_set_tags_field(state, num, SPLT_TAGS_TITLE, NULL);
+    splt_tu_set_tags_field(state, num, SPLT_TAGS_COMMENT, NULL);
+    splt_tu_set_tags_field(state, num, SPLT_TAGS_PERFORMER, NULL);
   }
 
-  if (splt_sp_splitpoint_exists(state, num))
-  {
-    splt_sp_set_splitpoint_name(state, num, NULL);
-  }
+  if (splt_sp_splitpoint_exists(state, num)) { splt_sp_set_splitpoint_name(state, num, NULL); }
 }
 
-void splt_t_clean_split_data(splt_state *state,int tracks)
+void splt_t_clean_split_data(splt_state *state, int tracks)
 {
-  splt_t_set_current_split(state,0);
+  splt_t_set_current_split(state, 0);
   do {
-    splt_t_clean_one_split_data(state,state->split.current_split);
+    splt_t_clean_one_split_data(state, state->split.current_split);
     splt_t_current_split_next(state);
   } while (splt_t_get_current_split(state) < tracks);
 }
 
-int splt_t_split_is_canceled(splt_state *state)
-{
-  return state->cancel_split;
-}
+int splt_t_split_is_canceled(splt_state *state) { return state->cancel_split; }
 
-void splt_t_set_stop_split(splt_state *state, int bool_value)
-{
-  state->cancel_split = bool_value;
-}
-
+void splt_t_set_stop_split(splt_state *state, int bool_value) { state->cancel_split = bool_value; }

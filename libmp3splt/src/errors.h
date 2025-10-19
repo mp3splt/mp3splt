@@ -53,4 +53,3 @@ char *splt_e_strerror(splt_state *state, splt_code error_code);
 #define SPLT_ERRORS_H
 
 #endif
-

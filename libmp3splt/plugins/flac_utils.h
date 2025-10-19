@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -34,22 +34,21 @@
 unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_code *error);
 unsigned char splt_flac_u_read_next_byte_(void *flac_frame_reader, splt_code *error);
 unsigned char splt_flac_u_read_bit(splt_flac_frame_reader *fr, splt_code *error);
-unsigned char splt_flac_u_read_bits(splt_flac_frame_reader *fr, unsigned char bits_number,
-    splt_code *error);
+unsigned char splt_flac_u_read_bits(
+  splt_flac_frame_reader *fr, unsigned char bits_number, splt_code *error);
 
-void splt_flac_u_read_up_to_total_bits(splt_flac_frame_reader *fr, unsigned total_bits,
-    splt_code *error);
+void splt_flac_u_read_up_to_total_bits(
+  splt_flac_frame_reader *fr, unsigned total_bits, splt_code *error);
 unsigned splt_flac_u_read_unsigned(splt_flac_frame_reader *fr, splt_code *error);
 
 void splt_flac_u_read_zeroes_and_the_next_one(splt_flac_frame_reader *fr, splt_code *error);
 
-void splt_flac_u_process_frame(splt_flac_frame_reader *fr,
-    unsigned frame_byte_buffer_start, splt_state *state, splt_code *error,
-    void (*frame_processor)(unsigned char *frame, size_t frame_length, 
-      splt_state *state, splt_code *error, void *user_data),
-    void *user_data);
+void splt_flac_u_process_frame(splt_flac_frame_reader *fr, unsigned frame_byte_buffer_start,
+  splt_state *state, splt_code *error,
+  void (*frame_processor)(unsigned char *frame, size_t frame_length, splt_state *state,
+    splt_code *error, void *user_data),
+  void *user_data);
 
 #define MP3SPLT_FLAC_UTILS_H
 
 #endif
-

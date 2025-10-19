@@ -42,11 +42,11 @@ int splt_io_input_is_stdout(splt_state *state);
 char *splt_io_get_linked_fname(const char *fname, int *number_of_symlinks);
 #endif
 
-int splt_io_get_word (FILE *in, off_t offset, int mode, unsigned long *headw);
+int splt_io_get_word(FILE *in, off_t offset, int mode, unsigned long *headw);
 off_t splt_io_get_file_length(splt_state *state, FILE *in, const char *filename, int *error);
 
-void splt_io_create_output_dirs_if_necessary(splt_state *state,
-    const char *output_filename, int *error);
+void splt_io_create_output_dirs_if_necessary(
+  splt_state *state, const char *output_filename, int *error);
 
 int splt_io_create_directories(splt_state *state, const char *dir);
 
@@ -54,15 +54,13 @@ int splt_io_stat(const char *path, mode_t *st_mode, off_t *st_size);
 FILE *splt_io_fopen(const char *filename, const char *mode);
 int splt_io_mkdir(splt_state *state, const char *path);
 unsigned char *splt_io_fread(FILE *file, size_t size);
-size_t splt_io_fwrite(splt_state *state, const void *ptr,
-    size_t size, size_t nmemb, FILE *stream);
+size_t splt_io_fwrite(splt_state *state, const void *ptr, size_t size, size_t nmemb, FILE *stream);
 
-void splt_io_find_filenames(splt_state *state, const char *directory,
-    char ***found_files, int *number_of_found_files, int *error);
+void splt_io_find_filenames(splt_state *state, const char *directory, char ***found_files,
+  int *number_of_found_files, int *error);
 
 char *splt_io_readline(FILE *stream, int *error);
 
 #define MP3SPLT_IO_H
 
 #endif
-

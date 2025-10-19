@@ -31,7 +31,8 @@
 
 #ifndef SPLT_TAGS_PARSER_H
 
-typedef struct {
+typedef struct
+{
   splt_tags *current_tags;
   splt_tags *all_tags;
   int ambigous;
@@ -65,4 +66,3 @@ void splt_tp_put_tags_from_filename(splt_state *state, int *error);
 #define SPLT_TAGS_PARSER_H
 
 #endif
-

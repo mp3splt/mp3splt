@@ -34,12 +34,12 @@
 
 m4_define([minimum_libmp3splt_version],[0.9.3.1518])
 
-AC_PREREQ(2.56)
-AC_INIT(mp3splt, 2.6.3.1518, mtrotta@users.sourceforge.net)
+AC_PREREQ([2.71])
+AC_INIT([mp3splt],[2.6.3.1518],[mtrotta@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR([src/mp3splt.c])
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE([enable])
 
 #################################################
@@ -110,7 +110,7 @@ Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 #Check for --enable-oggsplt_symlink
 
 AC_ARG_ENABLE(oggsplt_symlink,
-AC_HELP_STRING([--enable-oggsplt_symlink], [Enable symlink of oggsplt to mp3splt. ]),
+AS_HELP_STRING([--enable-oggsplt_symlink],[Enable symlink of oggsplt to mp3splt. ]),
 [enable_ogg_symlink=$enableval],[enable_ogg_symlink="no"])
 
 if test "x$enable_ogg_symlink" = xyes;then
@@ -123,7 +123,7 @@ fi
 #Check for --enable-flacsplt_symlink
 
 AC_ARG_ENABLE(flacsplt_symlink,
-AC_HELP_STRING([--enable-flacsplt_symlink], [Enable symlink of flacsplt to mp3splt. ]),
+AS_HELP_STRING([--enable-flacsplt_symlink],[Enable symlink of flacsplt to mp3splt. ]),
 [enable_flac_symlink=$enableval],[enable_flac_symlink="no"])
 
 if test "x$enable_flac_symlink" = xyes;then
@@ -137,19 +137,19 @@ fi
 # Check for some debugging, warnings and optimise options
 #################################################################
 
-AC_ARG_ENABLE(c-debug, [AC_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
+AC_ARG_ENABLE(c-debug, [AS_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
     [enable_c_debug=$enableval],[enable_c_debug="no"])
 if test "x$enable_c_debug" = xyes;then
   CFLAGS="$CFLAGS -g -Wall"
 fi
 
-AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--enable-optimise],[ Enable O3 optimise. ]) ],
+AC_ARG_ENABLE(optimise, [AS_HELP_STRING([--enable-optimise],[ Enable O3 optimise. ]) ],
     [enable_optimise=$enableval],[enable_optimise="no"])
 if test "x$enable_optimise" = xyes;then
   CFLAGS="$CFLAGS -O3"
 fi
 
-AC_ARG_ENABLE(extra-warnings, [AC_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
+AC_ARG_ENABLE(extra-warnings, [AS_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
     [enable_extra_warnings=$enableval],[enable_extra_warnings="no"])
 if test "x$enable_extra_warnings" = xyes;then
   CFLAGS="$CFLAGS -Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
@@ -159,7 +159,8 @@ fi
 # Generate Makefiles
 #################################################
 
-AC_OUTPUT(Makefile src/Makefile po/Makefile.in doc/Makefile)
+AC_CONFIG_FILES([Makefile src/Makefile po/Makefile.in doc/Makefile])
+AC_OUTPUT
 
 #################################################
 # Output configuration

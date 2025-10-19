@@ -35,11 +35,9 @@
 
 #include "external_includes.h"
 
-GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
-    gint value, void (*callback)(GtkToggleButton *, gpointer),
-    gpointer callback_data, GtkWidget *vbox);
+GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text, gint value,
+  void (*callback)(GtkToggleButton *, gpointer), gpointer callback_data, GtkWidget *vbox);
 gint rh_get_active_value(GtkWidget *radio_button);
 void rh_set_radio_value(GtkWidget *radio_button, gint key_value, gboolean value);
 
 #endif
-

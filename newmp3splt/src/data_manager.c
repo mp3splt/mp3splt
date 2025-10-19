@@ -84,7 +84,7 @@ void free_main_struct(main_data **d)
       if (data->filenames)
       {
         int i = 0;
-        for (i = 0; i < data->number_of_filenames;i++)
+        for (i = 0; i < data->number_of_filenames; i++)
         {
           free(data->filenames[i]);
           data->filenames[i] = NULL;
@@ -103,7 +103,7 @@ void free_main_struct(main_data **d)
       if (data->argv)
       {
         int i = 0;
-        for (i = 0; i < data->argc;i++)
+        for (i = 0; i < data->argc; i++)
         {
           if (data->argv[i])
           {
@@ -115,7 +115,7 @@ void free_main_struct(main_data **d)
         free(data->argv);
         data->argv = NULL;
       }
-#endif 
+#endif
 
       mp3splt_free_state(data->state);
       data->state = NULL;
@@ -130,21 +130,18 @@ void append_filename(main_data *data, const char *str)
 {
   if (data)
   {
-    if (!data->filenames)
-    {
-      data->filenames = my_malloc(sizeof(char *));
-    }
+    if (!data->filenames) { data->filenames = my_malloc(sizeof(char *)); }
     else
     {
-      data->filenames = my_realloc(data->filenames, sizeof(char *) *
-          (data->number_of_filenames + 1));
+      data->filenames =
+        my_realloc(data->filenames, sizeof(char *) * (data->number_of_filenames + 1));
     }
     data->filenames[data->number_of_filenames] = NULL;
     if (str != NULL)
     {
       int malloc_size = strlen(str) + 1;
       data->filenames[data->number_of_filenames] = my_malloc(sizeof(char) * malloc_size);
-      snprintf(data->filenames[data->number_of_filenames],malloc_size, "%s",str);
+      snprintf(data->filenames[data->number_of_filenames], malloc_size, "%s", str);
       data->number_of_filenames++;
     }
   }
@@ -154,17 +151,13 @@ void append_splitpoint(main_data *data, long value)
 {
   if (data)
   {
-    if (!data->splitpoints)
-    {
-      data->splitpoints = my_malloc(sizeof(long));
-    }
+    if (!data->splitpoints) { data->splitpoints = my_malloc(sizeof(long)); }
     else
     {
-      data->splitpoints = my_realloc(data->splitpoints,
-          sizeof(long) * (data->number_of_splitpoints + 1));
+      data->splitpoints =
+        my_realloc(data->splitpoints, sizeof(long) * (data->number_of_splitpoints + 1));
     }
     data->splitpoints[data->number_of_splitpoints] = value;
     data->number_of_splitpoints++;
   }
 }
-

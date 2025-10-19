@@ -35,26 +35,24 @@
 
 #include "all_includes.h"
 
-typedef enum {
+typedef enum
+{
   DND_SINGLE_MODE_AUDIO_FILE,
   DND_BATCH_MODE_AUDIO_FILES,
   DND_DATA_FILES,
   DND_SINGLE_MODE_AUDIO_FILE_AND_DATA_FILES,
 } drop_type;
 
-enum {
+enum
+{
   DROP_PLAIN,
   DROP_STRING,
   DROP_URI_LIST
 };
 
-static const GtkTargetEntry drop_types[] = {
-  { "text/plain", 0, DROP_PLAIN },
-  { "STRING", 0, DROP_STRING },
-  { "text/uri-list", 0, DROP_URI_LIST }
-};
+static const GtkTargetEntry drop_types[] = { { "text/plain", 0, DROP_PLAIN },
+  { "STRING", 0, DROP_STRING }, { "text/uri-list", 0, DROP_URI_LIST } };
 
 void dnd_add_drag_data_received_to_widget(GtkWidget *widget, drop_type type, ui_state *ui);
 
 #endif
-

@@ -1,6 +1,6 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt flac plugin
  *
  * Copyright (c) 2014 Alexandru Munteanu - <m@ioalex.net>
  *
@@ -33,23 +33,24 @@
 
 #include "splt.h"
 
-typedef struct {
+typedef struct
+{
   unsigned char block_type;
   FLAC__uint32 block_length;
   unsigned char *bytes;
 } splt_flac_one_metadata;
 
-typedef struct {
-  splt_flac_one_metadata *datas; 
+typedef struct
+{
+  splt_flac_one_metadata *datas;
   int number_of_datas;
 } splt_flac_metadatas;
 
 splt_flac_metadatas *splt_flac_m_new();
 void splt_flac_m_free(splt_flac_metadatas *metadatas);
-void splt_flac_m_append_metadata(unsigned char block_type, FLAC__uint32 block_length, 
-    unsigned char *bytes, splt_flac_metadatas *metadatas, splt_code *error);
+void splt_flac_m_append_metadata(unsigned char block_type, FLAC__uint32 block_length,
+  unsigned char *bytes, splt_flac_metadatas *metadatas, splt_code *error);
 
 #define MP3SPLT_FLAC_METADATA_H
 
 #endif
-

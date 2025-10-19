@@ -48,8 +48,7 @@ int splt_io_input_is_stdin(splt_state *state)
 
   if (filename && filename[0] != '\0')
   {
-    if ((strcmp(filename,"-") == 0) ||
-        (filename[strlen(filename)-1] == '-'))
+    if ((strcmp(filename, "-") == 0) || (filename[strlen(filename) - 1] == '-'))
     {
       return SPLT_TRUE;
     }
@@ -64,14 +63,8 @@ int splt_io_input_is_stdout(splt_state *state)
 
   if (oformat && oformat[0] != '\0')
   {
-    if ((strcmp(oformat,"-") == 0))
-    {
-      return SPLT_TRUE;
-    }
-    else
-    {
-      return SPLT_FALSE;
-    }
+    if ((strcmp(oformat, "-") == 0)) { return SPLT_TRUE; }
+    else { return SPLT_FALSE; }
   }
 
   return SPLT_FALSE;
@@ -83,10 +76,7 @@ static int splt_io_file_type_is(const char *fname, int file_type)
   int status = splt_io_stat(fname, &st_mode, NULL);
   if (status == 0)
   {
-    if ((st_mode & S_IFMT) == file_type)
-    {
-      return SPLT_TRUE;
-    }
+    if ((st_mode & S_IFMT) == file_type) { return SPLT_TRUE; }
   }
 
   return SPLT_FALSE;
@@ -113,10 +103,7 @@ static char *splt_io_readlink_as_realpath(const char *fname)
   while (bufsize < INT_MAX)
   {
     char *linked_fname = malloc(sizeof(char) * bufsize);
-    if (linked_fname == NULL)
-    {
-      return NULL;
-    }
+    if (linked_fname == NULL) { return NULL; }
 
     ssize_t real_link_size = readlink(fname, linked_fname, bufsize);
     if (real_link_size == -1)
@@ -143,18 +130,12 @@ static char *splt_io_get_linked_fname_one_level(const char *fname, int *number_o
   char *previous_linked_fname = NULL;
 
   char *linked_fname = splt_io_readlink_as_realpath(fname);
-  if (!linked_fname)
-  {
-    return NULL;
-  }
+  if (!linked_fname) { return NULL; }
 
   int count = 0;
   while (linked_fname != NULL)
   {
-    if (previous_linked_fname)
-    {
-      free(previous_linked_fname);
-    }
+    if (previous_linked_fname) { free(previous_linked_fname); }
     previous_linked_fname = linked_fname;
     linked_fname = splt_io_readlink_as_realpath(linked_fname);
 
@@ -166,35 +147,20 @@ static char *splt_io_get_linked_fname_one_level(const char *fname, int *number_o
         free(previous_linked_fname);
         previous_linked_fname = NULL;
       }
-      if (linked_fname)
-      {
-        free(linked_fname);
-      }
-      if (number_of_symlinks)
-      {
-        *number_of_symlinks = MAX_SYMLINKS;
-      }
+      if (linked_fname) { free(linked_fname); }
+      if (number_of_symlinks) { *number_of_symlinks = MAX_SYMLINKS; }
       return NULL;
     }
   }
 
-  if (number_of_symlinks)
-  {
-    *number_of_symlinks = count;
-  }
+  if (number_of_symlinks) { *number_of_symlinks = count; }
 
   linked_fname = previous_linked_fname;
 
-  if (linked_fname[0] == SPLT_DIRCHAR)
-  {
-    return linked_fname;
-  }
+  if (linked_fname[0] == SPLT_DIRCHAR) { return linked_fname; }
 
   char *slash_ptr = strrchr(fname, SPLT_DIRCHAR);
-  if (slash_ptr == NULL)
-  {
-    return linked_fname;
-  }
+  if (slash_ptr == NULL) { return linked_fname; }
 
   char *linked_fname_with_path = NULL;
 
@@ -231,10 +197,7 @@ char *splt_io_get_linked_fname(const char *fname, int *number_of_symlinks)
     free(output_fname);
     output_fname = new_output_fname;
 
-    if (num_of_symlinks == MAX_SYMLINKS)
-    {
-      break;
-    }
+    if (num_of_symlinks == MAX_SYMLINKS) { break; }
   }
 
   return output_fname;
@@ -248,19 +211,13 @@ static int splt_io_linked_file_type_is(const char *fname, int file_type)
   char *linked_fname = splt_io_get_linked_fname(fname, &number_of_symlinks);
   if (linked_fname)
   {
-    if (splt_io_file_type_is(linked_fname, file_type))
-    {
-      linked_file_is_of_type = SPLT_TRUE;
-    }
+    if (splt_io_file_type_is(linked_fname, file_type)) { linked_file_is_of_type = SPLT_TRUE; }
 
     free(linked_fname);
     linked_fname = NULL;
   }
 
-  if (number_of_symlinks == MAX_SYMLINKS)
-  {
-    errno = ELOOP;
-  }
+  if (number_of_symlinks == MAX_SYMLINKS) { errno = ELOOP; }
 
   return linked_file_is_of_type;
 }
@@ -270,10 +227,7 @@ int splt_io_check_if_directory(const char *fname)
 {
 #ifdef __WIN32__
   int is_file = splt_io_check_if_file(NULL, fname);
-  if (is_file)
-  {
-    return SPLT_FALSE;
-  }
+  if (is_file) { return SPLT_FALSE; }
 
   if (splt_w32_check_if_encoding_is_utf8(fname))
   {
@@ -289,10 +243,7 @@ int splt_io_check_if_directory(const char *fname)
   }
   else
   {
-    if (PathFileExistsA(fname) == 1)
-    {
-      return SPLT_TRUE;
-    }
+    if (PathFileExistsA(fname) == 1) { return SPLT_TRUE; }
 
     return SPLT_FALSE;
   }
@@ -300,17 +251,11 @@ int splt_io_check_if_directory(const char *fname)
 
   if (fname != NULL)
   {
-    if (splt_io_file_type_is(fname, S_IFDIR))
-    {
-      return SPLT_TRUE;
-    }
+    if (splt_io_file_type_is(fname, S_IFDIR)) { return SPLT_TRUE; }
 
 #ifndef __WIN32__
     int is_link = splt_io_file_type_is(fname, S_IFLNK);
-    if (is_link && splt_io_linked_file_type_is(fname, S_IFDIR))
-    {
-      return SPLT_TRUE;
-    }
+    if (is_link && splt_io_linked_file_type_is(fname, S_IFDIR)) { return SPLT_TRUE; }
 #endif
   }
 
@@ -324,29 +269,17 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
   if (fname != NULL)
   {
     //stdin: consider as file
-    if (fname[0] != '\0' && fname[strlen(fname)-1] == '-')
-    {
-      return SPLT_TRUE;
-    }
+    if (fname[0] != '\0' && fname[strlen(fname) - 1] == '-') { return SPLT_TRUE; }
 
-    if (splt_io_file_type_is(fname, S_IFREG))
-    {
-      return SPLT_TRUE;
-    }
+    if (splt_io_file_type_is(fname, S_IFREG)) { return SPLT_TRUE; }
 
 #ifndef __WIN32__
     int is_link = splt_io_file_type_is(fname, S_IFLNK);
-    if (is_link && splt_io_linked_file_type_is(fname, S_IFREG))
-    {
-      return SPLT_TRUE;
-    }
+    if (is_link && splt_io_linked_file_type_is(fname, S_IFREG)) { return SPLT_TRUE; }
 #endif
   }
 
-  if (state != NULL)
-  {
-    splt_e_set_strerror_msg_with_data(state, fname);
-  }
+  if (state != NULL) { splt_e_set_strerror_msg_with_data(state, fname); }
 
   return SPLT_FALSE;
 }
@@ -356,17 +289,11 @@ int splt_io_get_word(FILE *in, off_t offset, int mode, unsigned long *headw)
   int i;
   *headw = 0;
 
-  if (fseeko(in, offset, mode)==-1)
-  {
-    return -1;
-  }
+  if (fseeko(in, offset, mode) == -1) { return -1; }
 
-  for (i=0; i<4; i++)
+  for (i = 0; i < 4; i++)
   {
-    if (feof(in)) 
-    {
-      return -1;
-    }
+    if (feof(in)) { return -1; }
     *headw = *headw << 8;
     *headw |= fgetc(in);
   }
@@ -377,7 +304,7 @@ int splt_io_get_word(FILE *in, off_t offset, int mode, unsigned long *headw)
 off_t splt_io_get_file_length(splt_state *state, FILE *in, const char *filename, int *error)
 {
   struct stat info;
-  if (fstat(fileno(in), &info)==-1)
+  if (fstat(fileno(in), &info) == -1)
   {
     splt_e_set_strerror_msg_with_data(state, filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
@@ -386,13 +313,13 @@ off_t splt_io_get_file_length(splt_state *state, FILE *in, const char *filename,
   return info.st_size;
 }
 
-void splt_io_create_output_dirs_if_necessary(splt_state *state,
-    const char *output_filename, int *error)
+void splt_io_create_output_dirs_if_necessary(
+  splt_state *state, const char *output_filename, int *error)
 {
   if (splt_o_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
   {
     char *only_dirs = strdup(output_filename);
-    if (! only_dirs)
+    if (!only_dirs)
     {
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       return;
@@ -403,11 +330,10 @@ void splt_io_create_output_dirs_if_necessary(splt_state *state,
     {
       *dir_char = '\0';
 #ifdef __WIN32__
-      if (strlen(only_dirs) == 2 && only_dirs[1] == ':' &&
-          strlen(output_filename) > 3)
+      if (strlen(only_dirs) == 2 && only_dirs[1] == ':' && strlen(output_filename) > 3)
       {
         *dir_char = SPLT_DIRCHAR;
-        *(dir_char+1) = '\0';
+        *(dir_char + 1) = '\0';
       }
 #endif
       int err = splt_io_create_directories(state, only_dirs);
@@ -422,20 +348,15 @@ void splt_io_create_output_dirs_if_necessary(splt_state *state,
 int splt_io_create_directories(splt_state *state, const char *dir)
 {
   int result = SPLT_OK;
+  int max_size = strnlen(dir, 1024) + 100;
 
-  if (dir == NULL || dir[0] == '\0')
-  {
-    return result;
-  }
+  if (dir == NULL || dir[0] == '\0') { return result; }
 
-  char *dir_to_create = malloc(sizeof(char) * (strlen(dir)+100));
-  if (!dir_to_create)
-  {
-    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
- 
+  char *dir_to_create = malloc(sizeof(char) * max_size);
+  if (!dir_to_create) { return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; }
+
   splt_d_print_debug(state, "Starting to create directories for _%s_ ...\n", dir);
- 
+
   const char *ptr = dir;
 
 #ifdef __WIN32__
@@ -455,16 +376,16 @@ int splt_io_create_directories(splt_state *state, const char *dir)
     first_time = SPLT_FALSE;
 #endif
 
-    strncpy(dir_to_create, dir, ptr-dir);
-    dir_to_create[ptr-dir] = '\0';
+    strncpy(dir_to_create, dir, ptr - dir);
+    dir_to_create[ptr - dir] = '\0';
 
     if (dir_to_create[0] != '\0')
     {
-      splt_d_print_debug(state,"Checking if _%s_ is a directory ...\n", dir_to_create);
+      splt_d_print_debug(state, "Checking if _%s_ is a directory ...\n", dir_to_create);
 
-      if (! splt_io_check_if_directory(dir_to_create))
+      if (!splt_io_check_if_directory(dir_to_create))
       {
-        splt_d_print_debug(state,"Creating directory _%s_ ...\n", dir_to_create);
+        splt_d_print_debug(state, "Creating directory _%s_ ...\n", dir_to_create);
 
         if ((splt_io_mkdir(state, dir_to_create)) == -1)
         {
@@ -478,11 +399,11 @@ int splt_io_create_directories(splt_state *state, const char *dir)
     ptr++;
   }
 
-  strncpy(dir_to_create, dir, strlen(dir) + 1);
+  strncpy(dir_to_create, dir, max_size);
 
-  if (! splt_io_check_if_directory(dir_to_create))
+  if (!splt_io_check_if_directory(dir_to_create))
   {
-    splt_d_print_debug(state,"Creating final directory _%s_ ...\n", dir_to_create);
+    splt_d_print_debug(state, "Creating final directory _%s_ ...\n", dir_to_create);
 
     if ((splt_io_mkdir(state, dir_to_create)) == -1)
     {
@@ -497,7 +418,7 @@ end:
     free(dir_to_create);
     dir_to_create = NULL;
   }
-  
+
   return result;
 }
 
@@ -534,10 +455,7 @@ FILE *splt_io_fopen(const char *filename, const char *mode)
 
 int splt_io_mkdir(splt_state *state, const char *path)
 {
-  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
-  {
-    return 0;
-  }
+  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT)) { return 0; }
 
 #ifdef __WIN32__
   if (splt_w32_check_if_encoding_is_utf8(path))
@@ -554,10 +472,7 @@ int splt_io_mkdir(splt_state *state, const char *path)
 
     return ret;
   }
-  else
-  {
-    return mkdir(path);
-  }
+  else { return mkdir(path); }
 #else
   return mkdir(path, 0755);
 #endif
@@ -579,15 +494,9 @@ int splt_io_stat(const char *path, mode_t *st_mode, off_t *st_size)
       wpath = NULL;
     }
 
-    if (st_mode != NULL)
-    {
-      *st_mode = buf.st_mode;
-    }
+    if (st_mode != NULL) { *st_mode = buf.st_mode; }
 
-    if (st_size != NULL)
-    {
-      *st_size = buf.st_size;
-    }
+    if (st_size != NULL) { *st_size = buf.st_size; }
 
     return ret;
   }
@@ -602,22 +511,16 @@ int splt_io_stat(const char *path, mode_t *st_mode, off_t *st_size)
     int ret = lstat(path, &buf);
 #endif
 
-    if (st_mode != NULL)
-    {
-      *st_mode = buf.st_mode;
-    }
+    if (st_mode != NULL) { *st_mode = buf.st_mode; }
 
-    if (st_size != NULL)
-    {
-      *st_size = buf.st_size;
-    }
+    if (st_size != NULL) { *st_size = buf.st_size; }
 
     return ret;
   }
 }
 
-void splt_io_find_filenames(splt_state *state, const char *directory,
-    char ***found_files, int *number_of_found_files, int *error)
+void splt_io_find_filenames(splt_state *state, const char *directory, char ***found_files,
+  int *number_of_found_files, int *error)
 {
 #ifdef __WIN32__
   struct _wdirent **files = NULL;
@@ -658,21 +561,17 @@ void splt_io_find_filenames(splt_state *state, const char *directory,
         continue;
       }
 
-      snprintf(path_with_fname, path_with_fname_size, "%s%c%s", directory,
-          SPLT_DIRCHAR, fname);
+      snprintf(path_with_fname, path_with_fname_size, "%s%c%s", directory, SPLT_DIRCHAR, fname);
 
       if (splt_io_check_if_file(state, path_with_fname))
       {
         if (splt_p_file_is_supported_by_plugins(state, fname))
         {
-          if (!(*found_files))
-          {
-            (*found_files) = malloc(sizeof(char *));
-          }
+          if (!(*found_files)) { (*found_files) = malloc(sizeof(char *)); }
           else
           {
-            (*found_files) = realloc((*found_files),
-                sizeof(char *) * ((*number_of_found_files) + 1));
+            (*found_files) =
+              realloc((*found_files), sizeof(char *) * ((*number_of_found_files) + 1));
           }
           if (*found_files == NULL)
           {
@@ -695,10 +594,9 @@ void splt_io_find_filenames(splt_state *state, const char *directory,
       }
       else if (splt_io_check_if_directory(path_with_fname))
       {
-        if (! splt_u_fname_is_directory_parent(fname, fname_size))
+        if (!splt_u_fname_is_directory_parent(fname, fname_size))
         {
-          splt_io_find_filenames(state, path_with_fname, found_files,
-              number_of_found_files, error);
+          splt_io_find_filenames(state, path_with_fname, found_files, number_of_found_files, error);
         }
       }
 
@@ -731,18 +629,12 @@ size_t splt_io_fwrite(splt_state *state, const void *ptr, size_t size, size_t nm
     }
     return nmemb;
   }
-  else
-  {
-    return fwrite(ptr, size, nmemb, stream);
-  }
+  else { return fwrite(ptr, size, nmemb, stream); }
 }
 
 char *splt_io_readline(FILE *stream, int *error)
 {
-  if (feof(stream))
-  {
-    return NULL;
-  }
+  if (feof(stream)) { return NULL; }
 
   int err = SPLT_OK;
   int bufsize = 1024;
@@ -753,15 +645,19 @@ char *splt_io_readline(FILE *stream, int *error)
   while (fgets(buffer, bufsize, stream) != NULL)
   {
     err = splt_su_append_str(&line, buffer, NULL);
-    if (err < 0) { *error = err; break; }
+    if (err < 0)
+    {
+      *error = err;
+      break;
+    }
 
-    if (line != NULL && line[strlen(line)-1] == '\n')
+    if (line != NULL && line[strlen(line) - 1] == '\n')
     {
       free(buffer);
       return line;
     }
 
-    buffer[0] = '\0';  
+    buffer[0] = '\0';
   }
 
   free(buffer);
@@ -779,10 +675,7 @@ unsigned char *splt_io_fread(FILE *file, size_t size)
 {
   unsigned char *bytes = malloc(sizeof(unsigned char) * size);
 
-  if (! bytes)
-  {
-    return NULL;
-  }
+  if (!bytes) { return NULL; }
 
   size_t bytes_read = fread(bytes, 1, size, file);
 
@@ -803,6 +696,5 @@ unsigned char *splt_io_fread(FILE *file, size_t size)
 static int splt_u_fname_is_directory_parent(char *fname, int fname_size)
 {
   return ((fname_size == 1) && (strcmp(fname, ".") == 0)) ||
-    ((fname_size == 2) && (strcmp(fname, "..") == 0));
+         ((fname_size == 2) && (strcmp(fname, "..") == 0));
 }
-

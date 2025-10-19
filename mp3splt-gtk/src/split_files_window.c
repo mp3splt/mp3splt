@@ -30,10 +30,10 @@
  *********************************************************/
 
 /*!********************************************************
- * \file 
+ * \file
  * The split tab
  *
- * file that handles the split files tab from the main 
+ * file that handles the split files tab from the main
  * window
  **********************************************************/
 
@@ -65,14 +65,13 @@ static void create_split_columns(GtkTreeView *split_tree)
 {
   GtkCellRendererText *renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NAME));
-  GtkTreeViewColumn *name_column = gtk_tree_view_column_new_with_attributes 
-    (_("Filename"), GTK_CELL_RENDERER(renderer), "text", COL_NAME, NULL);
+  GtkTreeViewColumn *name_column = gtk_tree_view_column_new_with_attributes(
+    _("Filename"), GTK_CELL_RENDERER(renderer), "text", COL_NAME, NULL);
 
   gtk_tree_view_insert_column(split_tree, GTK_TREE_VIEW_COLUMN(name_column), COL_NAME);
 
   gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column), 0.5);
-  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column),
-      GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column), GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_resizable(name_column, TRUE);
 }
 
@@ -92,10 +91,7 @@ void remove_all_split_rows(ui_state *ui)
 const gchar *get_real_name_from_filename(const gchar *filename)
 {
   const gchar *fname = filename;
-  while (strchr(fname, G_DIR_SEPARATOR) != NULL)
-  {
-    fname = strchr(fname, G_DIR_SEPARATOR) + 1;
-  }
+  while (strchr(fname, G_DIR_SEPARATOR) != NULL) { fname = strchr(fname, G_DIR_SEPARATOR) + 1; }
 
   return fname;
 }
@@ -107,9 +103,8 @@ void add_split_row(const gchar *name, ui_state *ui)
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
   gtk_list_store_append(GTK_LIST_STORE(model), &iter);
 
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-      COL_NAME, get_real_name_from_filename(name),
-      COL_FILENAME, name, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_NAME, get_real_name_from_filename(name),
+    COL_FILENAME, name, -1);
 }
 
 //!return the n_th filename from the split files
@@ -118,7 +113,7 @@ gchar *get_filename_from_split_files(gint number, gui_state *gui)
   gchar *filename = NULL;
 
   GtkTreeModel *model = gtk_tree_view_get_model(gui->split_tree);
-  GtkTreePath *path = gtk_tree_path_new_from_indices(number-1 ,-1);
+  GtkTreePath *path = gtk_tree_path_new_from_indices(number - 1, -1);
 
   GtkTreeIter iter;
   if (gtk_tree_model_get_iter(model, &iter, path))
@@ -133,10 +128,7 @@ gchar *get_filename_from_split_files(gint number, gui_state *gui)
 //!queue button event
 static void queue_files_button_event(GtkWidget *widget, ui_state *ui)
 {
-  if (!ui->status->timer_active)
-  {
-    connect_button_event(ui->gui->connect_button, ui);
-  }
+  if (!ui->status->timer_active) { connect_button_event(ui->gui->connect_button, ui); }
 
   GList *file_list = NULL;
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
@@ -154,10 +146,7 @@ static void queue_files_button_event(GtkWidget *widget, ui_state *ui)
     valid_row = gtk_tree_model_iter_next(model, &iter);
   }
 
-  if (file_list != NULL)
-  {
-    player_add_files(file_list, ui);
-  }
+  if (file_list != NULL) { player_add_files(file_list, ui); }
 
   g_list_foreach(file_list, (GFunc)g_free, NULL);
   g_list_free(file_list);
@@ -195,7 +184,7 @@ static void remove_file_button_event(GtkWidget *widget, ui_state *ui)
     gtk_widget_set_sensitive(ui->gui->remove_all_files_button, FALSE);
   }
 
-  gtk_widget_set_sensitive(ui->gui->remove_file_button,FALSE);
+  gtk_widget_set_sensitive(ui->gui->remove_file_button, FALSE);
 
   g_list_foreach(selected_list, (GFunc)gtk_tree_path_free, NULL);
   g_list_free(selected_list);
@@ -217,42 +206,40 @@ static void remove_all_files_button_event(GtkWidget *widget, ui_state *ui)
     g_free(filename);
   }
 
-  gtk_widget_set_sensitive(ui->gui->remove_all_files_button,FALSE);
-  gtk_widget_set_sensitive(ui->gui->remove_file_button,FALSE);
-  gtk_widget_set_sensitive(ui->gui->queue_files_button,FALSE);
+  gtk_widget_set_sensitive(ui->gui->remove_all_files_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->remove_file_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->queue_files_button, FALSE);
 }
 
 //!creates the horizontal queue buttons horizontal box
 static void create_queue_buttons(ui_state *ui)
 {
   //button for queueing all files
-  GtkWidget *queue_files_button = 
-    wh_create_cool_button(NULL, _("_Queue to player"),FALSE);
+  GtkWidget *queue_files_button = wh_create_cool_button(NULL, _("_Queue to player"), FALSE);
   ui->gui->queue_files_button = queue_files_button;
   gtk_widget_set_sensitive(queue_files_button, FALSE);
-  g_signal_connect(G_OBJECT(queue_files_button), "clicked",
-      G_CALLBACK(queue_files_button_event), ui);
+  g_signal_connect(
+    G_OBJECT(queue_files_button), "clicked", G_CALLBACK(queue_files_button_event), ui);
 
   //button for removing a file
-  GtkWidget *remove_file_button =
-    wh_create_cool_button(NULL, _("_Delete selected"), FALSE);
+  GtkWidget *remove_file_button = wh_create_cool_button(NULL, _("_Delete selected"), FALSE);
   ui->gui->remove_file_button = remove_file_button;
   gtk_widget_set_sensitive(remove_file_button, FALSE);
-  g_signal_connect(G_OBJECT(remove_file_button), "clicked",
-      G_CALLBACK(remove_file_button_event), ui);
+  g_signal_connect(
+    G_OBJECT(remove_file_button), "clicked", G_CALLBACK(remove_file_button_event), ui);
 
   //button for removing a file
   GtkWidget *remove_all_files_button =
     wh_create_cool_button("list-remove", _("D_elete all"), FALSE);
   ui->gui->remove_all_files_button = remove_all_files_button;
   gtk_widget_set_sensitive(remove_all_files_button, FALSE);
-  g_signal_connect(G_OBJECT(remove_all_files_button), "clicked",
-      G_CALLBACK(remove_all_files_button_event), ui);
+  g_signal_connect(
+    G_OBJECT(remove_all_files_button), "clicked", G_CALLBACK(remove_all_files_button_event), ui);
 }
 
 //! Issued when a row is clicked on
-void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
-    GtkTreeViewColumn *arg2, ui_state *ui)
+void split_tree_row_activated(
+  GtkTreeView *split_tree, GtkTreePath *arg1, GtkTreeViewColumn *arg2, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(split_tree);
   GtkTreeSelection *selection = gtk_tree_view_get_selection(split_tree);
@@ -272,10 +259,7 @@ void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
   connect_to_player_with_song(0, ui);
 
   gtk_tree_path_free(path);
-  if (filename)
-  {
-    g_free(filename);
-  }
+  if (filename) { g_free(filename); }
 }
 
 //!split selection has changed
@@ -288,10 +272,7 @@ static void split_selection_changed(GtkTreeSelection *selec, ui_state *ui)
   {
     gtk_widget_set_sensitive(ui->gui->remove_file_button, TRUE);
   }
-  else
-  {
-    gtk_widget_set_sensitive(ui->gui->remove_file_button, FALSE);
-  }
+  else { gtk_widget_set_sensitive(ui->gui->remove_file_button, FALSE); }
 }
 
 //!creates the split files tab
@@ -303,21 +284,20 @@ GtkWidget *create_split_files_frame(ui_state *ui)
   ui->gui->split_tree = split_tree;
   GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-      GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy(
+    GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
   create_split_columns(split_tree);
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(split_tree));
   g_signal_connect(G_OBJECT(split_tree), "row-activated", G_CALLBACK(split_tree_row_activated), ui);
-  
+
   //selection for the tree
   GtkTreeSelection *split_tree_selection = gtk_tree_view_get_selection(split_tree);
-  g_signal_connect(G_OBJECT(split_tree_selection), "changed", 
-      G_CALLBACK(split_selection_changed), ui);
+  g_signal_connect(
+    G_OBJECT(split_tree_selection), "changed", G_CALLBACK(split_selection_changed), ui);
   gtk_tree_selection_set_mode(GTK_TREE_SELECTION(split_tree_selection), GTK_SELECTION_MULTIPLE);
-  
+
   create_queue_buttons(ui);
-  
+
   return vbox;
 }
-

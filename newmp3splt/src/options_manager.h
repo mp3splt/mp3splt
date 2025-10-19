@@ -23,24 +23,35 @@
 
 #ifndef OPTIONS_MANAGER_H
 
-typedef struct {
+typedef struct
+{
   //force id3v1 tags, force id3v2 tags or both
   short T_option;
   short T_option_value;
   //wrap split, list wrap options, error split
-  short w_option; short l_option; short e_option;
+  short w_option;
+  short l_option;
+  short e_option;
   //frame mode, cddb/cue option, time split
-  short f_option; short c_option; short t_option;
+  short f_option;
+  short c_option;
+  short t_option;
   //silence split, adjust option, parameters
-  short s_option; short a_option; short p_option;
+  short s_option;
+  short a_option;
+  short p_option;
   //trim silence split
   short r_option;
   //output filename, output directory, seekable
-  short o_option; short d_option; short k_option;
+  short o_option;
+  short d_option;
+  short k_option;
   //keep original tags when using cddb or cue import
   short K_option;
   //custom tags, no tags, quiet option
-  short g_option; short n_option; short q_option;
+  short g_option;
+  short n_option;
+  short q_option;
   short E_option;
   short P_option;
   short x_option;
@@ -59,7 +70,9 @@ typedef struct {
   int S_option_value;
   char *tags_from_fname_regex_arg;
   //cddb argument, output dir argument, parameters arguments with -p
-  char *cddb_arg; char *dir_arg; char *param_args;
+  char *cddb_arg;
+  char *dir_arg;
+  char *param_args;
   char *export_cue_arg;
   char *audacity_labels_arg;
   //custom tags with -g
@@ -86,7 +99,8 @@ typedef struct {
   int freedb_arg_result_option;
 } options;
 
-typedef struct {
+typedef struct
+{
   int replace_underscores_by_space;
 
   int artist_text_format;
@@ -107,4 +121,3 @@ void free_regex_options(regex_options **regex_opt);
 
 #define OPTIONS_MANAGER_H
 #endif
-

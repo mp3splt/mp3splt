@@ -60,4 +60,3 @@ void refresh_preview_drawing_areas(gui_state *gui);
 void update_example_output_dir_for_single_file_split(ui_state *ui);
 
 #endif
-

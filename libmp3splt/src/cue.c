@@ -44,12 +44,9 @@ static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_
   //skip the word TRACK
   line_content += 5;
 
-  if (cu->tracks == -1) 
-  {
-    cu->tracks = 0;
-  }
+  if (cu->tracks == -1) { cu->tracks = 0; }
 
-  if (!cu->time_for_track) 
+  if (!cu->time_for_track)
   {
     splt_e_set_error_data(state, cu->file);
     cu->error = SPLT_INVALID_CUE_FILE;
@@ -74,21 +71,12 @@ static void remove_trailing_spaces_and_quote(char *ptr_e, char *in)
   {
     ptr_e--;
 
-    while (*ptr_e == ' ' && ptr_e > in)
-    {
-      ptr_e--;
-    }
+    while (*ptr_e == ' ' && ptr_e > in) { ptr_e--; }
 
     if (ptr_e > in)
     {
-      if (*ptr_e == '"')
-      {
-        *ptr_e = '\0';
-      }
-      else
-      {
-        *(ptr_e + 1) = '\0';
-      }
+      if (*ptr_e == '"') { *ptr_e = '\0'; }
+      else { *(ptr_e + 1) = '\0'; }
     }
   }
 }
@@ -98,15 +86,9 @@ static const char *splt_cue_parse_value(char *in, int skip_last_word)
   char *ptr_b = in;
   char *ptr_e = NULL;
 
-  while (*ptr_b == ' ')
-  {
-    ptr_b++;
-  }
+  while (*ptr_b == ' ') { ptr_b++; }
 
-  if (*ptr_b == '"')
-  {
-    ptr_b++;
-  }
+  if (*ptr_b == '"') { ptr_b++; }
 
   ptr_e = strchr(ptr_b + 1, '\0');
 
@@ -127,21 +109,16 @@ static char *splt_cue_parse_and_duplicate_value(char *in, int *error)
 
   char *out = NULL;
   int err = splt_su_append(&out, ptr_b, strlen(ptr_b) + 1, NULL);
-  if (err < 0)
-  {
-    *error = err;
-  }
+  if (err < 0) { *error = err; }
 
   return out;
 }
 
 //! Update data for a track in the central splt_state structure.
-static int splt_cue_store_value(splt_state *state, char *in, int index, int tag_field, cue_utils *cu)
+static int splt_cue_store_value(
+  splt_state *state, char *in, int index, int tag_field, cue_utils *cu)
 {
-  if (!in)
-  {
-    return SPLT_OK;
-  }
+  if (!in) { return SPLT_OK; }
 
   splt_code error = SPLT_OK;
   char *out = splt_cue_parse_and_duplicate_value(in, &error);
@@ -168,21 +145,30 @@ static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_
   if (cu->tracks == -1)
   {
     char *album = splt_cue_parse_and_duplicate_value(line_content, &err);
-    if (err < 0) { cu->error = err; return; }
+    if (err < 0)
+    {
+      cu->error = err;
+      return;
+    }
 
     if (album)
     {
       splt_c_put_info_message_to_client(state, _("  Album: %s\n"), album);
       err = splt_tu_set_field_on_tags(cu->all_tags, SPLT_TAGS_ALBUM, album);
       free(album);
-      if (err < 0) { cu->error = err; return; }
+      if (err < 0)
+      {
+        cu->error = err;
+        return;
+      }
     }
   }
   else
   {
     if (cu->tracks > 0)
     {
-      if ((err = splt_cue_store_value(state, line_content, cu->tracks-1, SPLT_TAGS_TITLE, cu)) != SPLT_OK)
+      if ((err = splt_cue_store_value(state, line_content, cu->tracks - 1, SPLT_TAGS_TITLE, cu)) !=
+          SPLT_OK)
       {
         cu->error = err;
         return;
@@ -202,14 +188,22 @@ static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, s
   if (cu->tracks == -1)
   {
     char *artist = splt_cue_parse_and_duplicate_value(line_content, &err);
-    if (err < 0) { cu->error = err; return; }
+    if (err < 0)
+    {
+      cu->error = err;
+      return;
+    }
 
     if (artist)
     {
       splt_c_put_info_message_to_client(state, _("\n  Artist: %s\n"), artist);
       err = splt_tu_set_field_on_tags(cu->all_tags, SPLT_TAGS_ARTIST, artist);
       free(artist);
-      if (err < 0) { cu->error = err; return; }
+      if (err < 0)
+      {
+        cu->error = err;
+        return;
+      }
     }
   }
   else
@@ -222,7 +216,8 @@ static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, s
         return;
       }*/
 
-      if ((err = splt_cue_store_value(state, line_content, cu->tracks - 1, SPLT_TAGS_PERFORMER, cu)) != SPLT_OK)
+      if ((err = splt_cue_store_value(
+             state, line_content, cu->tracks - 1, SPLT_TAGS_PERFORMER, cu)) != SPLT_OK)
       {
         cu->error = err;
         return;
@@ -232,16 +227,14 @@ static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, s
 }
 
 //! Process the rest of a cue line that begins with the word INDEX
-static void splt_cue_process_index_line(int index_length, char *line_content, cue_utils *cu, splt_state *state)
+static void splt_cue_process_index_line(
+  int index_length, char *line_content, cue_utils *cu, splt_state *state)
 {
   int err = SPLT_OK;
 
   line_content += index_length;
 
-  if (cu->tracks <= 0)
-  {
-    return;
-  }
+  if (cu->tracks <= 0) { return; }
 
   char *trimmed_line = splt_su_trim_spaces(line_content);
 
@@ -254,7 +247,11 @@ static void splt_cue_process_index_line(int index_length, char *line_content, cu
   }
 
   err = splt_sp_append_splitpoint(state, hundr_seconds, cu->current_name, cu->current_track_type);
-  if (err < 0) { cu->error = err; return; }
+  if (err < 0)
+  {
+    cu->error = err;
+    return;
+  }
 
   if (cu->current_name)
   {
@@ -269,19 +266,13 @@ static void splt_cue_process_index_line(int index_length, char *line_content, cu
 //! Process the rest of a cue line that begins with the word REM
 static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_state *state)
 {
-  if (cu->tracks < 0)
-  {
-    return;
-  }
+  if (cu->tracks < 0) { return; }
 
   //skip the word REM
   line_content += 3;
 
   //skip all leading whitespace after the word REM
-  while ((*line_content == ' ') || (*line_content == '\t'))
-  {
-    line_content++;
-  }
+  while ((*line_content == ' ') || (*line_content == '\t')) { line_content++; }
 
   if (strstr(line_content, "NOKEEP") != NULL)
   {
@@ -295,8 +286,12 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   {
     line_content += 5;
     const char *album = splt_cue_parse_value(line_content, SPLT_FALSE);
-    err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_ALBUM, album);
-    if (err != SPLT_OK) { cu->error = err; return; }
+    err = splt_tu_set_tags_field(state, cu->tracks - 1, SPLT_TAGS_ALBUM, album);
+    if (err != SPLT_OK)
+    {
+      cu->error = err;
+      return;
+    }
     return;
   }
 
@@ -304,8 +299,12 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   {
     line_content += 5;
     const char *genre = splt_cue_parse_value(line_content, SPLT_FALSE);
-    err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_GENRE, genre);
-    if (err != SPLT_OK) { cu->error = err; return; }
+    err = splt_tu_set_tags_field(state, cu->tracks - 1, SPLT_TAGS_GENRE, genre);
+    if (err != SPLT_OK)
+    {
+      cu->error = err;
+      return;
+    }
     return;
   }
 
@@ -313,8 +312,12 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   {
     line_content += 4;
     const char *year = splt_cue_parse_value(line_content, SPLT_FALSE);
-    err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_YEAR, year);
-    if (err != SPLT_OK) { cu->error = err; return; }
+    err = splt_tu_set_tags_field(state, cu->tracks - 1, SPLT_TAGS_YEAR, year);
+    if (err != SPLT_OK)
+    {
+      cu->error = err;
+      return;
+    }
     return;
   }
 
@@ -323,8 +326,12 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
     line_content += 5;
     const char *track = splt_cue_parse_value(line_content, SPLT_FALSE);
     int tracknumber = atoi(track);
-    err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_TRACK, &tracknumber);
-    if (err != SPLT_OK) { cu->error = err; return; }
+    err = splt_tu_set_tags_field(state, cu->tracks - 1, SPLT_TAGS_TRACK, &tracknumber);
+    if (err != SPLT_OK)
+    {
+      cu->error = err;
+      return;
+    }
     return;
   }
 
@@ -332,8 +339,12 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   {
     line_content += 7;
     const char *comment = splt_cue_parse_value(line_content, SPLT_FALSE);
-    err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_COMMENT, comment);
-    if (err != SPLT_OK) { cu->error = err; return; }
+    err = splt_tu_set_tags_field(state, cu->tracks - 1, SPLT_TAGS_COMMENT, comment);
+    if (err != SPLT_OK)
+    {
+      cu->error = err;
+      return;
+    }
     return;
   }
 
@@ -357,10 +368,7 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
 //! Process the rest of a cue line that begins with the word FILE
 static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_state *state)
 {
-  if (!splt_o_get_int_option(state, SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND))
-  {
-    return;
-  }
+  if (!splt_o_get_int_option(state, SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND)) { return; }
 
   //skip the word FILE
   line_content += 4;
@@ -392,7 +400,11 @@ static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_s
     file_from_cue_with_path = NULL;
   }
 
-  if (err < 0) { cu->error = err; return; }
+  if (err < 0)
+  {
+    cu->error = err;
+    return;
+  }
 }
 
 /*! Analyze a line from a cue file
@@ -410,8 +422,7 @@ static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
   splt_t_clean_one_split_data(state, cu->tracks);
 
   char *line_content = NULL;
-  if (((line_content = strstr(line, "TRACK")) != NULL)
-      && (strstr(line, "AUDIO") != NULL))
+  if (((line_content = strstr(line, "TRACK")) != NULL) && (strstr(line, "AUDIO") != NULL))
   {
     splt_cue_process_track_line(line_content, cu, state);
   }
@@ -488,10 +499,7 @@ splt_cue_cu_new.
  */
 static void splt_cue_cu_free(cue_utils **cu)
 {
-  if (!cu || !*cu)
-  {
-    return;
-  }
+  if (!cu || !*cu) { return; }
 
   if ((*cu)->current_name)
   {
@@ -508,14 +516,13 @@ static void splt_cue_cu_free(cue_utils **cu)
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 {
   if (file == NULL)
-  { 
+  {
     splt_e_set_error_data(state, file);
     *error = SPLT_INVALID_CUE_FILE;
     return 0;
   }
 
-  splt_c_put_info_message_to_client(state, 
-      _(" reading informations from CUE file %s ...\n"), file);
+  splt_c_put_info_message_to_client(state, _(" reading informations from CUE file %s ...\n"), file);
 
   splt_t_free_splitpoints_tags(state);
 
@@ -527,8 +534,12 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   int tracks = -1;
 
   cue_utils *cu = splt_cue_cu_new(&err);
-  
-  if (err < 0) { *error = err; return tracks; }
+
+  if (err < 0)
+  {
+    *error = err;
+    return tracks;
+  }
   cu->file = file;
 
   if (!(file_input = splt_io_fopen(file, "r")))
@@ -551,7 +562,11 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 
     splt_cue_process_line(&line, cu, state);
     tracks = cu->tracks;
-    if (cu->error < 0) { *error = cu->error; goto function_end; }
+    if (cu->error < 0)
+    {
+      *error = cu->error;
+      goto function_end;
+    }
   }
 
   if (cu->counter == 0)
@@ -561,10 +576,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     goto function_end;
   }
 
-  if (!cu->time_for_track) 
-  {
-    tracks--;
-  }
+  if (!cu->time_for_track) { tracks--; }
 
   if (!splt_o_get_int_option(state, SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME))
   {
@@ -587,10 +599,7 @@ function_end:
   }
   file_input = NULL;
 
-  if (*error >= 0)
-  {
-    splt_c_put_info_message_to_client(state, _("  Tracks: %d\n\n"), tracks);
-  }
+  if (*error >= 0) { splt_c_put_info_message_to_client(state, _("  Tracks: %d\n\n"), tracks); }
 
   return tracks;
 }
@@ -604,18 +613,12 @@ function_end:
 \param with_spaces !=0 means we use indentation to make the cue file
        look nicer
  */
-static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
-    int tags_index, short with_spaces, short write_album)
+static void splt_cue_write_title_performer(
+  splt_state *state, FILE *file_output, int tags_index, short with_spaces, short write_album)
 {
   splt_tags *tags = NULL;
-  if (tags_index >= 0)
-  {
-    tags = splt_tu_get_tags_at(state, tags_index);
-  }
-  else
-  {
-    tags = splt_tu_get_current_tags(state);
-  }
+  if (tags_index >= 0) { tags = splt_tu_get_tags_at(state, tags_index); }
+  else { tags = splt_tu_get_current_tags(state); }
 
   if (!tags)
   {
@@ -679,10 +682,7 @@ static void splt_cue_write_other_tags(splt_state *state, FILE *file_output)
   if (!tags->was_auto_incremented)
   {
     const int *track = splt_tu_get_tags_value(tags, SPLT_TAGS_TRACK);
-    if (track != NULL && *track > 0)
-    {
-      fprintf(file_output, "    REM TRACK \"%d\"\n", *track);
-    }
+    if (track != NULL && *track > 0) { fprintf(file_output, "    REM TRACK \"%d\"\n", *track); }
   }
 
   const char *comment = splt_tu_get_tags_value(tags, SPLT_TAGS_COMMENT);
@@ -702,8 +702,8 @@ static void splt_cue_write_other_tags(splt_state *state, FILE *file_output)
   last splitpoint can be slightly beyond the calculated end of audio
   data.
  */
-void splt_cue_export_to_file(splt_state *state, const char *out_file,
-    short stop_at_total_time, int *error)
+void splt_cue_export_to_file(
+  splt_state *state, const char *out_file, short stop_at_total_time, int *error)
 {
   int err = SPLT_OK;
 
@@ -714,11 +714,19 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 
   char *dup_out_file = NULL;
   err = splt_su_copy(out_file, &dup_out_file);
-  if (err < 0) { *error = err; return; }
+  if (err < 0)
+  {
+    *error = err;
+    return;
+  }
   char *cue_out_file = splt_su_get_file_with_output_path(state, dup_out_file, &err);
   free(dup_out_file);
   dup_out_file = NULL;
-  if (err < 0) { *error = err; goto end; }
+  if (err < 0)
+  {
+    *error = err;
+    goto end;
+  }
 
   splt_d_print_debug(state, "Cue output file with output path = _%s_\n", cue_out_file);
 
@@ -738,63 +746,70 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
   {
     char upper_extension[5] = { '\0' };
     int i = 1;
-    for (i = 1;i < strlen(extension);i++)
+    for (i = 1; i < strlen(extension); i++)
     {
-      upper_extension[i-1] = (char) toupper((int)extension[i]);
+      upper_extension[i - 1] = (char)toupper((int)extension[i]);
     }
 
     fprintf(file_output, "FILE \"%s\" %s\n", fname, upper_extension);
-    if (err < 0) { *error = err; goto end; }
+    if (err < 0)
+    {
+      *error = err;
+      goto end;
+    }
   }
   else
   {
     fprintf(file_output, "FILE \"%s\"\n", fname);
-    if (err < 0) { *error = err; goto end; }
+    if (err < 0)
+    {
+      *error = err;
+      goto end;
+    }
   }
 
   splt_t_set_current_split(state, 0);
   int num_of_splitpoints = splt_sp_get_real_splitpoints_number(state);
   int i;
-  for (i = 0;i < num_of_splitpoints;i++)
+  for (i = 0; i < num_of_splitpoints; i++)
   {
     long splitpoint = splt_sp_get_splitpoint_value(state, i, &err);
-    if (err < 0) { *error = err; break; }
-
-    int splitpoint_type = splt_sp_get_splitpoint_type(state, i, &err);
-    if (err < 0) { *error = err; break; }
-
-    const char *name = splt_sp_get_splitpoint_name(state, i, &err);
-    if (err < 0) { *error = err; break; }
-
-    //todo: splitpoint can be slightly != than total_time sometimes
-    // (test with silence and cue)
-    if (stop_at_total_time &&
-        (total_time > 0  && splitpoint >= total_time))
+    if (err < 0)
     {
+      *error = err;
       break;
     }
 
-    fprintf(file_output, "  TRACK %02d AUDIO\n", i+1);
+    int splitpoint_type = splt_sp_get_splitpoint_type(state, i, &err);
+    if (err < 0)
+    {
+      *error = err;
+      break;
+    }
+
+    const char *name = splt_sp_get_splitpoint_name(state, i, &err);
+    if (err < 0)
+    {
+      *error = err;
+      break;
+    }
+
+    //todo: splitpoint can be slightly != than total_time sometimes
+    // (test with silence and cue)
+    if (stop_at_total_time && (total_time > 0 && splitpoint >= total_time)) { break; }
+
+    fprintf(file_output, "  TRACK %02d AUDIO\n", i + 1);
 
     splt_cue_write_title_performer(state, file_output, -1, SPLT_TRUE, SPLT_FALSE);
 
     splt_cue_write_other_tags(state, file_output);
 
-    if (name != NULL)
-    {
-      fprintf(file_output, "    REM NAME \"%s\"\n", name);
-    }
+    if (name != NULL) { fprintf(file_output, "    REM NAME \"%s\"\n", name); }
 
-    if (splitpoint_type == SPLT_SKIPPOINT)
-    {
-      fprintf(file_output, "    REM NOKEEP\n");
-    }
+    if (splitpoint_type == SPLT_SKIPPOINT) { fprintf(file_output, "    REM NOKEEP\n"); }
 
     long mins = 0, secs = 0, frames = 0;
-    if (splitpoint == LONG_MAX)
-    {
-      splitpoint = total_time;
-    }
+    if (splitpoint == LONG_MAX) { splitpoint = total_time; }
     splt_sp_get_mins_secs_frames_from_splitpoint(splitpoint, &mins, &secs, &frames);
     fprintf(file_output, "    INDEX 01 %02ld:%02ld:%02ld\n", mins, secs, frames);
 
@@ -821,4 +836,3 @@ end:
     cue_out_file = NULL;
   }
 }
-

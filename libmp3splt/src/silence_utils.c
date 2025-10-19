@@ -35,8 +35,8 @@ Utilities needed for silence detection.
 */
 #include "splt.h"
 
-int splt_siu_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len, int *error)
+int splt_siu_ssplit_new(
+  struct splt_ssplit **silence_list, float begin_position, float end_position, int len, int *error)
 {
   struct splt_ssplit *temp = NULL;
   struct splt_ssplit *s_new = NULL;
@@ -66,17 +66,14 @@ int splt_siu_ssplit_new(struct splt_ssplit **silence_list,
   }
   else
   {
-    if (temp->next == NULL)
+    if (temp->next == NULL) { temp->next = s_new; }
+    else
     {
-      temp->next = s_new;
-    }
-    else 
-    {
-      while (temp != NULL) 
+      while (temp != NULL)
       {
-        if (temp->next != NULL) 
+        if (temp->next != NULL)
         {
-          if (temp->next->len < len) 
+          if (temp->next->len < len)
           {
             //build an ordered list by len to keep most probable silence points
             s_new->next = temp->next;
@@ -84,7 +81,7 @@ int splt_siu_ssplit_new(struct splt_ssplit **silence_list,
             break;
           }
         }
-        else 
+        else
         {
           temp->next = s_new;
           break;
@@ -124,7 +121,7 @@ float splt_siu_silence_position(struct splt_ssplit *temp, float off)
 
 int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 {
-  char *line = NULL; 
+  char *line = NULL;
   int found = 0;
 
   while ((line = splt_io_readline(log_file, error)) != NULL)
@@ -136,10 +133,7 @@ int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
     if (sscanf(line, "%f\t%f\t%d", &begin_position, &end_position, &len) == 3)
     {
       splt_siu_ssplit_new(&state->silence_list, begin_position, end_position, len, error);
-      if (*error < 0)
-      {
-        break;
-      }
+      if (*error < 0) { break; }
 
       found++;
     }
@@ -159,4 +153,3 @@ int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 
   return found;
 }
-

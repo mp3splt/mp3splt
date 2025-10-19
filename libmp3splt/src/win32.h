@@ -39,13 +39,11 @@
 #include <windows.h>
 #include <direct.h>
 
-int scandir(const char *dir, struct dirent ***namelist,
-		int(*filter)(const struct dirent *),
-		int(*compar)(const struct dirent **, const struct dirent **));
+int scandir(const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *),
+  int (*compar)(const struct dirent **, const struct dirent **));
 
-int wscandir(const char *dir, struct _wdirent ***namelist,
-		int(*filter)(const struct _wdirent *),
-		int(*compar)(const struct _wdirent **, const struct _wdirent **));
+int wscandir(const char *dir, struct _wdirent ***namelist, int (*filter)(const struct _wdirent *),
+  int (*compar)(const struct _wdirent **, const struct _wdirent **));
 
 int alphasort(const struct dirent **a, const struct dirent **b);
 
@@ -63,4 +61,3 @@ int splt_w32_str_is_drive_root_directory(const char *str);
 #endif
 
 #endif
-

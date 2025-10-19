@@ -106,53 +106,32 @@ static short splt_of_output_variable_is_valid(char v, int *amb)
 int splt_of_parse_outformat(char *s, splt_state *state)
 {
   char *ptrs = NULL, *ptre = NULL;
-  int i=0, amb = SPLT_OUTPUT_FORMAT_AMBIGUOUS, len=0;
+  int i = 0, amb = SPLT_OUTPUT_FORMAT_AMBIGUOUS, len = 0;
 
-  size_t size = strlen(s);
+  size_t size = strnlen(s, 1024) + 1;
   for (i = 0; i < size; i++)
   {
-    if (s[i]=='+') 
+    if (s[i] == '+') { s[i] = ' '; }
+    else
     {
-      s[i]=' ';
-    }
-    else 
-    {
-      if (s[i] == SPLT_VARCHAR) 
-      {
-        s[i]='%';
-      }
+      if (s[i] == SPLT_VARCHAR) { s[i] = '%'; }
     }
   }
 
   ptrs = s;
   i = 0;
-  ptre = strchr(ptrs+1, '%');
+  ptre = strchr(ptrs + 1, '%');
   if (s[0] != '%')
   {
-    if (ptre==NULL)
-    {
-      len = strlen(ptrs);
-    }
-    else
-    {
-      len = ptre-ptrs;
-    }
-    if (len > SPLT_MAXOLEN)
-    {
-      len = SPLT_MAXOLEN;
-    }
+    if (ptre == NULL) { len = strnlen(ptrs, 1024) + 1; }
+    else { len = ptre - ptrs + 1; }
+    if (len > SPLT_MAXOLEN) { len = SPLT_MAXOLEN; }
     strncpy(state->oformat.format[i++], ptrs, len);
   }
-  else
-  {
-    ptre = s;
-  }
+  else { ptre = s; }
 
   //if stdout, NOT ambiguous
-  if (splt_io_input_is_stdout(state))
-  {
-    return SPLT_OUTPUT_FORMAT_OK;
-  }
+  if (splt_io_input_is_stdout(state)) { return SPLT_OUTPUT_FORMAT_OK; }
 
   char err[2] = { '\0' };
 
@@ -164,15 +143,12 @@ int splt_of_parse_outformat(char *s, splt_state *state)
   ptrs = ptre;
 
   char *last_ptre = NULL;
-  while (((ptre = strchr(ptrs+1, '%')) != NULL) && (i < SPLT_OUTNUM))
+  while (((ptre = strchr(ptrs + 1, '%')) != NULL) && (i < SPLT_OUTNUM))
   {
-    char cf = *(ptrs+1);
+    char cf = *(ptrs + 1);
 
-    len = ptre-ptrs;
-    if (len > SPLT_MAXOLEN)
-    {
-      len = SPLT_MAXOLEN;
-    }
+    len = ptre - ptrs;
+    if (len > SPLT_MAXOLEN) { len = SPLT_MAXOLEN; }
 
     if (!splt_of_output_variable_is_valid(cf, &amb))
     {
@@ -188,7 +164,7 @@ int splt_of_parse_outformat(char *s, splt_state *state)
 
   if (last_ptre && *last_ptre != '\0')
   {
-    char v = *(last_ptre+1);
+    char v = *(last_ptre + 1);
     if (!splt_of_output_variable_is_valid(v, &amb))
     {
       err[0] = v;
@@ -197,68 +173,47 @@ int splt_of_parse_outformat(char *s, splt_state *state)
     }
   }
 
-  strncpy(state->oformat.format[i], ptrs, strlen(ptrs));
+  strncpy(state->oformat.format[i], ptrs, strnlen(ptrs, 1024) + 1);
 
-  if (ptrs[1]=='t')
-  {
-    amb = SPLT_OUTPUT_FORMAT_OK;
-  }
+  if (ptrs[1] == 't') { amb = SPLT_OUTPUT_FORMAT_OK; }
 
-  if (ptrs[1]=='n')
-  {
-    amb = SPLT_OUTPUT_FORMAT_OK;
-  }
+  if (ptrs[1] == 'n') { amb = SPLT_OUTPUT_FORMAT_OK; }
 
   return amb;
 }
 
-static const char *splt_u_get_format_ptr(const char *format, char *temp,
-    int *number_of_digits_to_output)
+static const char *splt_u_get_format_ptr(
+  const char *format, char *temp, int *number_of_digits_to_output)
 {
   int format_length = strlen(format);
   const char *format_ptr = format;
 
   if ((format_length > 2) && isdigit(format[2]))
   {
-    if (number_of_digits_to_output)
-    {
-      sscanf(&format[2], "%d", number_of_digits_to_output);
-    }
+    if (number_of_digits_to_output) { sscanf(&format[2], "%d", number_of_digits_to_output); }
 
     temp[2] = format[2];
     format_ptr = format + 1;
   }
   else
   {
-    if (number_of_digits_to_output)
-    {
-      *number_of_digits_to_output = -1;
-    }
+    if (number_of_digits_to_output) { *number_of_digits_to_output = -1; }
   }
 
   return format_ptr;
 }
 
-static int splt_u_get_requested_num_of_digits(splt_state *state, const char *format,
-    int *requested_num_of_digits, int is_alpha)
+static int splt_u_get_requested_num_of_digits(
+  splt_state *state, const char *format, int *requested_num_of_digits, int is_alpha)
 {
   int format_length = strlen(format);
   int number_of_digits = 0;
-  if (is_alpha)
-  {
-    number_of_digits = state->oformat.output_alpha_format_digits;
-  }
-  else
-  {
-    number_of_digits = splt_of_get_oformat_number_of_digits_as_int(state);
-  }
+  if (is_alpha) { number_of_digits = state->oformat.output_alpha_format_digits; }
+  else { number_of_digits = splt_of_get_oformat_number_of_digits_as_int(state); }
   int max_number_of_digits = number_of_digits;
   *requested_num_of_digits = number_of_digits;
 
-  if ((format_length > 2) && isdigit(format[2]))
-  {
-    *requested_num_of_digits = format[2] - '0';
-  }
+  if ((format_length > 2) && isdigit(format[2])) { *requested_num_of_digits = format[2] - '0'; }
 
   if (*requested_num_of_digits > number_of_digits)
   {
@@ -281,8 +236,8 @@ static int splt_u_get_requested_num_of_digits(splt_state *state, const char *for
  *   the track number as simple base-26: 'AAA', 'AAB', ... 'AAZ', 'ABA',
  *   'ABB', ...
  */
-static void splt_u_alpha_track(splt_state *state, int nfield,
-    char *fm, int fm_length, int number_of_digits, int tracknumber)
+static void splt_u_alpha_track(
+  splt_state *state, int nfield, char *fm, int fm_length, int number_of_digits, int tracknumber)
 {
   char *format = state->oformat.format[nfield];
   int lowercase = (toupper(format[1]) == 'L');
@@ -293,9 +248,8 @@ static void splt_u_alpha_track(splt_state *state, int nfield,
   if (number_of_digits > 1)
   {
     /* Padding required => simple base-26 encoding */
-    if (number_of_digits < min_digits)
-      number_of_digits = min_digits;
-    for (i = 1; i <= number_of_digits; ++ i, zerobased /= 26)
+    if (number_of_digits < min_digits) number_of_digits = min_digits;
+    for (i = 1; i <= number_of_digits; ++i, zerobased /= 26)
     {
       int digit = (zerobased % 26);
       fm[number_of_digits - i] = a + digit;
@@ -311,7 +265,7 @@ static void splt_u_alpha_track(splt_state *state, int nfield,
 
     /* Now handle all other digits */
     zerobased /= 26;
-    for (i = 2; i <= number_of_digits; ++ i, zerobased /= 27)
+    for (i = 2; i <= number_of_digits; ++i, zerobased /= 27)
     {
       int digit = (zerobased % 27);
       fm[number_of_digits - i] = a + digit - 1;
@@ -319,29 +273,19 @@ static void splt_u_alpha_track(splt_state *state, int nfield,
   }
 
   int offset = 0;
-  if ((strlen(format) > 2) && isdigit(format[2]))
-  {
-    offset = 1;
-  }
-  snprintf(fm + number_of_digits, fm_length - number_of_digits,
-      "%s", format + 2 + offset);
+  if ((strlen(format) > 2) && isdigit(format[2])) { offset = 1; }
+  snprintf(fm + number_of_digits, fm_length - number_of_digits, "%s", format + 2 + offset);
 }
 
 char splt_of_get_number_of_digits_from_total_time(splt_state *state)
 {
   long total_time = splt_t_get_total_time(state);
-  if (total_time <= 0)
-  {
-    return '2';
-  }
+  if (total_time <= 0) { return '2'; }
 
   long minutes = total_time / 100 / 60;
-  int i = (int) (log10l((long double) minutes));
-  char number_of_digits = (char) (i + '1');
-  if (number_of_digits == '1')
-  {
-    return '2';
-  }
+  int i = (int)(log10l((long double)minutes));
+  char number_of_digits = (char)(i + '1');
+  if (number_of_digits == '1') { return '2'; }
 
   return number_of_digits;
 }
@@ -360,10 +304,7 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
   int error = SPLT_OK;
 
   int output_filenames = splt_o_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
-  if (output_filenames == SPLT_OUTPUT_CUSTOM)
-  {
-    return error;
-  }
+  if (output_filenames == SPLT_OUTPUT_CUSTOM) { return error; }
 
   char *temp = NULL;
   char *fm = NULL;
@@ -382,62 +323,52 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
   int split_file_number = splt_t_get_current_split_file_number(state);
   int tags_index = split_file_number - 1;
 
-  if (current_split == -1)
-  {
-    current_split = splt_t_get_current_split_file_number(state) - 1;
-  }
+  if (current_split == -1) { current_split = splt_t_get_current_split_file_number(state) - 1; }
 
-  long mins = -1; long secs = -1; long hundr = -1;
+  long mins = -1;
+  long secs = -1;
+  long hundr = -1;
   long point_value = splt_sp_get_splitpoint_value(state, current_split, &error);
   splt_co_get_mins_secs_hundr(point_value, &mins, &secs, &hundr);
-  long next_mins = -1; long next_secs = -1; long next_hundr = -1;
+  long next_mins = -1;
+  long next_secs = -1;
+  long next_hundr = -1;
   long next_point_value = -1;
   if (splt_sp_splitpoint_exists(state, current_split + 1))
   {
     next_point_value = splt_sp_get_splitpoint_value(state, current_split + 1, &error);
     long total_time = splt_t_get_total_time(state);
-    if (total_time > 0 && next_point_value > total_time)
-    {
-      next_point_value = total_time;
-    }
+    if (total_time > 0 && next_point_value > total_time) { next_point_value = total_time; }
     splt_co_get_mins_secs_hundr(next_point_value, &next_mins, &next_secs, &next_hundr);
   }
 
   int fm_length = 0;
 
   //if we get the tags from the first file
-  int remaining_tags_like_x = splt_o_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
   int real_tags_number = 0;
-  if (state->split.tags_group)
-  {
-    real_tags_number = state->split.tags_group->real_tagsnumber;
-  }
+  if (state->split.tags_group) { real_tags_number = state->split.tags_group->real_tagsnumber; }
 
-  if ((tags_index >= real_tags_number) &&
-      (remaining_tags_like_x != -1))
+  if ((tags_index >= real_tags_number) && (remaining_tags_like_x != -1))
   {
     tags_index = remaining_tags_like_x;
   }
 
   const char *output_format = splt_of_get_oformat(state);
   short write_eof = SPLT_FALSE;
-  if ((next_point_value == LONG_MAX) &&
-      (strcmp(output_format, SPLT_DEFAULT_OUTPUT) == 0))
+  if ((next_point_value == LONG_MAX) && (strcmp(output_format, SPLT_DEFAULT_OUTPUT) == 0))
   {
     write_eof = SPLT_TRUE;
   }
 
-  splt_d_print_debug(state,"The output format is _%s_\n", output_format);
+  splt_d_print_debug(state, "The output format is _%s_\n", output_format);
 
   long mMsShH_value = -1;
   short eof_written = SPLT_FALSE;
 
   for (i = 0; i < SPLT_OUTNUM; i++)
   {
-    if (strlen(state->oformat.format[i]) == 0)
-    {
-      break;
-    }
+    if (strlen(state->oformat.format[i]) == 0) { break; }
 
     //if we have some % in the format (@ has been converted to %)
     if (state->oformat.format[i][0] == '%')
@@ -449,7 +380,7 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
         temp = NULL;
       }
 
-      int temp_len = strlen(state->oformat.format[i])+10;
+      int temp_len = strlen(state->oformat.format[i]) + 10;
       if ((temp = malloc(temp_len * sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -482,10 +413,7 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
 put_value:
           if (!eof_written)
           {
-            if (write_eof &&
-                (char_variable == 'S' ||
-                 char_variable == 'M' ||
-                 char_variable == 'H'))
+            if (write_eof && (char_variable == 'S' || char_variable == 'M' || char_variable == 'H'))
             {
               write_eof = SPLT_FALSE;
               eof_written = SPLT_TRUE;
@@ -514,7 +442,7 @@ put_value:
               int offset = 5;
 
               int number_of_digits_to_output = 0;
-              const char *new_format = 
+              const char *new_format =
                 splt_u_get_format_ptr(state->oformat.format[i], temp, &number_of_digits_to_output);
 
               if (number_of_digits_to_output == 0 && mMsShH_value == 0)
@@ -525,16 +453,13 @@ put_value:
 
                 splt_of_trim_on_separator_characters(output_filename);
               }
-              else
-              {
-                format = new_format + 2;
-              }
+              else { format = new_format + 2; }
 
               int requested_num_of_digits = 0;
-              int max_number_of_digits = splt_u_get_requested_num_of_digits(state,
-                  state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
+              int max_number_of_digits = splt_u_get_requested_num_of_digits(
+                state, state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
 
-              snprintf(temp + offset, temp_len, "%s", format);
+              snprintf(temp + offset, temp_len - offset, "%s", format);
 
               fm_length = strlen(temp) + 1 + max_number_of_digits;
               if ((fm = malloc(fm_length * sizeof(char))) == NULL)
@@ -550,21 +475,18 @@ put_value:
         case 'A':
           if (splt_tu_tags_exists(state, tags_index))
           {
-            artist_or_performer = splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_PERFORMER);
+            artist_or_performer = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_PERFORMER);
             if (artist_or_performer == NULL || artist_or_performer[0] == '\0')
             {
               artist_or_performer = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_ARTIST);
             }
           }
-          else
-          {
-            artist_or_performer = NULL;
-          }
+          else { artist_or_performer = NULL; }
 
           //
           if (artist_or_performer != NULL)
           {
-            snprintf(temp+2,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
             int artist_length = 0;
             artist_length = strlen(artist_or_performer);
@@ -572,7 +494,7 @@ put_value:
           }
           else
           {
-            snprintf(temp,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp, temp_len, "%s", state->oformat.format[i] + 2);
             fm_length = strlen(temp) + 1;
           }
 
@@ -590,10 +512,7 @@ put_value:
             snprintf(fm, fm_length, temp, dup);
             free(dup);
           }
-          else
-          {
-            snprintf(fm, fm_length, "%s", temp);
-          }
+          else { snprintf(fm, fm_length, "%s", temp); }
 
           break;
         case 'a':
@@ -601,15 +520,12 @@ put_value:
           {
             artist = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_ARTIST);
           }
-          else
-          {
-            artist = NULL;
-          }
+          else { artist = NULL; }
 
           //
           if (artist != NULL)
           {
-            snprintf(temp+2,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
             int artist_length = 0;
             artist_length = strlen(artist);
@@ -617,7 +533,7 @@ put_value:
           }
           else
           {
-            snprintf(temp,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp, temp_len, "%s", state->oformat.format[i] + 2);
             fm_length = strlen(temp) + 1;
           }
 
@@ -635,33 +551,27 @@ put_value:
             snprintf(fm, fm_length, temp, dup);
             free(dup);
           }
-          else
-          {
-            snprintf(fm, fm_length, "%s", temp);
-          }
+          else { snprintf(fm, fm_length, "%s", temp); }
           break;
         case 'b':
-          if (splt_tu_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state, tags_index))
           {
             album = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_ALBUM);
           }
-          else
-          {
-            album = NULL;
-          }
+          else { album = NULL; }
 
           //
           if (album != NULL)
           {
             int album_length = 0;
             album_length = strlen(album);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
             fm_length = strlen(temp) + album_length + 1;
           }
           else
           {
-            snprintf(temp,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp, temp_len, "%s", state->oformat.format[i] + 2);
             fm_length = strlen(temp) + 1;
           }
 
@@ -679,33 +589,27 @@ put_value:
             snprintf(fm, fm_length, temp, dup);
             free(dup);
           }
-          else
-          {
-            snprintf(fm, fm_length, "%s", temp);
-          }
+          else { snprintf(fm, fm_length, "%s", temp); }
           break;
         case 'g':
-          if (splt_tu_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state, tags_index))
           {
             genre = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_GENRE);
           }
-          else
-          {
-            genre = NULL;
-          }
+          else { genre = NULL; }
 
           //
           if (genre != NULL)
           {
             int genre_length = 0;
             genre_length = strlen(genre);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
             fm_length = strlen(temp) + genre_length + 1;
           }
           else
           {
-            snprintf(temp,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp, temp_len, "%s", state->oformat.format[i] + 2);
             fm_length = strlen(temp) + 1;
           }
 
@@ -723,33 +627,27 @@ put_value:
             snprintf(fm, fm_length, temp, dup);
             free(dup);
           }
-          else
-          {
-            snprintf(fm, fm_length, "%s", temp);
-          }
+          else { snprintf(fm, fm_length, "%s", temp); }
           break;
         case 't':
-          if (splt_tu_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state, tags_index))
           {
             title = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_TITLE);
           }
-          else
-          {
-            title = NULL;
-          }
+          else { title = NULL; }
 
           //
           if (title != NULL)
           {
             int title_length = 0;
             title_length = strlen(title);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
             fm_length = strlen(temp) + title_length + 1;
           }
           else
           {
-            snprintf(temp,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp, temp_len, "%s", state->oformat.format[i] + 2);
             fm_length = strlen(temp) + 1;
           }
 
@@ -767,33 +665,27 @@ put_value:
             snprintf(fm, fm_length, temp, dup);
             free(dup);
           }
-          else
-          {
-            snprintf(fm, fm_length, "%s", temp);
-          }
+          else { snprintf(fm, fm_length, "%s", temp); }
           break;
         case 'p':
-          if (splt_tu_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state, tags_index))
           {
             performer = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_PERFORMER);
           }
-          else
-          {
-            performer = NULL;
-          }
+          else { performer = NULL; }
 
           //
           if (performer != NULL)
           {
             int performer_length = 0;
             performer_length = strlen(performer);
-            snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
             fm_length = strlen(temp) + performer_length + 1;
           }
           else
           {
-            snprintf(temp,temp_len, "%s", state->oformat.format[i]+2);
+            snprintf(temp, temp_len, "%s", state->oformat.format[i] + 2);
             fm_length = strlen(temp) + 1;
           }
 
@@ -810,10 +702,7 @@ put_value:
             snprintf(fm, fm_length, temp, dup);
             free(dup);
           }
-          else
-          {
-            snprintf(fm, fm_length, "%s", temp);
-          }
+          else { snprintf(fm, fm_length, "%s", temp); }
           break;
         case 'l':
         case 'L':
@@ -829,46 +718,37 @@ put_value:
 
           //if not time split, or normal split, or silence split or error,
           //we put the track number from the tags
-          int split_mode = splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE);
+          int split_mode = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
           if ((isupper(state->oformat.format[i][1])) ||
-              ((split_mode != SPLT_OPTION_TIME_MODE) &&
-               (split_mode != SPLT_OPTION_NORMAL_MODE) &&
-               (split_mode != SPLT_OPTION_SILENCE_MODE) &&
-               (split_mode != SPLT_OPTION_TRIM_SILENCE_MODE) &&
-               (split_mode != SPLT_OPTION_ERROR_MODE) &&
-               (split_mode != SPLT_OPTION_LENGTH_MODE)))
+              ((split_mode != SPLT_OPTION_TIME_MODE) && (split_mode != SPLT_OPTION_NORMAL_MODE) &&
+                (split_mode != SPLT_OPTION_SILENCE_MODE) &&
+                (split_mode != SPLT_OPTION_TRIM_SILENCE_MODE) &&
+                (split_mode != SPLT_OPTION_ERROR_MODE) && (split_mode != SPLT_OPTION_LENGTH_MODE)))
           {
             if (splt_tu_tags_exists(state, tags_index))
             {
               const int *tags_track = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_TRACK);
-              if (tags_track && *tags_track != -1)
-              {
-                tracknumber = *tags_track;
-              }
+              if (tags_track && *tags_track != -1) { tracknumber = *tags_track; }
             }
           }
 
           int requested_num_of_digits = 0;
-          int max_num_of_digits = splt_u_get_requested_num_of_digits(state,
-              state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
+          int max_num_of_digits = splt_u_get_requested_num_of_digits(
+            state, state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
 
           int alpha_requested_num_of_digits = 0;
-          int alpha_max_num_of_digits = splt_u_get_requested_num_of_digits(state,
-              state->oformat.format[i], &alpha_requested_num_of_digits, SPLT_TRUE);
+          int alpha_max_num_of_digits = splt_u_get_requested_num_of_digits(
+            state, state->oformat.format[i], &alpha_requested_num_of_digits, SPLT_TRUE);
 
           int is_numeric = toupper(state->oformat.format[i][1]) == 'N';
           if (is_numeric)
           {
-            const char *format =
-              splt_u_get_format_ptr(state->oformat.format[i], temp, NULL);
+            const char *format = splt_u_get_format_ptr(state->oformat.format[i], temp, NULL);
 
-            snprintf(temp + 4, temp_len, "%s", format + 2);
+            snprintf(temp + 4, temp_len - 4, "%s", format + 2);
             fm_length = strlen(temp) + 1 + max_num_of_digits;
           }
-          else
-          {
-            fm_length = strlen(state->oformat.format[i]) + 1 + alpha_max_num_of_digits;
-          }
+          else { fm_length = strlen(state->oformat.format[i]) + 1 + alpha_max_num_of_digits; }
 
           if ((fm = malloc(fm_length * sizeof(char))) == NULL)
           {
@@ -886,30 +766,28 @@ put_value:
           }
           else
           {
-            if (is_numeric)
-            {
-              snprintf(fm, fm_length, temp, tracknumber);
-            }
+            if (is_numeric) { snprintf(fm, fm_length, temp, tracknumber); }
             else
             {
-              splt_u_alpha_track(state, i, fm, fm_length,
-                  alpha_requested_num_of_digits, tracknumber);
+              splt_u_alpha_track(
+                state, i, fm, fm_length, alpha_requested_num_of_digits, tracknumber);
             }
           }
           break;
         case 'f':
           if (splt_t_get_filename_to_split(state) != NULL)
           {
-            original_filename = strdup(splt_su_get_fname_without_path(splt_t_get_filename_to_split(state)));
+            original_filename =
+              strdup(splt_su_get_fname_without_path(splt_t_get_filename_to_split(state)));
             if (original_filename)
             {
-              snprintf(temp+2,temp_len, "%s", state->oformat.format[i]+2);
+              snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
               splt_su_cut_extension(original_filename);
 
               int filename_length = strlen(original_filename);
 
-              fm_length = strlen(temp) + filename_length;
+              fm_length = strlen(temp) + filename_length + 1;
               if ((fm = malloc(fm_length * sizeof(char))) == NULL)
               {
                 error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -928,29 +806,30 @@ put_value:
           }
           break;
         case 'd':
+        {
+          char *last_dir =
+            splt_su_get_last_dir_of_fname(splt_t_get_filename_to_split(state), &error);
+          if (error < 0) { goto end; }
+
+          if (last_dir)
           {
-            char *last_dir = splt_su_get_last_dir_of_fname(splt_t_get_filename_to_split(state), &error);
-            if (error < 0) { goto end; }
+            snprintf(temp + 2, temp_len - 2, "%s", state->oformat.format[i] + 2);
 
-            if (last_dir)
+            int last_dir_length = strlen(last_dir);
+
+            fm_length = strlen(temp) + last_dir_length + 1;
+            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
             {
-              snprintf(temp+2, temp_len, "%s", state->oformat.format[i]+2);
-
-              int last_dir_length = strlen(last_dir);
-
-              fm_length = strlen(temp) + last_dir_length;
-              if ((fm = malloc(fm_length * sizeof(char))) == NULL)
-              {
-                error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                goto end;
-              }
-
-              snprintf(fm, fm_length, temp, last_dir);
-              free(last_dir);
-              last_dir = NULL;
+              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+              goto end;
             }
+
+            snprintf(fm, fm_length, temp, last_dir);
+            free(last_dir);
+            last_dir = NULL;
           }
-          break;
+        }
+        break;
       }
     }
     else
@@ -962,19 +841,17 @@ put_value:
         goto end;
       }
 
-      strncpy(fm, state->oformat.format[i], SPLT_MAXOLEN);
+      strncpy(fm, state->oformat.format[i], SPLT_MAXOLEN - 1);
+      fm[SPLT_MAXOLEN - 1] = 0;
     }
 
     int fm_size = 7;
-    if (fm != NULL)
-    {
-      fm_size = strlen(fm);
-    }
+    if (fm != NULL) { fm_size = strlen(fm) + 1; }
 
     //allocate memory for the output filename
     if (!output_filename)
     {
-      if ((output_filename = malloc((1+fm_size)*sizeof(char))) == NULL)
+      if ((output_filename = malloc((1 + fm_size) * sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         goto end;
@@ -984,7 +861,7 @@ put_value:
     }
     else
     {
-      output_filename_size += fm_size+1;
+      output_filename_size += fm_size + 1;
       if ((output_filename = realloc(output_filename, output_filename_size * sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -992,10 +869,7 @@ put_value:
       }
     }
 
-    if (fm != NULL)
-    {
-      strcat(output_filename, fm);
-    }
+    if (fm != NULL) { strcat(output_filename, fm); }
 
     //we free fm
     if (fm)
@@ -1005,7 +879,7 @@ put_value:
     }
   }
 
-  splt_d_print_debug(state,"The new output filename is _%s_\n", output_filename);
+  splt_d_print_debug(state, "The new output filename is _%s_\n", output_filename);
   int cur_splt = splt_t_get_current_split(state);
   int name_error = splt_sp_set_splitpoint_name(state, cur_splt, output_filename);
   if (name_error != SPLT_OK) { error = name_error; }
@@ -1032,29 +906,19 @@ end:
 
 static void splt_of_trim_on_separator_characters(char *filename)
 {
-  if (!filename)
-  {
-    return;
-  }
+  if (!filename) { return; }
 
-  int last_index = strlen(filename)-1;
-  if (last_index < 0)
-  {
-    return;
-  }
+  int last_index = strlen(filename);
+  if (last_index < 0) { return; }
 
   while (last_index >= 0)
   {
     char last_char = filename[last_index];
-    if (last_char == ':' || last_char == '_' ||
-        last_char == '-' || last_char == '.')
+    if (last_char == ':' || last_char == '_' || last_char == '-' || last_char == '.')
     {
       filename[last_index] = '\0';
     }
-    else
-    {
-      return;
-    }
+    else { return; }
 
     last_index--;
   }
@@ -1062,17 +926,14 @@ static void splt_of_trim_on_separator_characters(char *filename)
 
 static const char *splt_of_goto_last_non_separator_character(const char *format)
 {
-  if (!format)
-  {
-    return format;
-  }
+  if (!format) { return format; }
 
   int counter = 0;
   int max_length = strlen(format);
   while (counter < max_length)
   {
-    if (format[counter] == ':' || format[counter] == '_' ||
-        format[counter] == '-' || format[counter] == '.')
+    if (format[counter] == ':' || format[counter] == '_' || format[counter] == '-' ||
+        format[counter] == '.')
     {
       break;
     }
@@ -1082,4 +943,3 @@ static const char *splt_of_goto_last_non_separator_character(const char *format)
 
   return format + counter;
 }
-

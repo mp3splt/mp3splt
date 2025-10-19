@@ -39,4 +39,3 @@ char splt_of_get_number_of_digits_from_total_time(splt_state *state);
 #define SPLT_OFORMAT_PARSER_H
 
 #endif
-

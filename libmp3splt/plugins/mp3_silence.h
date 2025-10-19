@@ -34,12 +34,11 @@
 #include "silence_processors.h"
 #include "splt.h"
 
-int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length,
-    float threshold, float min, int shots, short output, int *error,
-    short silence_processor(double time, float level, int silence_was_found, short must_flush,
-      splt_scan_silence_data *ssd, int *found, int *error));
+int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length, float threshold,
+  float min, int shots, short output, int *error,
+  short silence_processor(double time, float level, int silence_was_found, short must_flush,
+    splt_scan_silence_data *ssd, int *found, int *error));
 
 #define MP3SPLT_MP3_SILENCE_H
 
 #endif
-

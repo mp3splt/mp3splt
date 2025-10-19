@@ -65,4 +65,3 @@ void append_splitpoint(main_data *data, long value);
 
 #define DATA_MANAGER_H
 #endif
-

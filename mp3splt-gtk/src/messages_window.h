@@ -45,4 +45,3 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type, u
 void create_mess_history_window(ui_state *ui);
 
 #endif
-

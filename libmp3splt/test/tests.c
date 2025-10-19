@@ -8,4 +8,3 @@ void mp3splt_assert_equal_error_message(splt_state *state, int error, char *expe
   cut_assert_equal_string(expected_error, actual_error);
   free(actual_error);
 }
-

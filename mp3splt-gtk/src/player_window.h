@@ -91,14 +91,13 @@ void restart_player_timer(ui_state *ui);
 
 void compute_douglas_peucker_filters(ui_state *ui);
 
-gint draw_silence_wave(gint left_mark, gint right_mark, 
-    gint interpolation_text_x, gint interpolation_text_y,
-    gfloat draw_time, gint width_drawing_area, gint y_margin,
-    gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
-    GtkWidget *da, cairo_t *gc, ui_state *ui);
+gint draw_silence_wave(gint left_mark, gint right_mark, gint interpolation_text_x,
+  gint interpolation_text_y, gfloat draw_time, gint width_drawing_area, gint y_margin,
+  gfloat current_time, gfloat total_time, gfloat zoom_coeff, GtkWidget *da, cairo_t *gc,
+  ui_state *ui);
 
-void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
-    gint *splitpoint_left, ui_state *ui);
+void get_current_splitpoints_time_left_right(
+  gint *time_left, gint *time_right, gint *splitpoint_left, ui_state *ui);
 void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui);
 void adjust_zoom_coeff(ui_infos *infos);
 
@@ -116,4 +115,3 @@ gint get_currently_scanning_for_silence_safe(ui_state *ui);
 void clear_previous_distances(ui_state *ui);
 
 #endif
-

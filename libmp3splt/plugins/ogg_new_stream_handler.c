@@ -40,16 +40,13 @@
 
 #include <string.h>
 
-splt_ogg_new_stream_handler *splt_ogg_nsh_new(splt_state *state, splt_ogg_state *oggstate, 
-    ogg_stream_state *stream_out, const char *output_fname, int write_header_packets,
-    ogg_stream_state *optional_stream_in)
+splt_ogg_new_stream_handler *splt_ogg_nsh_new(splt_state *state, splt_ogg_state *oggstate,
+  ogg_stream_state *stream_out, const char *output_fname, int write_header_packets,
+  ogg_stream_state *optional_stream_in)
 {
   splt_ogg_new_stream_handler *nsh = malloc(sizeof(*nsh));
 
-  if (nsh == NULL)
-  {
-    return NULL;
-  }
+  if (nsh == NULL) { return NULL; }
 
   memset(nsh, 0x0, sizeof(*nsh));
 
@@ -66,34 +63,25 @@ splt_ogg_new_stream_handler *splt_ogg_nsh_new(splt_state *state, splt_ogg_state 
 
 void splt_ogg_nsh_free(splt_ogg_new_stream_handler **nsh)
 {
-  if (!nsh || !*nsh)
-  {
-    return;
-  }
+  if (!nsh || !*nsh) { return; }
 
   free(*nsh);
   *nsh = NULL;
 }
 
-void splt_ogg_initialise_for_new_stream(splt_ogg_new_stream_handler *nsh, 
-    ogg_page *page, ogg_int64_t *cutpoint, ogg_int64_t previous_granulepos)
+void splt_ogg_initialise_for_new_stream(splt_ogg_new_stream_handler *nsh, ogg_page *page,
+  ogg_int64_t *cutpoint, ogg_int64_t previous_granulepos)
 {
   splt_ogg_state *oggstate = nsh->oggstate;
 
   ogg_stream_state *stream_in = nsh->optional_stream_in;
-  if (nsh->optional_stream_in == NULL)
-  {
-    stream_in = oggstate->stream_in;
-  }
+  if (nsh->optional_stream_in == NULL) { stream_in = oggstate->stream_in; }
 
   ogg_stream_clear(stream_in);
   ogg_stream_init(stream_in, ogg_page_serialno(page));
   oggstate->saved_serial = ogg_page_serialno(page);
 
-  if (cutpoint != NULL && *cutpoint != 0)
-  {
-    *cutpoint -= previous_granulepos;
-  }
+  if (cutpoint != NULL && *cutpoint != 0) { *cutpoint -= previous_granulepos; }
 
   nsh->header_packet_counter = 0;
 }
@@ -103,7 +91,8 @@ int splt_ogg_new_stream_needs_header_packet(splt_ogg_new_stream_handler *nsh)
   return nsh->header_packet_counter < TOTAL_HEADER_PACKETS;
 }
 
-void splt_ogg_new_stream_handle_header_packet(splt_ogg_new_stream_handler *nsh, ogg_packet *packet, int *error)
+void splt_ogg_new_stream_handle_header_packet(
+  splt_ogg_new_stream_handler *nsh, ogg_packet *packet, int *error)
 {
   splt_ogg_state *oggstate = nsh->oggstate;
 
@@ -127,16 +116,13 @@ void splt_ogg_new_stream_handle_header_packet(splt_ogg_new_stream_handler *nsh, 
     }
     memset(oggstate->headers, 0, sizeof(splt_v_packet) * TOTAL_HEADER_PACKETS);
 
-    splt_ogg_free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment); 
+    splt_ogg_free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
     vorbis_info_clear(oggstate->vi);
     vorbis_info_init(oggstate->vi);
   }
 
   oggstate->headers[nsh->header_packet_counter] = splt_ogg_clone_packet(packet, error);
-  if (*error < 0)
-  {
-    return;
-  }
+  if (*error < 0) { return; }
 
   if (vorbis_synthesis_headerin(oggstate->vi, &oggstate->vc, packet) < 0)
   {
@@ -164,4 +150,3 @@ void splt_ogg_new_stream_handle_header_packet(splt_ogg_new_stream_handler *nsh, 
     splt_ogg_write_header_packets(state, oggstate, nsh->stream_out, nsh->output_fname, error);
   }
 }
-

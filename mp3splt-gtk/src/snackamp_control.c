@@ -30,10 +30,10 @@
  *********************************************************/
 
 /*!********************************************************
- * \file 
+ * \file
  * Snackamp control
  *
- * this file contains functions to control the snackamp 
+ * this file contains functions to control the snackamp
  * player
  **********************************************************/
 
@@ -52,7 +52,7 @@ gint connect_snackamp(gint port, ui_state *ui)
 #ifdef __WIN32__
   long winsockinit;
   WSADATA winsock;
-  winsockinit = WSAStartup(0x0101,&winsock);
+  winsockinit = WSAStartup(0x0101, &winsock);
 #endif
 
   struct addrinfo hints;
@@ -66,9 +66,7 @@ gint connect_snackamp(gint port, ui_state *ui)
   snprintf(port_as_string, 16, "%d", port);
 
   int return_code = getaddrinfo("localhost", port_as_string, &hints, &result);
-  if (return_code != 0) {
-    return_err = 1;
-  }
+  if (return_code != 0) { return_err = 1; }
 
   if (return_err == 0)
   {
@@ -84,10 +82,7 @@ gint connect_snackamp(gint port, ui_state *ui)
         continue;
       }
 
-      if (connect(ui->pi->socket_id, result_p->ai_addr, result_p->ai_addrlen) != -1)
-      {
-        break;
-      }
+      if (connect(ui->pi->socket_id, result_p->ai_addr, result_p->ai_addrlen) != -1) { break; }
 
       return_err = 3;
       close(ui->pi->socket_id);
@@ -100,12 +95,12 @@ gint connect_snackamp(gint port, ui_state *ui)
   {
 #ifdef __WIN32__
 #else
-    if (NULL == (ui->pi->in = fdopen(ui->pi->socket_id, "r")) || 
+    if (NULL == (ui->pi->in = fdopen(ui->pi->socket_id, "r")) ||
         NULL == (ui->pi->out = fdopen(ui->pi->socket_id, "w")))
     {
       return_err = 4;
     }
-#endif  
+#endif
   }
 
   if (return_err == 0)
@@ -114,10 +109,7 @@ gint connect_snackamp(gint port, ui_state *ui)
     ui->pi->connected = TRUE;
   }
 
-  if (return_err >= 2)
-  {
-    disconnect_snackamp(ui);
-  }
+  if (return_err >= 2) { disconnect_snackamp(ui); }
 
   return return_err;
 }
@@ -178,18 +170,15 @@ gint connect_snackamp(gint port, ui_state *ui)
 
 static gchar *cut_begin_end(gchar *result)
 {
-  if (strchr(result,' ') != NULL)
+  if (strchr(result, ' ') != NULL)
   {
     gchar *test = strchr(result, ' ');
-    g_snprintf(result, strlen(result), "%s",test+1);
+    g_snprintf(result, strlen(result), "%s", test + 1);
   }
 
   //cut the \n at the end
   gint result_str = strlen(result);
-  if (result_str >= 2)
-  {
-    result[result_str - 2] = '\0';
-  }
+  if (result_str >= 2) { result[result_str - 2] = '\0'; }
 
   return result;
 }
@@ -217,16 +206,13 @@ gint disconnect_snackamp(ui_state *ui)
 static gchar *snackamp_socket_send_message(gchar *message, ui_state *ui)
 {
   gchar *result = malloc(1024 * sizeof(gchar *));
-  strcpy(result,"disconnected");
+  strcpy(result, "disconnected");
 
 #ifdef __WIN32__
   gboolean r = TRUE;
 
   gint err1 = send(ui->pi->socket_id, message, strlen(message), 0);
-  if (err1 <= 0)
-  {
-    disconnect_snackamp(ui);
-  }
+  if (err1 <= 0) { disconnect_snackamp(ui); }
   else
   {
     gint err = recv(ui->pi->socket_id, result, 1024, 0);
@@ -245,10 +231,10 @@ static gchar *snackamp_socket_send_message(gchar *message, ui_state *ui)
 #ifdef __WIN32__
   if (r)
   {
-    if (strchr(result,'\n') != NULL)
+    if (strchr(result, '\n') != NULL)
     {
       gchar *line_end;
-      line_end = strchr(result,'\n') + 1;
+      line_end = strchr(result, '\n') + 1;
       *line_end = '\0';
     }
   }
@@ -263,24 +249,18 @@ static gint get_integer_from_string(gchar *result)
   gint our_integer = 0;
   gint i = 0;
   gchar *number = NULL;
-  while ((isdigit(result[i])==0) && (result[i]!='\0') && (result[i]!='-'))
+  while ((isdigit(result[i]) == 0) && (result[i] != '\0') && (result[i] != '-'))
   {
     i++;
     number = result + i;
   }
-  if (! (number == (result + strlen(result))))
-  {
-    our_integer = atoi (number);
-  }
+  if (!(number == (result + strlen(result)))) { our_integer = atoi(number); }
 
   return our_integer;
 }
 
 //!Test if we are connected to snackamp
-static gboolean snackamp_is_connected(ui_state *ui)
-{
-  return ui->pi->connected;
-}
+static gboolean snackamp_is_connected(ui_state *ui) { return ui->pi->connected; }
 
 //!gets informations about the song
 void snackamp_get_song_infos(gchar *total_infos, ui_state *ui)
@@ -302,44 +282,35 @@ void snackamp_get_song_infos(gchar *total_infos, ui_state *ui)
   gchar nch_str[32] = { '\0' };
   gchar *ptr = NULL;
 
-  if (strstr(a+1, " ") != NULL)
-  {
-    ptr = strstr(a+1, " ") + 1;
-  }
+  if (strstr(a + 1, " ") != NULL) { ptr = strstr(a + 1, " ") + 1; }
 
   //rate
   gint i = 0;
   while (result[i] != ' ' && isdigit(result[i]) && i < 16)
   {
-    g_sprintf(rate_str, "%s%c",rate_str,result[i]);
+    g_sprintf(rate_str, "%s%c", rate_str, result[i]);
     i++;
   }
 
   //cut the beginning
   if (strchr(result, ' ') != NULL)
   {
-    gchar *test = strchr(result,' ');
-    g_snprintf(result, strlen(result), "%s",test+1);
+    gchar *test = strchr(result, ' ');
+    g_snprintf(result, strlen(result), "%s", test + 1);
   }
 
   //freq
   i = 0;
   while (result[i] != ' ' && isdigit(result[i]) && i < 16)
   {
-    g_sprintf(freq_str, "%s%c",freq_str,result[i]);
+    g_sprintf(freq_str, "%s%c", freq_str, result[i]);
     i++;
   }
 
   //channels int
   gint nch = atoi(ptr);
-  if (nch == 2)
-  {
-    snprintf(nch_str, 32, "%s", _("stereo"));
-  }
-  else
-  {
-    snprintf(nch_str, 32, "%s", _("mono"));
-  }
+  if (nch == 2) { snprintf(nch_str, 32, "%s", _("stereo")); }
+  else { snprintf(nch_str, 32, "%s", _("mono")); }
 
   gchar *_Kbps = _("Kbps");
   gchar *_Khz = _("Khz");
@@ -364,11 +335,11 @@ The result of this query must be freed after use.
 gchar *snackamp_get_filename(ui_state *ui)
 {
   gint playlist_pos = snackamp_get_playlist_pos(ui);
-  
+
   //we get the current file
   gchar temp[100];
   g_snprintf(temp, 100, "%s %d\n", "xmms_remote_get_playlist_file", playlist_pos);
- 
+
   gchar *result = snackamp_socket_send_message(temp, ui);
   result = cut_begin_end(result);
 
@@ -389,10 +360,7 @@ gint snackamp_get_playlist_number(ui_state *ui)
   gint number = get_integer_from_string(result);
   g_free(result);
 
-  if (number == -1)
-  {
-    snackamp_stop(ui);
-  }
+  if (number == -1) { snackamp_stop(ui); }
 
   return number;
 }
@@ -404,13 +372,13 @@ The return value must be g_free'd after use.
 gchar *snackamp_get_title_song(ui_state *ui)
 {
   gint playlist_pos = snackamp_get_playlist_pos(ui);
-  
+
   gchar temp[100];
-  g_snprintf(temp, 100,"%s %d\n", "xmms_remote_get_playlist_title",playlist_pos);
+  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_get_playlist_title", playlist_pos);
 
   gchar *result = snackamp_socket_send_message(temp, ui);
   result = cut_begin_end(result);
-  
+
   return result;
 }
 
@@ -430,13 +398,10 @@ void snackamp_start(ui_state *ui)
   static gchar *exec_command = "snackAmp";
   gchar *exec_this = g_strdup_printf("%s &", exec_command);
   system(exec_this);
-  
+
   time_t lt;
   gint timer = time(&lt);
-  while ((!snackamp_is_running(ui)) && ((time(&lt) - timer) < 8))
-  {
-    usleep(0);
-  }
+  while ((!snackamp_is_running(ui)) && ((time(&lt) - timer) < 8)) { usleep(0); }
 
   g_free(exec_this);
 }
@@ -445,7 +410,7 @@ void snackamp_start(ui_state *ui)
 static void snackamp_set_playlist_pos(gint pos, ui_state *ui)
 {
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_playlist_pos",pos);
+  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_playlist_pos", pos);
   gchar *result = snackamp_socket_send_message(temp, ui);
   g_free(result);
 }
@@ -505,7 +470,7 @@ gint snackamp_get_volume(ui_state *ui)
   gchar *result = snackamp_socket_send_message("xmms_remote_get_main_volume\n", ui);
   gint vol = get_integer_from_string(result);
   g_free(result);
- 
+
   return vol;
 }
 
@@ -516,18 +481,12 @@ void snackamp_start_with_songs(GList *list, ui_state *ui)
   snackamp_add_files(list, ui);
 }
 
-//!returns TRUE if snackamp is running; if not, FALSE 
+//!returns TRUE if snackamp is running; if not, FALSE
 gint snackamp_is_running(ui_state *ui)
 {
-  if (ui->pi->connected)
-  {
-    return TRUE;
-  }
+  if (ui->pi->connected) { return TRUE; }
 
-  if (connect_snackamp(8775, ui) == 0)
-  {
-    return TRUE;
-  }
+  if (connect_snackamp(8775, ui) == 0) { return TRUE; }
 
   return FALSE;
 }
@@ -566,10 +525,7 @@ void snackamp_jump(gint position, ui_state *ui)
 {
   gint hundr_secs_pos = position / 10;
   gint hundr_secs = hundr_secs_pos % 100;
-  if (hundr_secs == 1)
-  {
-    hundr_secs = 0;
-  }
+  if (hundr_secs == 1) { hundr_secs = 0; }
 
   gint secs = hundr_secs_pos / 100;
   gfloat total_pos = hundr_secs + secs * 100;
@@ -595,19 +551,13 @@ gint snackamp_get_total_time(ui_state *ui)
 //!returns TRUE if snackamp is playing, else FALSE
 gint snackamp_is_playing(ui_state *ui)
 {
-  if (!snackamp_is_connected(ui))
-  {
-    return FALSE;
-  }
+  if (!snackamp_is_connected(ui)) { return FALSE; }
 
   gchar *result = snackamp_socket_send_message("xmms_remote_is_playing\n", ui);
   gint i = atoi(result);
   g_free(result);
 
-  if (i == 0)
-  {
-    return FALSE;
-  }
+  if (i == 0) { return FALSE; }
 
   return TRUE;
 }
@@ -618,10 +568,7 @@ not yet implemented in snackamp
 */
 gint snackamp_is_paused(ui_state *ui)
 {
-  if (!snackamp_is_connected(ui))
-  {
-    return FALSE;
-  }
+  if (!snackamp_is_connected(ui)) { return FALSE; }
 
   gchar *result = snackamp_socket_send_message("xmms_remote_is_paused\n", ui);
   result = cut_begin_end(result);
@@ -629,11 +576,7 @@ gint snackamp_is_paused(ui_state *ui)
   gint i = atoi(result);
   g_free(result);
 
-  if (i == 1)
-  {
-    return TRUE;
-  }
+  if (i == 1) { return TRUE; }
 
   return FALSE;
 }
-

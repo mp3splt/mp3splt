@@ -6,16 +6,11 @@
 
 static splt_il_pair *pair = NULL;
 
-void cut_setup()
-{
-}
+void cut_setup() {}
 
 void cut_teardown()
 {
-  if (pair)
-  {
-    splt_il_pair_free(&pair);
-  }
+  if (pair) { splt_il_pair_free(&pair); }
 }
 
 void test_new()
@@ -44,4 +39,3 @@ void test_free()
 
   cut_assert_null(pair);
 }
-

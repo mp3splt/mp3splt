@@ -42,13 +42,12 @@ static char *get_input_line(FILE *input_file, char *key);
 
 extern FILE *console_out;
 
-#if defined(__BEOS__) && !defined (HAS_GETPASS)
+#if defined(__BEOS__) && !defined(HAS_GETPASS)
 #warning Faking getpass() !!!
 char *getpass(char *p)
 {
   char *ret = malloc(30);
-  if (!ret)
-    return NULL;
+  if (!ret) return NULL;
   puts(p);
   fgets(ret, 30, stdin);
   return ret;
@@ -59,27 +58,32 @@ char *getpass(char *p)
 char *getpass(char *s)
 {
   char *pass, c;
-  int i=0;
+  int i = 0;
   fputs(s, stdout);
   pass = malloc(100);
   do {
     c = _getch();
-    if (c!='\r') {
-      if (c=='\b') {
-        if (i>0) {
-          printf ("\b \b");
+    if (c != '\r')
+    {
+      if (c == '\b')
+      {
+        if (i > 0)
+        {
+          printf("\b \b");
           i--;
         }
       }
-      else {
-        printf ("*");
+      else
+      {
+        printf("*");
         pass[i++] = c;
       }
     }
-    else break;
-  } while (i<100);
+    else
+      break;
+  } while (i < 100);
 
-  pass[i]='\0';
+  pass[i] = '\0';
 
   printf("\n");
 
@@ -101,25 +105,19 @@ void do_freedb_search(main_data *data)
   {
     snprintf(search_type, 30, "%s", "cddb_cgi");
   }
-  else
-  {
-    snprintf(search_type, 30 ,"%s", "web_search");
-  }
+  else { snprintf(search_type, 30, "%s", "web_search"); }
   if (opt->freedb_get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
   {
     snprintf(get_type, 30, "%s", "cddb_cgi");
   }
-  else
-  {
-    snprintf(get_type, 30, "%s", "cddb_protocol");
-  }
+  else { snprintf(get_type, 30, "%s", "cddb_protocol"); }
 
   //print out infos about the servers
-  fprintf(console_out,_(" Freedb search type: %s , Site: %s , Port: %d\n"),
-      search_type,opt->freedb_search_server,opt->freedb_search_port);
+  fprintf(console_out, _(" Freedb search type: %s , Site: %s , Port: %d\n"), search_type,
+    opt->freedb_search_server, opt->freedb_search_port);
   fflush(console_out);
-  fprintf(console_out,_(" Freedb get type: %s , Site: %s , Port: %d\n"),
-      get_type,opt->freedb_get_server,opt->freedb_get_port);
+  fprintf(console_out, _(" Freedb get type: %s , Site: %s , Port: %d\n"), get_type,
+    opt->freedb_get_server, opt->freedb_get_port);
   fflush(console_out);
 
   char *freedb_search_string = NULL;
@@ -131,10 +129,7 @@ void do_freedb_search(main_data *data)
 
     short first_time = SPLT_TRUE;
     do {
-      if (!first_time)
-      {
-        print_message(_("\nPlease search something ..."));
-      }
+      if (!first_time) { print_message(_("\nPlease search something ...")); }
 
       memset(freedb_input, '\0', sizeof(freedb_input));
 
@@ -145,32 +140,23 @@ void do_freedb_search(main_data *data)
 
       first_time = SPLT_FALSE;
 
-      freedb_input[strlen(freedb_input)-1] = '\0';
-    } while (strlen(freedb_input)==0);
+      freedb_input[strlen(freedb_input) - 1] = '\0';
+    } while (strlen(freedb_input) == 0);
 
     freedb_search_string = freedb_input;
   }
-  else
-  {
-    freedb_search_string = opt->freedb_arg_search_string;
-  }
+  else { freedb_search_string = opt->freedb_arg_search_string; }
 
-  fprintf(console_out, _("\n  Search string: %s\n"),freedb_search_string);
+  fprintf(console_out, _("\n  Search string: %s\n"), freedb_search_string);
   fprintf(console_out, _("\nSearching from %s on port %d using %s ...\n"),
-      opt->freedb_search_server,opt->freedb_search_port, search_type);
+    opt->freedb_search_server, opt->freedb_search_port, search_type);
   fflush(console_out);
 
-  splt_freedb_results *f_results =
-    mp3splt_get_freedb_search(state, freedb_search_string,
-        &err, opt->freedb_search_type,
-        opt->freedb_search_server,
-        opt->freedb_search_port);
+  splt_freedb_results *f_results = mp3splt_get_freedb_search(state, freedb_search_string, &err,
+    opt->freedb_search_type, opt->freedb_search_server, opt->freedb_search_port);
 
   process_confirmation_error(err, data);
-  if (!f_results)
-  {
-    print_message_exit(_("No results found"), data);
-  }
+  if (!f_results) { print_message_exit(_("No results found"), data); }
 
   //if we don't have an auto-select the result X from the arguments:
   // (query{artist}(resultX)
@@ -186,22 +172,23 @@ void do_freedb_search(main_data *data)
 
     mp3splt_freedb_init_iterator(f_results);
     const splt_freedb_one_result *f_result = NULL;
-    while ((f_result = mp3splt_freedb_next(f_results))) {
+    while ((f_result = mp3splt_freedb_next(f_results)))
+    {
       int cd_id = mp3splt_freedb_get_id(f_result);
 
       const char *cd_name = mp3splt_freedb_get_name(f_result);
-      fprintf(console_out,"%3d) %s\n", cd_id, cd_name);
+      fprintf(console_out, "%3d) %s\n", cd_id, cd_name);
 
       int i = 0;
       int number_of_revisions = mp3splt_freedb_get_number_of_revisions(f_result);
-      for(i = 0; i < number_of_revisions; i++)
+      for (i = 0; i < number_of_revisions; i++)
       {
         fprintf(console_out, "  |\\=>");
-        fprintf(console_out, "%3d) ", cd_id+i+1);
-        fprintf(console_out, _("Revision: %d\n"), i+2);
+        fprintf(console_out, "%3d) ", cd_id + i + 1);
+        fprintf(console_out, _("Revision: %d\n"), i + 2);
 
         //break at 22
-        if (((cd_id+i+2) % 22) == 0)
+        if (((cd_id + i + 2) % 22) == 0)
         {
           //duplicate, see below
           char junk[18];
@@ -209,7 +196,7 @@ void do_freedb_search(main_data *data)
           fflush(console_out);
 
           fgets(junk, 16, stdin);
-          if (junk[0]=='q')
+          if (junk[0] == 'q')
           {
             end = SPLT_TRUE;
             goto end;
@@ -227,7 +214,7 @@ void do_freedb_search(main_data *data)
         fflush(console_out);
 
         fgets(junk, 16, stdin);
-        if (junk[0]=='q')
+        if (junk[0] == 'q')
         {
           end = SPLT_TRUE;
           goto end;
@@ -253,17 +240,14 @@ end:
       fprintf(console_out, _("Select cd #: "));
       fflush(console_out);
       fgets(sel_cd_input, 254, stdin);
-      sel_cd_input[strlen(sel_cd_input)-1]='\0';
+      sel_cd_input[strlen(sel_cd_input) - 1] = '\0';
       tot = 0;
 
-      if (sel_cd_input[tot] == '\0') 
-      {
-        selected_cd = -1;
-      }
+      if (sel_cd_input[tot] == '\0') { selected_cd = -1; }
 
-      while(sel_cd_input[tot] != '\0')
+      while (sel_cd_input[tot] != '\0')
       {
-        if (isdigit(sel_cd_input[tot++])==0)
+        if (isdigit(sel_cd_input[tot++]) == 0)
         {
           fprintf(console_out, _("Please "));
           fflush(console_out);
@@ -273,25 +257,18 @@ end:
         }
       }
 
-      if (selected_cd != -1) 
-      {
-        selected_cd = atoi(sel_cd_input);
-      }
+      if (selected_cd != -1) { selected_cd = atoi(sel_cd_input); }
 
     } while ((selected_cd < 0) || (selected_cd >= cd_number));
   }
-  else
-  {
-    selected_cd = opt->freedb_arg_result_option;
-  }
+  else { selected_cd = opt->freedb_arg_result_option; }
 
   fprintf(console_out, _("\nGetting file from %s on port %d using %s ...\n"),
-      opt->freedb_get_server,opt->freedb_get_port, get_type);
+    opt->freedb_get_server, opt->freedb_get_port, get_type);
   fflush(console_out);
 
-  err = mp3splt_write_freedb_file_result(state, selected_cd,
-      MP3SPLT_CDDBFILE, opt->freedb_get_type,
-      opt->freedb_get_server, opt->freedb_get_port);
+  err = mp3splt_write_freedb_file_result(state, selected_cd, MP3SPLT_CDDBFILE, opt->freedb_get_type,
+    opt->freedb_get_server, opt->freedb_get_port);
   process_confirmation_error(err, data);
 
   mp3splt_clear_proxy(data->state);
@@ -322,21 +299,19 @@ static void read_proxy_settings_from_configuration_file(main_data *data)
   if (!proxy_address) { goto end; }
 
   char *proxy_port = get_input_line(input_file, "PROXYPORT");
-  if (!proxy_port) { free(proxy_address); goto end; }
+  if (!proxy_port)
+  {
+    free(proxy_address);
+    goto end;
+  }
   int port = atoi(proxy_port);
 
   fprintf(stderr, " Using proxy %s on port %d\n", proxy_address, port);
 
   mp3splt_use_proxy(data->state, proxy_address, port);
 
-  if (proxy_address != NULL)
-  {
-    free(proxy_address);
-  }
-  if (proxy_port != NULL)
-  {
-    free(proxy_port);
-  }
+  if (proxy_address != NULL) { free(proxy_address); }
+  if (proxy_port != NULL) { free(proxy_port); }
 
   char *use_proxy_auth = get_input_line(input_file, "PROXYAUTH");
   if (!use_proxy_auth) { goto end; }
@@ -358,7 +333,7 @@ static void read_proxy_settings_from_configuration_file(main_data *data)
     splt_code error = SPLT_OK;
 
     char *proxy_authentification = query_for_proxy_login();
-    char *authentification_as_base64 = 
+    char *authentification_as_base64 =
       mp3splt_encode_in_base64(data->state, proxy_authentification, &error);
     process_confirmation_error(error, data);
 
@@ -405,34 +380,27 @@ static char *get_input_line(FILE *input_file, char *key)
     return NULL;
   }
 
-  line[line_length-1] = '\0';
-  if (line[line_length-2] == '\r')
-  {
-    line[line_length-2] = '\0';
-  }
+  line[line_length - 1] = '\0';
+  if (line[line_length - 2] == '\r') { line[line_length - 2] = '\0'; }
 
-  if (key == NULL)
-  {
-    return line;
-  }
+  if (key == NULL) { return line; }
 
-  if (strstr(line, key) == NULL) {
+  if (strstr(line, key) == NULL)
+  {
     free(line);
     return NULL;
   }
 
   char *value_start = NULL;
-  if ((value_start = strchr(line, '=')) == NULL) {
+  if ((value_start = strchr(line, '=')) == NULL)
+  {
     print_warning(_("the configuration file is malformed !"));
     free(line);
     return NULL;
   }
 
   char *value = strdup(value_start + 1);
-  if (!value)
-  {
-    print_warning(_("cannot allocate memory !"));
-  }
+  if (!value) { print_warning(_("cannot allocate memory !")); }
 
   free(line);
 
@@ -451,10 +419,7 @@ static void query_for_proxy_and_write_configuration_file(main_data *data)
     return;
   }
 
-  if (data->opt->q_option)
-  {
-    return;
-  }
+  if (data->opt->q_option) { return; }
 
   if (!(output_file = fopen(config_file, "w+")))
   {
@@ -469,10 +434,7 @@ static void query_for_proxy_and_write_configuration_file(main_data *data)
 
   fprintf(stderr, _("Will you use a proxy ? (y/n): "));
   fgets(user_input, user_input_length, stdin);
-  if (user_input[0] != 'y')
-  {
-    goto close_file;
-  }
+  if (user_input[0] != 'y') { goto close_file; }
 
   fprintf(stderr, _("Proxy Address: "));
   fgets(user_input, user_input_length, stdin);
@@ -484,23 +446,17 @@ static void query_for_proxy_and_write_configuration_file(main_data *data)
 
   fprintf(stderr, _("Need authentication ? (y/n): "));
   fgets(user_input, user_input_length, stdin);
-  if (user_input[0] != 'y')
-  {
-    goto close_file;
-  }
+  if (user_input[0] != 'y') { goto close_file; }
 
   fprintf(output_file, "PROXYAUTH=1\n");
   fprintf(stderr, _("Would you like to save the password (insecure) ? (y/n): "));
   fgets(user_input, user_input_length, stdin);
-  if (user_input[0] != 'y')
-  {
-    goto close_file;
-  }
+  if (user_input[0] != 'y') { goto close_file; }
 
   char *authentification = query_for_proxy_login();
 
   splt_code error = SPLT_OK;
-  char *authentification_as_base64 = 
+  char *authentification_as_base64 =
     mp3splt_encode_in_base64(data->state, authentification, &error);
   process_confirmation_error(error, data);
 
@@ -521,7 +477,7 @@ static char *query_for_proxy_login()
   char user_input[130];
   fprintf(console_out, _("Username: "));
   fgets(user_input, 128, stdin);
-  user_input[strlen(user_input)-1] = '\0';
+  user_input[strlen(user_input) - 1] = '\0';
 
   char *pass = getpass(_("Password: "));
 
@@ -540,23 +496,16 @@ static char *get_configuration_filename()
   char *home_directory = getenv("HOME");
 
   size_t home_directory_length = 0;
-  if (home_directory)
-  {
-    home_directory_length = strlen(home_directory);
-  }
+  if (home_directory) { home_directory_length = strlen(home_directory); }
 
   size_t maximum_length = home_directory_length + strlen(PROXY_CONFIG_FILE) + 2;
   char *config_file = my_malloc(sizeof(char) * maximum_length);
 
   if (home_directory != NULL)
   {
-    snprintf(config_file, maximum_length, "%s%c"PROXY_CONFIG_FILE, home_directory, SPLT_DIRCHAR);
+    snprintf(config_file, maximum_length, "%s%c" PROXY_CONFIG_FILE, home_directory, SPLT_DIRCHAR);
   }
-  else
-  {
-    snprintf(config_file, maximum_length, PROXY_CONFIG_FILE);
-  }
+  else { snprintf(config_file, maximum_length, PROXY_CONFIG_FILE); }
 
   return config_file;
 }
-

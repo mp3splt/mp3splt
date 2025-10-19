@@ -31,4 +31,3 @@ void do_freedb_search(main_data *data);
 
 #define FREEDB_H
 #endif
-
